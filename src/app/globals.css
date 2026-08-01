@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --surface-0: theme('colors.parchment.50');
+  --surface-1: theme('colors.parchment.100');
+  --ink: theme('colors.ink.900');
+}
+
+.dark {
+  color-scheme: dark;
+  --surface-0: theme('colors.ink.950');
+  --surface-1: theme('colors.ink.900');
+  --ink: theme('colors.parchment.100');
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html.reduced-motion *, html.reduced-motion *::before, html.reduced-motion *::after {
+  animation-duration: 0.001ms !important;
+  transition-duration: 0.001ms !important;
+}
+
+body {
+  background-color: var(--surface-0);
+  color: var(--ink);
+}
+
+/* Arabic text: comfortably larger, generously leaded, correct RTL shaping. */
+.arabic {
+  font-family: theme('fontFamily.arabic');
+  direction: rtl;
+  unicode-bidi: isolate;
+  line-height: 2.1;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+}
+
+.arabic-lg { font-size: 1.75rem; }
+.arabic-xl { font-size: 2.25rem; }
+
+/* Diacritic visibility levels toggle a CSS class on a wrapping element. */
+.diacritics-minimal .diacritic { opacity: 0; }
+.diacritics-partial .diacritic-secondary { opacity: 0.35; }
+
+:focus-visible {
+  outline: 2px solid theme('colors.gold.500');
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.high-contrast {
+  --surface-0: #000000;
+  --surface-1: #0a0a0a;
+  --ink: #ffffff;
+}
+
+.high-contrast .card {
+  border-color: #ffffff !important;
+}
+
+::selection {
+  background-color: theme('colors.jade.200');
+  color: theme('colors.ink.900');
+}
+
+.card {
+  background-color: var(--surface-1);
+  border: 1px solid rgb(0 0 0 / 0.06);
+  border-radius: 1rem;
+}
+.dark .card {
+  border-color: rgb(255 255 255 / 0.08);
+}
+
+.scrollbar-thin::-webkit-scrollbar { height: 6px; width: 6px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: theme('colors.ink.300'); border-radius: 4px; }
+.dark .scrollbar-thin::-webkit-scrollbar-thumb { background: theme('colors.ink.600'); }

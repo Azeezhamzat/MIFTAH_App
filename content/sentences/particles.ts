@@ -1,0 +1,117 @@
+import type { SentenceSeed } from '../sentenceTypes';
+
+export const particleSentences: SentenceSeed[] = [
+  {
+    code: 'part-01-inna-basic',
+    textVocalized: 'إِنَّ الطَّالِبَ مُجْتَهِدٌ',
+    textUnvocalized: 'إن الطالب مجتهد',
+    transliteration: 'inna ṭ-ṭāliba mujtahidun',
+    translationEnglish: 'Indeed, the student is diligent.',
+    difficulty: 2,
+    notes: 'Direct transformation of nom-01: إنّ enters, and الطالب flips from nominative (mubtada) to accusative (اسم إنّ), while مجتهد stays nominative.',
+    tokens: [
+      { position: 1, surfaceVocalized: 'إِنَّ', surfaceUnvocalized: 'إن', lemma: 'إن', partOfSpeech: 'particle', role: 'governing particle (حرف مشبه بالفعل)', translation: 'indeed', explanation: 'إنّ (and its sisters) enter a nominal sentence and immediately change the case of the following noun.' },
+      { position: 2, surfaceVocalized: 'الطَّالِبَ', surfaceUnvocalized: 'الطالب', lemma: 'طالب', rootRadicals: 'ط ل ب', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'definite', grammaticalCase: 'accusative', role: 'ism inna (اسم إنّ)', marker: 'fatḥah (ـَ)', markerType: 'visible', governedByPosition: 1, translation: 'the student', explanation: 'Was nominative as a bare mubtada (nom-01); إنّ forces it to accusative. Its grammatical role name also changes: it is no longer called مبتدأ but اسم إنّ.' },
+      { position: 3, surfaceVocalized: 'مُجْتَهِدٌ', surfaceUnvocalized: 'مجتهد', lemma: 'مجتهد', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'indefinite', grammaticalCase: 'nominative', role: 'khabar inna (خبر إنّ)', marker: 'ḍammah + tanwīn (ـٌ)', markerType: 'visible', translation: 'diligent', explanation: 'Unchanged from nom-01 — إنّ only touches the noun immediately after it, not the predicate.' },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'particle_governed', explanation: 'إنّ governs الطالب, assigning it the accusative.' },
+      { headPosition: 2, dependentPosition: 3, relation: 'mubtada_khabar', explanation: 'مجتهد is predicated of الطالب, structurally parallel to an ordinary khabar.' },
+    ],
+  },
+  {
+    code: 'part-02-lakinna-contrast',
+    textVocalized: 'الْمُعَلِّمُ حَاضِرٌ لَكِنَّ الطَّالِبَ غَائِبٌ',
+    textUnvocalized: 'المعلم حاضر لكن الطالب غائب',
+    transliteration: 'al-muʿallimu ḥāḍirun lākinna ṭ-ṭāliba ghāʾibun',
+    translationEnglish: 'The teacher is present, but the student is absent.',
+    difficulty: 3,
+    notes: 'لكنّ, "but," is one of إنّ\'s sisters and governs exactly the same way.',
+    tokens: [
+      { position: 1, surfaceVocalized: 'الْمُعَلِّمُ', surfaceUnvocalized: 'المعلم', lemma: 'معلم', rootRadicals: 'ع ل م', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'definite', grammaticalCase: 'nominative', role: 'mubtada', marker: 'ḍammah (ـُ)', markerType: 'visible', translation: 'the teacher', explanation: 'Ordinary mubtada of the first clause.' },
+      { position: 2, surfaceVocalized: 'حَاضِرٌ', surfaceUnvocalized: 'حاضر', lemma: 'حاضر', rootRadicals: 'ح ض ر', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'indefinite', grammaticalCase: 'nominative', role: 'khabar', marker: 'ḍammah + tanwīn (ـٌ)', markerType: 'visible', translation: 'present', explanation: 'Khabar of the first clause.' },
+      { position: 3, surfaceVocalized: 'لَكِنَّ', surfaceUnvocalized: 'لكن', lemma: 'لكن', partOfSpeech: 'particle', role: 'governing particle, sister of إنّ', translation: 'but', explanation: 'Introduces a contrasting second clause and governs exactly like إنّ.' },
+      { position: 4, surfaceVocalized: 'الطَّالِبَ', surfaceUnvocalized: 'الطالب', lemma: 'طالب', rootRadicals: 'ط ل ب', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'definite', grammaticalCase: 'accusative', role: 'ism lākinna', marker: 'fatḥah (ـَ)', markerType: 'visible', governedByPosition: 3, translation: 'the student', explanation: 'Accusative because لكنّ governs it, exactly as إنّ would.' },
+      { position: 5, surfaceVocalized: 'غَائِبٌ', surfaceUnvocalized: 'غائب', lemma: 'غائب', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'indefinite', grammaticalCase: 'nominative', role: 'khabar lākinna', marker: 'ḍammah + tanwīn (ـٌ)', markerType: 'visible', translation: 'absent', explanation: 'Predicate, nominative as always.' },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'mubtada_khabar', explanation: 'حاضر is predicated of المعلم.' },
+      { headPosition: 3, dependentPosition: 4, relation: 'particle_governed', explanation: 'لكنّ governs الطالب.' },
+      { headPosition: 4, dependentPosition: 5, relation: 'mubtada_khabar', explanation: 'غائب is predicated of الطالب.' },
+    ],
+  },
+  {
+    code: 'part-03-kana-basic',
+    textVocalized: 'كَانَ الطَّالِبُ مُجْتَهِدًا',
+    textUnvocalized: 'كان الطالب مجتهدا',
+    transliteration: 'kāna ṭ-ṭālibu mujtahidan',
+    translationEnglish: 'The student was diligent.',
+    difficulty: 2,
+    notes: 'كان does the mirror-opposite of إنّ: the subject stays nominative, and the predicate becomes accusative.',
+    tokens: [
+      { position: 1, surfaceVocalized: 'كَانَ', surfaceUnvocalized: 'كان', lemma: 'كان', rootRadicals: 'ك و ن', partOfSpeech: 'verb', person: 'third', gender: 'masculine', number: 'singular', role: 'governing verb (فعل ناقص)', translation: 'was', explanation: 'كان and its sisters are called "deficient verbs" (أفعال ناقصة) because they do not describe a real action — they only establish a state and reach forward to reshape the nominal sentence that follows.' },
+      { position: 2, surfaceVocalized: 'الطَّالِبُ', surfaceUnvocalized: 'الطالب', lemma: 'طالب', rootRadicals: 'ط ل ب', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'definite', grammaticalCase: 'nominative', role: 'ism kāna (اسم كان)', marker: 'ḍammah (ـُ)', markerType: 'visible', translation: 'the student', explanation: 'Stays nominative — كان does not touch the subject\'s case, only the predicate\'s.' },
+      { position: 3, surfaceVocalized: 'مُجْتَهِدًا', surfaceUnvocalized: 'مجتهدا', lemma: 'مجتهد', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'indefinite', grammaticalCase: 'accusative', role: 'khabar kāna (خبر كان)', marker: 'fatḥah + tanwīn (ـً)', markerType: 'visible', governedByPosition: 1, translation: 'diligent', explanation: 'Was nominative in the bare nominal sentence (nom-01); كان forces it to accusative — the opposite target from إنّ, which touches the subject instead.' },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'particle_governed', explanation: 'كان (as a deficient verb) still requires a subject, which stays nominative.' },
+      { headPosition: 1, dependentPosition: 3, relation: 'particle_governed', explanation: 'كان governs مجتهدًا into the accusative as its predicate.' },
+    ],
+  },
+  {
+    code: 'part-04-kana-imperfect',
+    textVocalized: 'كَانَ الطَّالِبُ يَكْتُبُ الدَّرْسَ',
+    textUnvocalized: 'كان الطالب يكتب الدرس',
+    transliteration: 'kāna ṭ-ṭālibu yaktubu d-darsa',
+    translationEnglish: 'The student was writing the lesson.',
+    difficulty: 3,
+    notes: 'When خبر كان is a full imperfect-verb sentence, that whole sentence has no case ending of its own — it simply "has the position" of an accusative khabar (محل نصب), previewing Domain H.',
+    tokens: [
+      { position: 1, surfaceVocalized: 'كَانَ', surfaceUnvocalized: 'كان', lemma: 'كان', rootRadicals: 'ك و ن', partOfSpeech: 'verb', person: 'third', gender: 'masculine', number: 'singular', role: 'governing verb', translation: 'was', explanation: 'Establishes past time for the whole sentence.' },
+      { position: 2, surfaceVocalized: 'الطَّالِبُ', surfaceUnvocalized: 'الطالب', lemma: 'طالب', rootRadicals: 'ط ل ب', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'definite', grammaticalCase: 'nominative', role: 'ism kāna', marker: 'ḍammah (ـُ)', markerType: 'visible', translation: 'the student', explanation: 'Nominative, as always for اسم كان.' },
+      { position: 3, surfaceVocalized: 'يَكْتُبُ', surfaceUnvocalized: 'يكتب', lemma: 'كتب', rootRadicals: 'ك ت ب', prefix: 'ي', partOfSpeech: 'verb', person: 'third', gender: 'masculine', number: 'singular', mood: 'indicative', role: 'verb of the embedded sentence serving as khabar kāna', marker: 'no visible case ending on the clause itself', markerType: 'estimated', translation: 'writes / was writing', explanation: 'This whole embedded verbal sentence (يكتب الدرس) is the خبر كان — it is said to be "in the position of accusative" (في محل نصب) even though nothing here is literally marked accusative, because only single words carry case endings, not clauses.' },
+      { position: 4, surfaceVocalized: 'الدَّرْسَ', surfaceUnvocalized: 'الدرس', lemma: 'درس', rootRadicals: 'د ر س', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'definite', grammaticalCase: 'accusative', role: 'mafʿūl bihi of يكتب', marker: 'fatḥah (ـَ)', markerType: 'visible', translation: 'the lesson', explanation: 'Ordinary direct object inside the embedded clause.' },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'particle_governed', explanation: 'كان requires الطالب as its (nominative) subject.' },
+      { headPosition: 1, dependentPosition: 3, relation: 'particle_governed', explanation: 'The whole embedded sentence starting at يكتب serves as خبر كان.' },
+      { headPosition: 3, dependentPosition: 4, relation: 'verb_object', explanation: 'الدرس is the object inside the embedded clause.' },
+    ],
+  },
+  {
+    code: 'part-05-laysa-negation',
+    textVocalized: 'لَيْسَ الطَّالِبُ غَائِبًا',
+    textUnvocalized: 'ليس الطالب غائبا',
+    transliteration: 'laysa ṭ-ṭālibu ghāʾiban',
+    translationEnglish: 'The student is not absent.',
+    difficulty: 2,
+    notes: 'ليس is grammatically one of كان\'s sisters (a deficient verb), even though semantically it negates rather than describes a state.',
+    tokens: [
+      { position: 1, surfaceVocalized: 'لَيْسَ', surfaceUnvocalized: 'ليس', lemma: 'ليس', partOfSpeech: 'verb', person: 'third', gender: 'masculine', number: 'singular', role: 'governing verb (negates a nominal sentence)', translation: 'is not', explanation: 'ليس has no imperfect or imperative form and no separate agent — it is used only to negate a nominal sentence, but it governs case exactly like كان.' },
+      { position: 2, surfaceVocalized: 'الطَّالِبُ', surfaceUnvocalized: 'الطالب', lemma: 'طالب', rootRadicals: 'ط ل ب', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'definite', grammaticalCase: 'nominative', role: 'ism laysa', marker: 'ḍammah (ـُ)', markerType: 'visible', translation: 'the student', explanation: 'Nominative subject, unaffected.' },
+      { position: 3, surfaceVocalized: 'غَائِبًا', surfaceUnvocalized: 'غائبا', lemma: 'غائب', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'indefinite', grammaticalCase: 'accusative', role: 'khabar laysa', marker: 'fatḥah + tanwīn (ـً)', markerType: 'visible', governedByPosition: 1, translation: 'absent', explanation: 'Accusative predicate, governed by ليس exactly as by كان.' },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'particle_governed', explanation: 'ليس requires الطالب as its nominative subject.' },
+      { headPosition: 1, dependentPosition: 3, relation: 'particle_governed', explanation: 'ليس governs غائبًا into the accusative.' },
+    ],
+  },
+  {
+    code: 'part-06-maa-zaala',
+    textVocalized: 'مَا زَالَ الطَّالِبُ مُجْتَهِدًا',
+    textUnvocalized: 'ما زال الطالب مجتهدا',
+    transliteration: 'mā zāla ṭ-ṭālibu mujtahidan',
+    translationEnglish: 'The student is still diligent.',
+    difficulty: 3,
+    notes: 'ما زال ("continued to be / still is") is a sister of كان expressing continuation, built from a hollow verb زال.',
+    tokens: [
+      { position: 1, surfaceVocalized: 'مَا زَالَ', surfaceUnvocalized: 'ما زال', lemma: 'ما زال', rootRadicals: 'ز ي ل', partOfSpeech: 'verb', person: 'third', gender: 'masculine', number: 'singular', role: 'governing verb, sister of كان', translation: 'continued to be; is still', explanation: 'This compound expression as a whole functions as one of كان\'s sisters. زال is itself a hollow verb (middle radical ي).' },
+      { position: 2, surfaceVocalized: 'الطَّالِبُ', surfaceUnvocalized: 'الطالب', lemma: 'طالب', rootRadicals: 'ط ل ب', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'definite', grammaticalCase: 'nominative', role: 'ism (subject)', marker: 'ḍammah (ـُ)', markerType: 'visible', translation: 'the student', explanation: 'Nominative subject.' },
+      { position: 3, surfaceVocalized: 'مُجْتَهِدًا', surfaceUnvocalized: 'مجتهدا', lemma: 'مجتهد', partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'indefinite', grammaticalCase: 'accusative', role: 'khabar', marker: 'fatḥah + tanwīn (ـً)', markerType: 'visible', governedByPosition: 1, translation: 'diligent', explanation: 'Accusative predicate, governed exactly like خبر كان.' },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'particle_governed', explanation: 'ما زال requires الطالب as its nominative subject.' },
+      { headPosition: 1, dependentPosition: 3, relation: 'particle_governed', explanation: 'ما زال governs مجتهدًا into the accusative.' },
+    ],
+  },
+];

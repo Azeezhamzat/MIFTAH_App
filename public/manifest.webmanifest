@@ -1,0 +1,12 @@
+{
+  "name": "Miftāḥ — See the system. Build the language.",
+  "short_name": "Miftāḥ",
+  "description": "A complete personal teacher of Arabic Nahw and Sarf.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#fdfbf6",
+  "theme_color": "#2f3a8a",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

@@ -1,0 +1,574 @@
+// Miftāḥ data model.
+// SQLite has no native enum type, so enum-like fields are plain String columns
+// whose allowed values are documented and enforced in TypeScript (see src/lib/types.ts).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Identity & learner profile
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("learner") // learner | reviewer | admin
+  createdAt    DateTime @default(now())
+
+  learnerProfile     LearnerProfile?
+  languageProfile    LanguageProfile?
+  goals              LearningGoal[]
+  attempts           Attempt[]
+  masteries          ConceptMastery[]
+  reviewSchedules    ReviewSchedule[]
+  dailySessions      DailySession[]
+  vocabularyItems    VocabularyItem[]
+  placementAttempts  PlacementAttempt[]
+  tutorConversations TutorConversation[]
+  misconceptionLogs  MisconceptionLog[]
+}
+
+model LearnerProfile {
+  id                     String    @id @default(cuid())
+  userId                 String    @unique
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  arabicOrientation      String    @default("msa") // msa | quranic | classical | mixed
+  studyIntensity         String    @default("standard") // light | standard | intensive
+  dailyGoalMinutes       Int       @default(20)
+  quietProgress          Boolean   @default(false)
+  yorubaNotesEnabled     Boolean   @default(true)
+  reducedMotion          Boolean   @default(false)
+  theme                  String    @default("system") // light | dark | system
+  diacriticLevel         String    @default("full") // full | partial | minimal
+  placementCompletedAt   DateTime?
+  placementConfidence    Float?
+  recommendedStartNodeId String?
+  currentStreak          Int       @default(0)
+  longestStreak          Int       @default(0)
+  lastStudyDate          DateTime?
+  streakRepairUsedMonth  String? // "2026-08" — one repair per calendar month
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+}
+
+model LanguageProfile {
+  id                     String @id @default(cuid())
+  userId                 String @unique
+  user                   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  motherTongue            String @default("yoruba")
+  instructionalLanguage   String @default("english")
+  yorubaProficiency       String @default("native") // native | heritage | learner
+  englishProficiency      String @default("fluent")
+  notes                   String?
+}
+
+model LearningGoal {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  text      String
+  priority  Int      @default(1)
+  createdAt DateTime @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Curriculum structure
+// ---------------------------------------------------------------------------
+
+model Stage {
+  id          String @id @default(cuid())
+  code        String @unique // foundation | core | advanced
+  title       String
+  description String
+  order       Int
+  units       Unit[]
+}
+
+model Domain {
+  id          String    @id @default(cuid())
+  code        String    @unique // A..H
+  title       String
+  subtitle    String
+  description String
+  order       Int
+  units       Unit[]
+  concepts    Concept[]
+}
+
+model Unit {
+  id           String   @id @default(cuid())
+  domainId     String
+  domain       Domain   @relation(fields: [domainId], references: [id])
+  stageId      String
+  stage        Stage    @relation(fields: [stageId], references: [id])
+  code         String   @unique
+  title        String
+  titleArabic  String
+  description  String
+  order        Int
+  lessons      Lesson[]
+}
+
+model Lesson {
+  id               String   @id @default(cuid())
+  unitId           String
+  unit             Unit     @relation(fields: [unitId], references: [id])
+  code             String   @unique
+  title            String
+  titleArabic      String
+  summary          String
+  order            Int
+  estimatedMinutes Int      @default(15)
+  status           String   @default("published") // draft | linguistic_review | pedagogical_review | yoruba_review | technical_validation | approved | published | retired
+  observePrompt    String? // "meaning before labels" contrast set, stored as JSON string
+  discoveryJson    String? // guided discovery structure, JSON string
+  microExplanation String
+  deeperDetail     String?
+  concepts         LessonConcept[]
+  exercises        Exercise[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Concept {
+  id               String   @id @default(cuid())
+  domainId         String
+  domain           Domain   @relation(fields: [domainId], references: [id])
+  code             String   @unique
+  title            String
+  titleArabic      String
+  definition       String
+  whyItMatters     String
+  difficulty       Int      @default(1) // 1..5
+  order            Int
+
+  lessons          LessonConcept[]
+  prerequisitesOf  ConceptPrerequisite[] @relation("PrereqTarget")
+  prerequisites    ConceptPrerequisite[] @relation("PrereqSource")
+  exercises        Exercise[]
+  masteries        ConceptMastery[]
+  reviewSchedules  ReviewSchedule[]
+  referenceMappings ReferenceMapping[]
+  misconceptions   MisconceptionConcept[]
+}
+
+model ConceptPrerequisite {
+  id             String  @id @default(cuid())
+  conceptId      String
+  concept        Concept @relation("PrereqTarget", fields: [conceptId], references: [id])
+  prerequisiteId String
+  prerequisite   Concept @relation("PrereqSource", fields: [prerequisiteId], references: [id])
+  strength       String  @default("required") // required | recommended
+
+  @@unique([conceptId, prerequisiteId])
+}
+
+model LessonConcept {
+  id        String  @id @default(cuid())
+  lessonId  String
+  lesson    Lesson  @relation(fields: [lessonId], references: [id])
+  conceptId String
+  concept   Concept @relation(fields: [conceptId], references: [id])
+  role      String  @default("introduces") // introduces | reinforces | reviews
+
+  @@unique([lessonId, conceptId])
+}
+
+// ---------------------------------------------------------------------------
+// Reference works (Al-Nahw al-Wadih, al-Tuhfah al-Saniyyah, ...)
+// ---------------------------------------------------------------------------
+
+model ReferenceWork {
+  id       String   @id @default(cuid())
+  code     String   @unique // nahw_wadih | tuhfah_saniyyah
+  titleArabic  String
+  titleEnglish String
+  author       String
+  kind         String // inductive_primer | classical_matn_commentary
+  mappings     ReferenceMapping[]
+}
+
+model ReferenceMapping {
+  id              String        @id @default(cuid())
+  conceptId       String
+  concept         Concept       @relation(fields: [conceptId], references: [id])
+  referenceWorkId String
+  referenceWork   ReferenceWork @relation(fields: [referenceWorkId], references: [id])
+  chapter         String
+  section         String?
+  note            String?
+}
+
+// ---------------------------------------------------------------------------
+// Arabic linguistic data: sentences, tokens, morphology, syntax
+// ---------------------------------------------------------------------------
+
+model Root {
+  id          String   @id @default(cuid())
+  radicals    String   @unique // "ك ت ب"
+  meaningCore String
+  tokens      Token[]
+  lexemes     Lexeme[]
+}
+
+model Pattern {
+  id             String   @id @default(cuid())
+  label          String   @unique // "Form I: فَعَلَ", "اسم الفاعل: فَاعِل"
+  skeleton       String   // "فَاعِل"
+  category       String   // verb_form_i..x | active_participle | passive_participle | verbal_noun | noun_pattern | broken_plural
+  meaningTendency String?
+  tokens         Token[]
+  lexemes        Lexeme[]
+}
+
+model Lexeme {
+  id             String  @id @default(cuid())
+  rootId         String?
+  root           Root?   @relation(fields: [rootId], references: [id])
+  patternId      String?
+  pattern        Pattern? @relation(fields: [patternId], references: [id])
+  vocalized      String
+  unvocalized    String
+  partOfSpeech   String
+  meaningEnglish String
+  notes          String?
+  vocabularyItems VocabularyItem[]
+}
+
+model VocabularyItem {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lexemeId     String?
+  lexeme       Lexeme?   @relation(fields: [lexemeId], references: [id])
+  freeformArabic String?
+  freeformMeaning String?
+  note         String?
+  masteryLevel String    @default("new") // new | emerging | developing | reliable | strong
+  addedAt      DateTime  @default(now())
+}
+
+model ArabicSentence {
+  id                String   @id @default(cuid())
+  code              String?  @unique // stable content-authoring key, e.g. "nom-01-mubtada-khabar-basic"
+  textVocalized     String
+  textUnvocalized   String
+  transliteration   String?
+  translationEnglish String
+  sourceType        String   @default("original") // original | quranic | hadith | classical | corpus
+  sourceRef         String?
+  notes             String?
+  difficulty        Int      @default(1)
+  tokens            Token[]
+  dependencies      Dependency[]
+  exercises         Exercise[]
+  createdAt         DateTime @default(now())
+}
+
+model Token {
+  id                  String   @id @default(cuid())
+  sentenceId          String
+  sentence            ArabicSentence @relation(fields: [sentenceId], references: [id])
+  position            Int
+  surfaceVocalized    String
+  surfaceUnvocalized  String
+  lemma               String?
+  rootId              String?
+  root                Root?    @relation(fields: [rootId], references: [id])
+  patternId           String?
+  pattern             Pattern? @relation(fields: [patternId], references: [id])
+  prefix              String?
+  stem                String?
+  suffix              String?
+  partOfSpeech        String   // verb | noun | particle | pronoun | adjective | demonstrative | ...
+  person              String?  // first | second | third
+  gender              String?  // masculine | feminine
+  number              String?  // singular | dual | plural
+  definiteness        String?  // definite | indefinite
+  state               String?  // construct | free (for idafa)
+  grammaticalCase      String?  // nominative | accusative | genitive
+  mood                String?  // indicative | subjunctive | jussive
+  role                String   // subject | object | predicate | ... plain-English role label
+  marker              String?  // e.g. "damma (ة)" visible/secondary/estimated description
+  markerType          String?  // visible | secondary | estimated | positional
+  governedByTokenId   String?
+  translation         String
+  contextualMeaning   String?
+  explanation         String   // plain-English explanation
+  traditionalExplanation String?
+  confidence          Float    @default(1.0)
+  source              String   @default("authored") // authored | reviewed | ai_draft
+  alternatives         AlternativeAnalysis[]
+  headOf               Dependency[] @relation("HeadToken")
+  dependentIn           Dependency[] @relation("DependentToken")
+}
+
+model Dependency {
+  id             String  @id @default(cuid())
+  sentenceId     String
+  sentence       ArabicSentence @relation(fields: [sentenceId], references: [id])
+  headTokenId    String
+  headToken      Token   @relation("HeadToken", fields: [headTokenId], references: [id])
+  dependentTokenId String
+  dependentToken Token   @relation("DependentToken", fields: [dependentTokenId], references: [id])
+  relation       String  // verb_subject | verb_object | preposition_object | noun_adjective | mudaf_mudaf_ilayh | mubtada_khabar | particle_governed | relative_clause
+  explanation    String
+}
+
+model AlternativeAnalysis {
+  id           String  @id @default(cuid())
+  tokenId      String
+  token        Token   @relation(fields: [tokenId], references: [id])
+  description  String
+  isTraditional Boolean @default(false)
+  note         String?
+}
+
+// ---------------------------------------------------------------------------
+// Exercises, attempts, misconceptions
+// ---------------------------------------------------------------------------
+
+model Exercise {
+  id               String   @id @default(cuid())
+  lessonId         String?
+  lesson           Lesson?  @relation(fields: [lessonId], references: [id])
+  conceptId        String
+  concept          Concept  @relation(fields: [conceptId], references: [id])
+  sentenceId       String?
+  sentence         ArabicSentence? @relation(fields: [sentenceId], references: [id])
+  type             String   // identify_role | select_ending | add_vowels | reorder | connect_dependency | complete_conjugation | construct_from_root | transform_word | transform_sentence | repair_error | complete_paradigm | translate_to_structure | compare_analyses | explain_rule | partial_irab | full_irab | analyze_passage | free_production | teach_back
+  objective        String
+  prompt           String
+  promptArabic     String?
+  difficulty       Int      @default(1)
+  expectedAnswer   String   // JSON
+  acceptedVariants String   @default("[]") // JSON array of strings
+  invalidPlausible String   @default("[]") // JSON array of {answer, why}
+  explanation      String
+  misconceptionTags String  @default("[]") // JSON array of misconception codes
+  estimatedSeconds Int      @default(45)
+  reviewPriority   Int      @default(1)
+  order            Int      @default(1)
+  hints            Hint[]
+  attempts         Attempt[]
+}
+
+model Hint {
+  id         String   @id @default(cuid())
+  exerciseId String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  level      Int // 1 = gentle nudge .. 3 = near-answer
+  text       String
+}
+
+model Misconception {
+  id               String   @id @default(cuid())
+  code             String   @unique
+  title            String
+  description      String
+  evidencePattern  String
+  correctModel     String
+  contrastExample  String
+  repairGuidance   String
+  concepts         MisconceptionConcept[]
+  logs             MisconceptionLog[]
+}
+
+model MisconceptionConcept {
+  id              String        @id @default(cuid())
+  misconceptionId String
+  misconception   Misconception @relation(fields: [misconceptionId], references: [id])
+  conceptId       String
+  concept         Concept       @relation(fields: [conceptId], references: [id])
+
+  @@unique([misconceptionId, conceptId])
+}
+
+model MisconceptionLog {
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  misconceptionId String
+  misconception   Misconception @relation(fields: [misconceptionId], references: [id])
+  evidenceAttemptId String?
+  detectedAt      DateTime      @default(now())
+  status          String        @default("active") // active | repaired | retested_pass | retested_fail
+  retestAt        DateTime?
+}
+
+model Attempt {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exerciseId       String
+  exercise         Exercise @relation(fields: [exerciseId], references: [id])
+  sessionId        String?
+  response         String   // JSON
+  isCorrect        Boolean
+  score            Float    @default(0) // 0..1 partial credit
+  confidence       Int?     // 1..4 self-rating
+  responseTimeMs   Int
+  hintsUsed        Int      @default(0)
+  misconceptionCode String?
+  attemptedAt      DateTime @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Mastery & spaced review
+// ---------------------------------------------------------------------------
+
+model ConceptMastery {
+  id                    String   @id @default(cuid())
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conceptId             String
+  concept               Concept  @relation(fields: [conceptId], references: [id])
+  recognitionScore      Float    @default(0)
+  formationScore        Float    @default(0)
+  explanationScore      Float    @default(0)
+  transferScore         Float    @default(0)
+  retentionScore        Float    @default(0)
+  readingApplicationScore Float  @default(0)
+  overallScore          Float    @default(0)
+  label                 String   @default("new") // new | emerging | developing | reliable | strong | needs_review
+  distinctDaysPracticed Int      @default(0)
+  lastPracticedAt       DateTime?
+  updatedAt             DateTime @updatedAt
+
+  @@unique([userId, conceptId])
+}
+
+model ReviewSchedule {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conceptId      String
+  concept        Concept  @relation(fields: [conceptId], references: [id])
+  dueAt          DateTime
+  intervalDays   Float    @default(1)
+  easeFactor     Float    @default(2.3)
+  repetitions    Int      @default(0)
+  lastResult     String?  // again | hard | good | easy
+  lastReason     String?  // explainable "why review" note
+  updatedAt      DateTime @updatedAt
+
+  @@unique([userId, conceptId])
+}
+
+model DailySession {
+  id                   String    @id @default(cuid())
+  userId               String
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mode                 String    @default("guided") // guided | accelerated | reference | lab
+  lengthMinutesTarget  Int
+  startedAt            DateTime  @default(now())
+  endedAt              DateTime?
+  stagesCompleted      String    @default("[]") // JSON array of stage names
+  newConceptsIntroduced String   @default("[]") // JSON array of concept codes
+  summary              String?   // JSON: {improved, uncertain, recommendation}
+}
+
+// ---------------------------------------------------------------------------
+// Reading library
+// ---------------------------------------------------------------------------
+
+model ReadingPassage {
+  id                     String @id @default(cuid())
+  title                  String
+  level                  Int    // 1..9 per reading-progression ladder
+  textVocalized          String
+  vocabPreview           String @default("[]") // JSON
+  comprehensionQuestions String @default("[]") // JSON
+  sentenceIds            String @default("[]") // JSON array of ArabicSentence ids
+  recurringStructures    String @default("[]") // JSON
+}
+
+// ---------------------------------------------------------------------------
+// Placement
+// ---------------------------------------------------------------------------
+
+model PlacementQuestion {
+  id            String @id @default(cuid())
+  code          String @unique
+  skillArea     String // reading_comfort | word_category | sentence_meaning | nominal_verbal | agreement | case_awareness | conjugation | root_pattern | inference | explanation
+  prompt        String
+  promptArabic  String?
+  type          String // multiple_choice | short_answer | sorting | free_text
+  options       String  @default("[]") // JSON
+  correctAnswer String  // JSON
+  difficulty    Int     @default(1)
+}
+
+model PlacementAttempt {
+  id                     String    @id @default(cuid())
+  userId                 String
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startedAt              DateTime  @default(now())
+  completedAt            DateTime?
+  responses              String    @default("[]") // JSON
+  recommendedStartUnitId String?
+  strengths              String    @default("[]") // JSON
+  fragilePrerequisites   String    @default("[]") // JSON
+  priorityGaps           String    @default("[]") // JSON
+  suggestedFirstWeek     String    @default("[]") // JSON
+  estimatedIntensity     String?
+  confidenceLevel        Float?
+}
+
+// ---------------------------------------------------------------------------
+// Living Teacher (grounded, knowledge-base-constrained tutor)
+// ---------------------------------------------------------------------------
+
+model TutorConversation {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contextType String   // lesson | sentence | exercise | concept | general
+  contextId   String?
+  createdAt   DateTime @default(now())
+  messages    TutorMessage[]
+}
+
+model TutorMessage {
+  id              String   @id @default(cuid())
+  conversationId  String
+  conversation    TutorConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role            String   // learner | tutor
+  text            String
+  groundedOn      String   @default("[]") // JSON array of concept/sentence ids cited
+  uncertain       Boolean  @default(false)
+  intent          String?  // matched intent code, for diagnostics
+  createdAt       DateTime @default(now())
+  outcome         TutorExplanationOutcome?
+}
+
+model TutorExplanationOutcome {
+  id                 String       @id @default(cuid())
+  tutorMessageId     String       @unique
+  tutorMessage       TutorMessage @relation(fields: [tutorMessageId], references: [id], onDelete: Cascade)
+  wasHelpful         Boolean?
+  learnerStillConfused Boolean?   @default(false)
+  followUpNeeded     Boolean      @default(false)
+}
+
+// ---------------------------------------------------------------------------
+// Content authoring workflow (lightweight — full studio is a roadmap item)
+// ---------------------------------------------------------------------------
+
+model ContentReview {
+  id            String   @id @default(cuid())
+  entityType    String   // lesson | exercise | sentence | concept
+  entityId      String
+  workflowState String   @default("draft") // draft | linguistic_review | pedagogical_review | yoruba_review | technical_validation | approved | published | retired
+  reviewerNote  String?
+  reviewerRole  String?
+  createdAt     DateTime @default(now())
+}
