@@ -9,10 +9,13 @@ implementation phases."* Below is the honest accounting.
 - **Greenfield project, no existing repo conventions to preserve** — the repository was empty at the start of this
   session, so stack choices (Next.js/TypeScript/Prisma/SQLite/Tailwind/NextAuth) were made fresh per the spec's
   fallback guidance for a greenfield app.
-- **No external LLM/API key was available or requested** in this environment, and the spec explicitly requires the
+- **No external LLM/API key was available or requested at initial build time**, and the spec explicitly requires the
   Living Teacher to be grounded and not let an unconstrained model be the sole source of grammatical truth — so it
   was built as a deterministic, knowledge-base-constrained engine rather than an LLM wrapper. This is a design
-  choice consistent with the spec's own requirement, not a fallback taken due to a missing capability.
+  choice consistent with the spec's own requirement, not a fallback taken due to a missing capability. An optional
+  enhancement was added later: a learner may paste their own Anthropic API key (Settings) to have Claude rephrase
+  the rule engine's already-grounded answer under a strict no-new-facts system prompt — retrieval and grounding
+  remain entirely in the deterministic engine, and the key is fully optional, encrypted at rest, and never required.
 - **The initial learner profile from spec §1** (Yorùbá L1, English instructional language, MSA-primary orientation,
   intensive study cadence) is encoded as the onboarding defaults and the demo account's profile, but the app is not
   hard-coded to only that learner — `LanguageProfile`/`LearnerProfile` are per-user and the onboarding flow lets any

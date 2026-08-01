@@ -2,6 +2,7 @@ import { requireOnboardedUser } from '@/lib/session';
 import NavShell from '@/components/NavShell';
 import SettingsForm from './SettingsForm';
 import AccountActions from './AccountActions';
+import AnthropicKeyForm from './AnthropicKeyForm';
 
 export default async function SettingsPage() {
   const user = await requireOnboardedUser();
@@ -25,6 +26,12 @@ export default async function SettingsPage() {
             Retake the placement assessment →
           </a>
         </div>
+
+        <AnthropicKeyForm
+          hasKey={!!user.learnerProfile?.anthropicApiKeyEncrypted}
+          model={user.learnerProfile?.anthropicModel ?? 'claude-haiku-4-5'}
+          validatedAt={user.learnerProfile?.anthropicKeyValidatedAt?.toISOString() ?? null}
+        />
 
         <AccountActions />
       </div>

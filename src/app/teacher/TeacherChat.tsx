@@ -6,6 +6,7 @@ interface Message {
   role: 'learner' | 'tutor';
   text: string;
   uncertain?: boolean;
+  enhancedByClaude?: boolean;
 }
 
 const SUGGESTIONS = [
@@ -36,7 +37,7 @@ export default function TeacherChat({ concepts }: { concepts: { code: string; ti
       body: JSON.stringify({ question: text, contextConceptCode: contextConceptCode || undefined }),
     });
     const data = await res.json();
-    setMessages((m) => [...m, { role: 'tutor', text: data.text, uncertain: data.uncertain }]);
+    setMessages((m) => [...m, { role: 'tutor', text: data.text, uncertain: data.uncertain, enhancedByClaude: data.enhancedByClaude }]);
     setLoading(false);
   }
 
@@ -68,6 +69,9 @@ export default function TeacherChat({ concepts }: { concepts: { code: string; ti
             >
               {m.text.split('\n').map((line, j) => <p key={j}>{line}</p>)}
             </div>
+            {m.enhancedByClaude && (
+              <p className="text-[10px] uppercase tracking-wide text-indigo-500 dark:text-indigo-300 mt-1">Phrased by Claude, grounded in this app&apos;s curriculum</p>
+            )}
           </div>
         ))}
         {loading && <p className="text-xs text-ink-400">Thinking…</p>}

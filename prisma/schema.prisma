@@ -57,6 +57,14 @@ model LearnerProfile {
   streakRepairUsedMonth  String? // "2026-08" — one repair per calendar month
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
+
+  // Optional, user-supplied Anthropic API key that enhances the Living Teacher's
+  // grounded answers via a real Claude call. Never sent to the client — see
+  // src/lib/crypto.ts and src/lib/tutor/claude.ts. The tutor remains fully
+  // functional (rule-based, knowledge-base-grounded) with no key at all.
+  anthropicApiKeyEncrypted String? // AES-256-GCM ciphertext, server-only
+  anthropicModel           String  @default("claude-haiku-4-5") // claude-haiku-4-5 | claude-sonnet-5
+  anthropicKeyValidatedAt  DateTime?
 }
 
 model LanguageProfile {

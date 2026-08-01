@@ -83,9 +83,18 @@ See `prisma/schema.prisma` for the authoritative model. Key relationships:
 simply," Yorùbā-note lookup, missing-prerequisite computation from real mastery data, alternative-analysis lookup,
 teach-back invitations) with a final fallback to keyword-overlap search across `Concept` and `Misconception` rows.
 Every answer either cites the database rows it drew from (`groundedOn`) or explicitly says it doesn't have a
-verified answer. There is no call to an external LLM anywhere in this path — this is deliberate (see the spec's
-"do not allow an unconstrained language model to serve as the sole source of grammatical truth" requirement) and
-means the tutor's honesty guarantees hold structurally, not by prompting.
+verified answer. By default there is no call to an external LLM anywhere in this path — this is deliberate (see the
+spec's "do not allow an unconstrained language model to serve as the sole source of grammatical truth" requirement)
+and means the tutor's honesty guarantees hold structurally, not by prompting.
+
+If a learner has connected their own Anthropic API key (`src/app/settings/AnthropicKeyForm.tsx`, encrypted at rest
+via `src/lib/crypto.ts`), `src/app/api/tutor/ask/route.ts` passes the already-grounded `answer.text` and its cited
+facts to `enhanceAnswerWithClaude` (`src/lib/tutor/claude.ts`), which calls the Claude API under a system prompt
+that explicitly forbids adding any grammatical claim beyond the supplied facts. Claude's role here is phrasing only,
+never retrieval: it never sees raw curriculum data to search, only the specific facts the rule engine already
+grounded its answer in. Any error (invalid key, rate limit, network failure, or a response the wrapper can't parse
+as compliant) causes `enhanceAnswerWithClaude` to return `null`, and the route keeps the original grounded text —
+the honesty guarantee holds structurally whether or not a key is present.
 
 ## Why SQLite for the reference implementation
 
