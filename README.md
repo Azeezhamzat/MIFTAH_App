@@ -15,11 +15,28 @@ real database and a real mastery/spaced-repetition engine.
 
 ```bash
 npm install
-cp .env.example .env          # generates DATABASE_URL + a NEXTAUTH_SECRET placeholder — replace the secret
-npm run db:push               # create the SQLite schema
-npm run db:seed                # seed the full curriculum + a demo account
-npm run dev                    # http://localhost:3000
+cp .env.example .env
+npm run db:push
+npm run db:seed
+npm run dev
 ```
+
+Then open **http://localhost:3000**.
+
+> **Note for zsh users (default on macOS):** if you copy commands with trailing `# comments` into an interactive
+> zsh prompt, zsh does not treat `#` as a comment there (unlike bash) — it passes everything after `#` as literal
+> arguments to the command, which breaks it in confusing ways (`cp` erroring about a directory named after a word
+> in the comment, or `next dev` erroring "Invalid project directory"). Paste each command on its own line with no
+> trailing comment, as above, and this can't happen.
+
+`.env.example` ships with a placeholder `NEXTAUTH_SECRET` — it works for local development, but replace it with a
+real random value before deploying anywhere reachable by others:
+
+```bash
+openssl rand -base64 32
+```
+
+Paste the output as `NEXTAUTH_SECRET` in `.env`.
 
 Demo login (pre-seeded with realistic progress so the dashboard, review queue, and analytics have real data on
 first visit): **demo@miftah.app / learnarabic**
