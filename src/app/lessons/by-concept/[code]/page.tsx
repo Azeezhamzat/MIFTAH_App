@@ -5,7 +5,7 @@ export default async function LessonByConceptPage({ params }: { params: { code: 
   const concept = await prisma.concept.findUnique({ where: { code: params.code } });
   if (!concept) notFound();
   const lessonConcept = await prisma.lessonConcept.findFirst({
-    where: { conceptId: concept.id },
+    where: { conceptId: concept.id, lesson: { status: 'published' } },
     include: { lesson: true },
     orderBy: { lesson: { order: 'asc' } },
   });

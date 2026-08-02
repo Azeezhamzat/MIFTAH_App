@@ -96,6 +96,42 @@ grounded its answer in. Any error (invalid key, rate limit, network failure, or 
 as compliant) causes `enhanceAnswerWithClaude` to return `null`, and the route keeps the original grounded text —
 the honesty guarantee holds structurally whether or not a key is present.
 
+## AI-assisted lesson drafting
+
+The same connected API key can also draft new lessons — `POST /api/studio/generate-lesson` (triggered from
+`/studio`'s "AI drafts" tab) calls `draftLessonWithClaude` (`src/lib/tutor/claude.ts`). This is a different trust
+boundary from the Living Teacher's phrasing-only role above: here Claude is asked to *write* new pedagogical content
+and exercises, including grammatical claims it has no independent authority to assert. Two structural safeguards
+keep this consistent with the app's grounding principle:
+
+1. **Closed citation list.** Claude receives a fixed list of already-verified sentence codes and may only cite from
+   it (enforced via Anthropic's tool-use / structured-output feature, `DRAFT_LESSON_TOOL`); any sentence code it
+   invents is dropped server-side in `validateDraft` before anything is written to the database.
+2. **A `status` gate, not a suggestion.** Every `Lesson` and `Exercise` row carries a `status` column
+   (`"published"` by default for all hand-authored/seeded content). Claude's drafts are written with
+   `status: "draft"`, and every learner-facing query in the app filters on `status: "published"` —
+   `lessons/[code]`, `lessons/by-concept/[code]`, the review queue, the Misconception Clinic, the offline bundle,
+   the Living Teacher's own retrieval, and (as defense in depth) `gradeAndRecordAttempt` itself, which refuses to
+   grade a non-published exercise even if its id somehow reached a client. A draft becomes visible to the learner
+   only when a human clicks "Approve & publish" in `/studio` (`POST /api/studio/drafts`), which is the one place
+   this pipeline hands final judgment to a person rather than a model.
+
+## Offline study
+
+`/offline` (`src/app/offline/OfflineStudio.tsx`) downloads the entire published curriculum — every lesson and the
+complete exercise bank, not only lesson-attached exercises — via `GET /api/offline/bundle` into IndexedDB
+(`src/lib/offline/db.ts`). Because grading an exercise needs the answer key, the bundle necessarily ships
+`expectedAnswer`/`acceptedVariants`/`explanation` to the client, unlike the normal online path, which never sends
+those fields — an inherent, accepted trade-off of grading with no server round-trip, appropriate for a personal,
+single-user deployment. Once downloaded, `LessonPlayer` and `ExercisePlayer` accept optional offline-grading props
+that reuse `src/lib/grading.ts` (the exact function the server uses) for instant local feedback; each attempt is
+queued in IndexedDB and replayed through the ordinary `POST /api/exercises/[id]/attempt` endpoint on reconnect
+(`src/lib/offline/sync.ts`), so mastery and spaced-review scheduling still run through the single server-side
+pipeline exactly once per attempt. `public/sw.js` is a hand-written service worker (network-first, falling back to
+cache) that keeps already-visited pages — including `/offline` itself — reachable with no connection at all; it
+cannot precache a fixed asset manifest the way a static-export PWA would, since the App Router renders most pages
+per-request, so this is a pragmatic "cache what you've seen" strategy rather than a full pre-cache.
+
 ## Why SQLite for the reference implementation
 
 SQLite keeps the reference implementation dependency-free (no external database to provision) while exercising the

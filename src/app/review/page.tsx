@@ -24,7 +24,7 @@ export default async function ReviewPage() {
   const items = [];
   for (const s of due) {
     const exercise = await prisma.exercise.findFirst({
-      where: { conceptId: s.conceptId },
+      where: { conceptId: s.conceptId, status: 'published' },
       include: { hints: { orderBy: { level: 'asc' } } },
       orderBy: { reviewPriority: 'desc' },
     });

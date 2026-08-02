@@ -353,6 +353,7 @@ model Exercise {
   sentenceId       String?
   sentence         ArabicSentence? @relation(fields: [sentenceId], references: [id])
   type             String   // identify_role | select_ending | add_vowels | reorder | connect_dependency | complete_conjugation | construct_from_root | transform_word | transform_sentence | repair_error | complete_paradigm | translate_to_structure | compare_analyses | explain_rule | partial_irab | full_irab | analyze_passage | free_production | teach_back
+  status           String   @default("published") // draft | published — draft rows (e.g. AI-generated) are never shown to learners until approved in /studio
   objective        String
   prompt           String
   promptArabic     String?

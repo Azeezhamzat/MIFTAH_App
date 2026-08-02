@@ -18,14 +18,16 @@ export async function GET() {
 
   const [lessons, exercises] = await Promise.all([
     prisma.lesson.findMany({
+      where: { status: 'published' },
       include: {
         unit: { include: { domain: true } },
         concepts: { include: { concept: true } },
-        exercises: { select: { id: true } },
+        exercises: { where: { status: 'published' }, select: { id: true } },
       },
       orderBy: { order: 'asc' },
     }),
     prisma.exercise.findMany({
+      where: { status: 'published' },
       include: { hints: { orderBy: { level: 'asc' } }, concept: true, lesson: { select: { code: true } } },
       orderBy: { order: 'asc' },
     }),

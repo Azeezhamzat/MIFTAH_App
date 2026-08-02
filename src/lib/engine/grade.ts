@@ -35,6 +35,11 @@ function scoreToReviewResult(score: number, hintsUsed: number): ReviewResult {
 
 export async function gradeAndRecordAttempt(input: GradeInput): Promise<GradeFeedback> {
   const exercise = await prisma.exercise.findUniqueOrThrow({ where: { id: input.exerciseId } });
+  if (exercise.status !== 'published') {
+    // Defense in depth: even if a draft exercise's id ever reached the client,
+    // it must never be graded or feed the mastery/SRS pipeline before review.
+    throw new Error('This exercise is not yet published.');
+  }
   const expectedAnswer = JSON.parse(exercise.expectedAnswer) as string;
   const acceptedVariants = JSON.parse(exercise.acceptedVariants) as string[];
   const invalidPlausible = JSON.parse(exercise.invalidPlausible) as { answer: string; why: string }[];

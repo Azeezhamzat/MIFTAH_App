@@ -12,10 +12,12 @@ export default async function LessonPage({ params }: { params: { code: string } 
     include: {
       unit: { include: { domain: true } },
       concepts: { include: { concept: true } },
-      exercises: { include: { hints: { orderBy: { level: 'asc' } } }, orderBy: { order: 'asc' } },
+      exercises: { where: { status: 'published' }, include: { hints: { orderBy: { level: 'asc' } } }, orderBy: { order: 'asc' } },
     },
   });
-  if (!lesson) notFound();
+  // Draft lessons (e.g. AI-generated, pending review in /studio) are never
+  // shown to the learner — only fully approved, published content is.
+  if (!lesson || lesson.status !== 'published') notFound();
 
   const observeCodes = JSON.parse(lesson.observePrompt ?? '[]') as string[];
   const observeSentences = await prisma.arabicSentence.findMany({ where: { code: { in: observeCodes } } });

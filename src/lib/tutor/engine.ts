@@ -50,7 +50,7 @@ export async function answerQuestion(params: {
   if (/harder example|more difficult|challenge me/.test(q)) {
     const concept = contextConceptCode ? await prisma.concept.findUnique({ where: { code: contextConceptCode } }) : null;
     const exercise = await prisma.exercise.findFirst({
-      where: concept ? { conceptId: concept.id } : undefined,
+      where: concept ? { conceptId: concept.id, status: 'published' } : { status: 'published' },
       orderBy: { difficulty: 'desc' },
     });
     if (exercise) {
@@ -67,7 +67,7 @@ export async function answerQuestion(params: {
   if (/three (contrasting )?examples|contrast(ing)? examples|show me examples/.test(q)) {
     const concept = contextConceptCode ? await prisma.concept.findUnique({ where: { code: contextConceptCode } }) : null;
     const exercises = await prisma.exercise.findMany({
-      where: { AND: [concept ? { conceptId: concept.id } : {}, { sentenceId: { not: null } }] },
+      where: { AND: [concept ? { conceptId: concept.id } : {}, { sentenceId: { not: null } }, { status: 'published' }] },
       include: { sentence: true },
       take: 3,
       distinct: ['sentenceId'],

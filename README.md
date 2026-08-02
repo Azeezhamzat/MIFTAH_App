@@ -72,8 +72,8 @@ npm test
 | Reference Companion (Naḥw al-Wāḍiḥ / al-Tuḥfah al-Saniyyah mappings) | ✅ Functional |
 | Settings (theme, motion, diacritics, Yorùbá notes, Quiet Progress) | ✅ Functional |
 | Account export & deletion | ✅ Functional |
-| Content-authoring / linguistic review studio | ⚠️ Functional but reduced (see roadmap) |
-| Offline PWA lesson caching | ⚠️ Manifest present; full offline cache is roadmap |
+| Content-authoring / linguistic review studio, incl. AI-drafted lessons | ✅ Functional (see [Assumptions](#assumptions--known-limitations)) |
+| Offline PWA (full curriculum + exercise bank downloadable, local grading, sync queue) | ✅ Functional |
 | Full 250-exercise / 100-sentence content targets | ⚠️ Partial — see below |
 
 See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the honest, itemized gap list and what Phase 5/6 would add.

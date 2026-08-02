@@ -12,7 +12,7 @@ export default async function ClinicPage() {
     orderBy: { detectedAt: 'desc' },
   });
 
-  const allExercises = await prisma.exercise.findMany({ include: { hints: { orderBy: { level: 'asc' } } } });
+  const allExercises = await prisma.exercise.findMany({ where: { status: 'published' }, include: { hints: { orderBy: { level: 'asc' } } } });
 
   const items = logs.map((log) => {
     const repairExercise = allExercises.find((e) => {

@@ -47,13 +47,15 @@ export default function AnthropicKeyForm({
   return (
     <div className="card p-6 space-y-4">
       <div>
-        <h2 className="text-sm font-semibold uppercase tracking-widest text-ink-400">Living Teacher enhancement (optional)</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-widest text-ink-400">Claude API key (optional)</h2>
         <p className="text-sm text-ink-500 mt-2">
-          The Living Teacher works fully on its own, grounded entirely in this app&apos;s verified curriculum data —
-          no key required. If you paste your own Anthropic API key, its answers are additionally phrased through a
-          real Claude call, strictly constrained to only the facts this app already retrieved. It never becomes an
-          independent source of grammatical truth, and it never leaves this device except in calls you authorize to
-          Anthropic&apos;s API using your own key.
+          The app works fully on its own, grounded entirely in verified curriculum data — no key required. If you
+          paste your own Anthropic API key, two things unlock: the Living Teacher additionally phrases its answers
+          through a real Claude call (strictly constrained to only the facts this app already retrieved), and
+          <strong> Content studio → AI drafts</strong> can draft new lessons for you to review and approve. Neither
+          ever becomes an independent source of grammatical truth — Claude phrases and drafts; this app&apos;s
+          verified data and your explicit approval decide what&apos;s true. Your key never leaves this device except
+          in calls you authorize to Anthropic&apos;s API.
         </p>
       </div>
 
@@ -79,8 +81,9 @@ export default function AnthropicKeyForm({
           onChange={(e) => setSelectedModel(e.target.value)}
           className="w-full rounded-lg border border-ink-900/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm"
         >
-          <option value="claude-haiku-4-5">Claude Haiku 4.5 — fastest, cheapest (recommended)</option>
+          <option value="claude-haiku-4-5">Claude Haiku 4.5 — fastest, cheapest (recommended for chat)</option>
           <option value="claude-sonnet-5">Claude Sonnet 5 — higher quality, costs more per message</option>
+          <option value="claude-opus-5">Claude Opus 5 — most capable, best for drafting new lessons in /studio</option>
         </select>
       </div>
 

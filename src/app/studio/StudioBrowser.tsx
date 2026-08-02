@@ -7,21 +7,35 @@ import ArabicText from '@/components/ArabicText';
 const WORKFLOW_STATES = ['draft', 'linguistic_review', 'pedagogical_review', 'yoruba_review', 'technical_validation', 'approved', 'published', 'retired'];
 
 interface Review { id: string; entityType: string; entityId: string; workflowState: string; reviewerNote: string | null; createdAt: string }
+interface DraftExercisePreview { id: string; prompt: string; expectedAnswer: string; explanation: string; hints: string[] }
+interface DraftLesson {
+  id: string; title: string; titleArabic: string; summary: string; microExplanation: string;
+  concepts: string[]; exercises: DraftExercisePreview[];
+}
+interface DraftExercise extends DraftExercisePreview { conceptTitle: string }
 
 export default function StudioBrowser({
-  lessons, exercises, sentences, concepts, recentReviews,
+  lessons, exercises, sentences, concepts, recentReviews, draftLessons, draftExercises,
 }: {
   lessons: { id: string; code: string; title: string; status: string }[];
   exercises: { id: string; type: string; prompt: string }[];
   sentences: { id: string; code: string; text: string; sourceType: string }[];
   concepts: { id: string; code: string; title: string }[];
   recentReviews: Review[];
+  draftLessons: DraftLesson[];
+  draftExercises: DraftExercise[];
 }) {
   const router = useRouter();
-  const [tab, setTab] = useState<'lessons' | 'exercises' | 'sentences' | 'concepts' | 'reviews'>('lessons');
+  const [tab, setTab] = useState<'ai' | 'lessons' | 'exercises' | 'sentences' | 'concepts' | 'reviews'>('ai');
   const [flagging, setFlagging] = useState<{ type: string; id: string } | null>(null);
   const [note, setNote] = useState('');
   const [workflowState, setWorkflowState] = useState('linguistic_review');
+  const [genConceptCode, setGenConceptCode] = useState(concepts[0]?.code ?? '');
+  const [genTopicHint, setGenTopicHint] = useState('');
+  const [generating, setGenerating] = useState(false);
+  const [genError, setGenError] = useState<string | null>(null);
+  const [genSuccess, setGenSuccess] = useState<string | null>(null);
+  const [reviewing, setReviewing] = useState<string | null>(null);
 
   async function flag() {
     if (!flagging) return;
@@ -35,15 +49,125 @@ export default function StudioBrowser({
     router.refresh();
   }
 
+  async function generateLesson() {
+    setGenerating(true);
+    setGenError(null);
+    setGenSuccess(null);
+    const res = await fetch('/api/studio/generate-lesson', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ conceptCode: genConceptCode, topicHint: genTopicHint || undefined }),
+    });
+    const data = await res.json();
+    setGenerating(false);
+    if (!res.ok || !data.ok) {
+      setGenError(data.error ?? 'Generation failed.');
+      return;
+    }
+    setGenSuccess(`Draft lesson created (${data.exerciseCount} exercises) — review it below before it goes live.`);
+    setGenTopicHint('');
+    router.refresh();
+  }
+
+  async function reviewDraft(entityType: 'lesson' | 'exercise', id: string, action: 'approve' | 'reject') {
+    setReviewing(id);
+    await fetch('/api/studio/drafts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ entityType, id, action }),
+    });
+    setReviewing(null);
+    router.refresh();
+  }
+
   return (
     <div>
       <div className="flex flex-wrap gap-2 mb-6">
-        {(['lessons', 'exercises', 'sentences', 'concepts', 'reviews'] as const).map((t) => (
+        {(['ai', 'lessons', 'exercises', 'sentences', 'concepts', 'reviews'] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)} className={`text-sm rounded-full px-4 py-1.5 border capitalize ${tab === t ? 'border-jade-600 bg-jade-50 dark:bg-jade-900/30 text-jade-800 dark:text-jade-200' : 'border-ink-900/10 dark:border-white/10'}`}>
-            {t}
+            {t === 'ai' ? `AI drafts (${draftLessons.length + draftExercises.length})` : t}
           </button>
         ))}
       </div>
+
+      {tab === 'ai' && (
+        <div className="space-y-6">
+          <div className="card p-5">
+            <h3 className="font-medium mb-1">Draft a new lesson with Claude</h3>
+            <p className="text-xs text-ink-500 mb-4">
+              Claude may only cite already-verified example sentences and never becomes the source of grammatical
+              truth — everything it writes lands here as a draft, invisible to the learner until you approve it.
+              Requires an Anthropic API key connected in Settings.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2 mb-3">
+              <select value={genConceptCode} onChange={(e) => setGenConceptCode(e.target.value)} className="rounded-lg border border-ink-900/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm">
+                {concepts.map((c) => <option key={c.code} value={c.code}>{c.title}</option>)}
+              </select>
+              <input
+                value={genTopicHint}
+                onChange={(e) => setGenTopicHint(e.target.value)}
+                placeholder="Optional emphasis, e.g. 'more reading-comprehension style'"
+                className="rounded-lg border border-ink-900/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm"
+              />
+            </div>
+            <button onClick={generateLesson} disabled={generating || !genConceptCode} className="rounded-lg bg-indigo-700 hover:bg-indigo-600 disabled:opacity-60 text-white font-medium px-5 py-2 text-sm">
+              {generating ? 'Drafting…' : 'Draft lesson'}
+            </button>
+            {genError && <p className="text-sm text-red-600 mt-2">{genError}</p>}
+            {genSuccess && <p className="text-sm text-jade-700 dark:text-jade-300 mt-2">{genSuccess}</p>}
+          </div>
+
+          {draftLessons.length === 0 && draftExercises.length === 0 && (
+            <p className="text-sm text-ink-500">No AI drafts waiting for review.</p>
+          )}
+
+          {draftLessons.map((l) => (
+            <div key={l.id} className="card p-5 border border-gold-400/40">
+              <div className="flex items-start justify-between gap-4 mb-2">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-gold-700 dark:text-gold-400">Draft lesson · {l.concepts.join(', ')}</p>
+                  <p className="font-medium">{l.title}</p>
+                  <ArabicText text={l.titleArabic} className="text-ink-500" />
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button onClick={() => reviewDraft('lesson', l.id, 'reject')} disabled={reviewing === l.id} className="text-xs font-medium text-red-600 disabled:opacity-50">Reject</button>
+                  <button onClick={() => reviewDraft('lesson', l.id, 'approve')} disabled={reviewing === l.id} className="text-xs font-medium text-jade-700 dark:text-jade-300 disabled:opacity-50">Approve & publish</button>
+                </div>
+              </div>
+              <p className="text-sm text-ink-600 dark:text-ink-300 mb-3">{l.summary}</p>
+              <p className="text-sm text-ink-700 dark:text-ink-200 mb-3">{l.microExplanation}</p>
+              <details>
+                <summary className="cursor-pointer text-xs text-ink-400">{l.exercises.length} draft exercises</summary>
+                <div className="mt-2 space-y-2">
+                  {l.exercises.map((e) => (
+                    <div key={e.id} className="text-xs bg-parchment-100 dark:bg-ink-800 rounded-lg px-3 py-2">
+                      <p className="text-ink-700 dark:text-ink-200">{e.prompt}</p>
+                      <p className="text-ink-500 mt-1">Answer: {e.expectedAnswer}</p>
+                      <p className="text-ink-500">{e.explanation}</p>
+                    </div>
+                  ))}
+                </div>
+              </details>
+            </div>
+          ))}
+
+          {draftExercises.map((e) => (
+            <div key={e.id} className="card p-5 border border-gold-400/40">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-gold-700 dark:text-gold-400">Draft exercise · {e.conceptTitle}</p>
+                  <p className="text-sm text-ink-800 dark:text-ink-100 mt-1">{e.prompt}</p>
+                  <p className="text-xs text-ink-500 mt-1">Answer: {e.expectedAnswer}</p>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button onClick={() => reviewDraft('exercise', e.id, 'reject')} disabled={reviewing === e.id} className="text-xs font-medium text-red-600 disabled:opacity-50">Reject</button>
+                  <button onClick={() => reviewDraft('exercise', e.id, 'approve')} disabled={reviewing === e.id} className="text-xs font-medium text-jade-700 dark:text-jade-300 disabled:opacity-50">Approve</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {tab === 'lessons' && (
         <div className="space-y-2">

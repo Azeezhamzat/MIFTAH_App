@@ -40,20 +40,29 @@ a real seeded database — not mocked.
    annotated sentence requires per-token linguistic review). The pipeline (`content/*.ts` → `prisma/seed.ts`,
    validated by `tests/content-integrity.test.ts`) scales to the full targets with no code changes — it's pure
    content-authoring time, tracked in `docs/CONTENT_AUTHORING.md`.
-2. **Content-authoring studio is browse-and-flag, not a full in-app editor.** `/studio` lets a reviewer browse
-   seeded lessons/exercises/sentences/concepts and push them through the review-workflow states
-   (`ContentReview` rows), but authoring new content still happens by editing `content/*.ts` and re-seeding, not
-   through a UI form. A full WYSIWYG authoring UI (with vocalization helpers, dependency-arc drawing, live RTL
-   preview, and version diffing) is a substantial standalone project — worth scoping separately once the content
-   pipeline's shape has stabilized from real use.
+2. **Content-authoring studio is browse-and-flag plus AI-assisted drafting, not a full in-app editor.** `/studio`
+   lets a reviewer browse seeded lessons/exercises/sentences/concepts and push them through the review-workflow
+   states (`ContentReview` rows). It can also draft an entirely new lesson using a connected Anthropic API key
+   (`POST /api/studio/generate-lesson`): Claude may only cite already-verified example sentences from a closed
+   list (any invented code is dropped server-side) and writes everything — the lesson row and its exercises — with
+   `status: 'draft'`, which every learner-facing query filters out (`lessons/[code]`, the review queue, the
+   Misconception Clinic, the offline bundle, the Living Teacher's retrieval, and the grading endpoint itself all
+   check `status: 'published'`). Nothing a draft contains reaches a learner until a human clicks "Approve &
+   publish" in `/studio`. What's still missing is hand-authoring new content directly through a form — that still
+   happens by editing `content/*.ts` and re-seeding, or via the AI-drafting path above. A full WYSIWYG authoring UI
+   (vocalization helpers, dependency-arc drawing, live RTL preview, version diffing) remains a substantial
+   standalone project.
 3. **Placement is deterministic-adaptive, not item-response-theory adaptive.** See `docs/README.md`'s assumptions
    section — true IRT-based item selection needs a much larger, difficulty-calibrated item bank than 18 questions
    to be worth the complexity.
 4. **Grammar Constellation uses a deterministic grid layout with straight SVG connectors**, not a force-directed
    graph library. Fully functional (every node clickable, every edge real, mastery-driven coloring) but would
    benefit visually from a proper graph-layout library at a much larger concept count.
-5. **No offline service worker.** The manifest is in place (installable PWA), but pre-caching lesson content for
-   offline study is not implemented.
+5. ~~No offline service worker.~~ **Resolved.** `/offline` downloads the full curriculum — every lesson and the
+   complete exercise bank, not just lesson-attached exercises — into IndexedDB, and `public/sw.js` keeps
+   already-visited pages reachable with no connection at all. Grading happens locally offline (reusing
+   `src/lib/grading.ts`) and attempts queue up to sync through the normal grading/mastery/SRS pipeline once back
+   online, so offline study never bypasses the single source of truth for mastery.
 6. **No automated audio/pronunciation features.** The spec mentions audio controls and transcripts under
    accessibility; this build supports adjustable diacritic levels and full RTL/screen-reader-friendly markup, but
    does not include recorded or synthesized audio.
@@ -68,8 +77,8 @@ a real seeded database — not mocked.
 2. Expand exercise banks toward 250+, leaning on the algorithmic-drill-generation pattern already in `seed.ts`
    (e.g. a generated `transform_sentence` drill per Sentence Laboratory family).
 3. Build the full in-app content-authoring editor (structured forms over the same `content/*.ts` shapes, with a
-   "commit to file + reseed" or a direct-to-database mode with proper versioning).
-4. Add a service worker for offline lesson caching.
+   "commit to file + reseed" or a direct-to-database mode with proper versioning) — the AI-drafting path in
+   `/studio` covers lesson/exercise generation, but hand-authoring still means editing `content/*.ts` directly.
 5. Add pronunciation audio (recorded or TTS) with transcripts, and voice recording for teach-back.
 6. Move the placement assessment to IRT-based adaptive item selection once the question bank is large enough to
    support it.
