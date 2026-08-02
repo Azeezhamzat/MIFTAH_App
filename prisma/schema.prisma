@@ -3,7 +3,10 @@
 // whose allowed values are documented and enforced in TypeScript (see src/lib/types.ts).
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // Ships query-engine binaries for every desktop OS the Electron build
+  // targets, plus "native" for local dev/tests on whatever machine runs them.
+  binaryTargets = ["native", "windows", "darwin", "darwin-arm64", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {

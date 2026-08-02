@@ -3,6 +3,8 @@ node_modules/
 out/
 build/
 dist/
+dist-electron/
+build-resources/
 *.log
 npm-debug.log*
 .env

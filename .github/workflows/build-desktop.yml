@@ -1,0 +1,59 @@
+name: Build desktop installers
+
+# Manual on-demand build (not run on every push) — this app is for personal
+# use, so there's no need to build installers on a schedule. Trigger it from
+# the Actions tab whenever you want fresh Linux/Windows/macOS builds.
+#
+# This exists because a Windows .exe can be cross-built from Linux only with
+# Wine (not installed in most dev sandboxes), and a macOS .dmg can only ever
+# be built on real Apple hardware/software — GitHub's native runners for
+# each OS sidestep both restrictions.
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            script: dist:linux
+          - os: windows-latest
+            script: dist:win
+          - os: macos-latest
+            script: dist:mac
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set up a local .env for the build
+        run: cp .env.example .env
+        shell: bash
+
+      - name: Push schema and seed a fresh curriculum database (becomes the desktop app's first-run template)
+        run: |
+          npm run db:push
+          npm run db:seed
+        shell: bash
+
+      - name: Build the desktop installer
+        run: npm run ${{ matrix.script }}
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: miftah-${{ matrix.os }}
+          path: |
+            dist-electron/*.AppImage
+            dist-electron/*.deb
+            dist-electron/*.exe
+            dist-electron/*.dmg
+          if-no-files-found: ignore

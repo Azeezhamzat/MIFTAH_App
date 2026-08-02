@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "description": "مِفْتَاح — Miftāḥ: an interactive personal teacher of Arabic Nahw and Sarf",
+  "homepage": "https://github.com/Azeezhamzat/My_code_sessions",
+  "author": { "name": "Azeez Hamzat", "email": "researcherhamzat@gmail.com" },
+  "main": "electron/main.js",
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "next dev",
@@ -15,10 +18,50 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
-    "db:reset": "prisma migrate reset --force"
+    "db:reset": "prisma migrate reset --force",
+    "electron:dev": "electron .",
+    "electron:prepare": "node scripts/prepare-electron.js",
+    "dist:linux": "npm run build && npm run electron:prepare && electron-builder --linux",
+    "dist:win": "npm run build && npm run electron:prepare && electron-builder --win",
+    "dist:mac": "npm run build && npm run electron:prepare && electron-builder --mac"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "build": {
+    "appId": "app.miftah.desktop",
+    "productName": "Miftah",
+    "publish": null,
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "electron/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "build-resources/app-data",
+        "to": "app-data"
+      }
+    ],
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Education"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.education"
+    }
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
@@ -28,6 +71,7 @@
     "next-auth": "^4.24.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "tar": "^7.5.22",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -36,6 +80,8 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
+    "electron": "^43.2.0",
+    "electron-builder": "^26.15.3",
     "postcss": "^8.4.47",
     "prisma": "^5.20.0",
     "tailwindcss": "^3.4.13",

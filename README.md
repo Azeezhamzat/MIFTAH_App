@@ -49,6 +49,19 @@ Run the test suite:
 npm test
 ```
 
+### Desktop app
+
+To build an installable desktop app for your own machine instead of running `npm run dev`:
+
+```bash
+npm run dist:linux   # AppImage + .deb — verified end-to-end
+npm run dist:win     # needs Wine on Linux, or run natively on Windows
+npm run dist:mac     # must be built on macOS — Apple allows no workaround
+```
+
+See [`docs/DESKTOP.md`](docs/DESKTOP.md) — it also covers a GitHub Actions workflow that builds all three
+installers for you on GitHub's own native runners, if you don't have Windows/Mac hardware handy.
+
 ## What's actually implemented
 
 | Area | Status |
@@ -74,6 +87,7 @@ npm test
 | Account export & deletion | ✅ Functional |
 | Content-authoring / linguistic review studio, incl. AI-drafted lessons | ✅ Functional (see [Assumptions](#assumptions--known-limitations)) |
 | Offline PWA (full curriculum + exercise bank downloadable, local grading, sync queue) | ✅ Functional |
+| Desktop app (Linux/Windows/macOS installers, Electron) | ✅ Functional — see [`docs/DESKTOP.md`](docs/DESKTOP.md) |
 | Full 250-exercise / 100-sentence content targets | ⚠️ Partial — see below |
 
 See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the honest, itemized gap list and what Phase 5/6 would add.
