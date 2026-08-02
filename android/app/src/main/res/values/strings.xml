@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Miftah</string>
+    <string name="title_activity_main">Miftah</string>
+    <string name="package_name">app.miftah.mobile</string>
+    <string name="custom_url_scheme">app.miftah.mobile</string>
+</resources>

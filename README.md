@@ -88,6 +88,7 @@ installers for you on GitHub's own native runners, if you don't have Windows/Mac
 | Content-authoring / linguistic review studio, incl. AI-drafted lessons | ✅ Functional (see [Assumptions](#assumptions--known-limitations)) |
 | Offline PWA (full curriculum + exercise bank downloadable, local grading, sync queue) | ✅ Functional |
 | Desktop app (Linux/Windows/macOS installers, Electron) | ✅ Functional — see [`docs/DESKTOP.md`](docs/DESKTOP.md) |
+| Android app (Capacitor WebView + offline PWA) | ✅ Scaffolded & verified where this sandbox allows — see [`docs/MOBILE.md`](docs/MOBILE.md) |
 | Full 250-exercise / 100-sentence content targets | ⚠️ Partial — see below |
 
 See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the honest, itemized gap list and what Phase 5/6 would add.

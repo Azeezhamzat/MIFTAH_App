@@ -17,3 +17,13 @@ coverage/
 .vercel
 next-env.d.ts
 tsconfig.tsbuildinfo
+
+# Android (Capacitor) — keep the project scaffold, ignore local/build state
+android/.gradle/
+android/local.properties
+android/app/build/
+android/build/
+android/.idea/
+android/**/*.iml
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json

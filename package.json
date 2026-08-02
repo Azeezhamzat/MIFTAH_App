@@ -4,7 +4,10 @@
   "private": true,
   "description": "مِفْتَاح — Miftāḥ: an interactive personal teacher of Arabic Nahw and Sarf",
   "homepage": "https://github.com/Azeezhamzat/My_code_sessions",
-  "author": { "name": "Azeez Hamzat", "email": "researcherhamzat@gmail.com" },
+  "author": {
+    "name": "Azeez Hamzat",
+    "email": "researcherhamzat@gmail.com"
+  },
   "main": "electron/main.js",
   "scripts": {
     "postinstall": "prisma generate",
@@ -23,7 +26,9 @@
     "electron:prepare": "node scripts/prepare-electron.js",
     "dist:linux": "npm run build && npm run electron:prepare && electron-builder --linux",
     "dist:win": "npm run build && npm run electron:prepare && electron-builder --win",
-    "dist:mac": "npm run build && npm run electron:prepare && electron-builder --mac"
+    "dist:mac": "npm run build && npm run electron:prepare && electron-builder --mac",
+    "android:sync": "cap sync android",
+    "android:build": "cd android && ./gradlew assembleDebug"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -75,6 +80,9 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/cli": "^8.5.0",
+    "@capacitor/core": "^8.5.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.16.11",
     "@types/react": "^18.3.11",

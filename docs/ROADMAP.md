@@ -69,6 +69,17 @@ a real seeded database — not mocked.
 7. **Teach-back and oral-explanation recording are text-only.** The spec's `TeachBackRecorder` component is
    implemented as a text-based teach-back flow (in the lesson player's practice stage and the Misconception Clinic's
    repair flow); voice recording is not implemented.
+8. **Installable-app packaging is real but platform-uneven, for reasons outside this app's control.** See
+   [`docs/DESKTOP.md`](DESKTOP.md) and [`docs/MOBILE.md`](MOBILE.md). The Linux desktop build (Electron, wrapping
+   the same Next.js server + a bundled SQLite database) was built and verified end-to-end — a real `.AppImage`/
+   `.deb` that boots, reads/writes its bundled database, and serves a working login → dashboard flow. Windows and
+   macOS builds are configured identically but couldn't be produced in this environment (no Wine for the Windows
+   cross-build's signing step; macOS builds are only possible on real Apple hardware, a platform restriction, not a
+   gap here) — a GitHub Actions workflow builds both on native runners instead. The Android app is a Capacitor
+   WebView shell around a running Miftāḥ server (there is no practical way to run the Node/Prisma/SQLite stack
+   itself inside an Android app) — it reuses the offline PWA mechanism for genuine offline study once the
+   curriculum has been downloaded once, but building the actual APK needs the Android SDK, which this sandbox also
+   lacks; a second GitHub Actions workflow builds the debug APK on a runner that has it.
 
 ## Suggested Phase 5/6 order (if continuing this project)
 
@@ -79,6 +90,6 @@ a real seeded database — not mocked.
 3. Build the full in-app content-authoring editor (structured forms over the same `content/*.ts` shapes, with a
    "commit to file + reseed" or a direct-to-database mode with proper versioning) — the AI-drafting path in
    `/studio` covers lesson/exercise generation, but hand-authoring still means editing `content/*.ts` directly.
-5. Add pronunciation audio (recorded or TTS) with transcripts, and voice recording for teach-back.
-6. Move the placement assessment to IRT-based adaptive item selection once the question bank is large enough to
+4. Add pronunciation audio (recorded or TTS) with transcripts, and voice recording for teach-back.
+5. Move the placement assessment to IRT-based adaptive item selection once the question bank is large enough to
    support it.
