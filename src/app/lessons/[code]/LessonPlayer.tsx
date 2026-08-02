@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import ArabicText from '@/components/ArabicText';
 import ExercisePlayer, { type ExerciseForPlayer } from '@/components/ExercisePlayer';
+import type { OfflineGradingData } from '@/lib/offline/types';
 
 type Stage = 'observe' | 'discover' | 'explain' | 'practice' | 'reflect';
 const STAGES: Stage[] = ['observe', 'discover', 'explain', 'practice', 'reflect'];
@@ -23,7 +24,16 @@ interface LessonData {
   exercises: ExerciseForPlayer[];
 }
 
-export default function LessonPlayer({ lesson }: { lesson: LessonData }) {
+export default function LessonPlayer({
+  lesson,
+  offlineGradingByExerciseId,
+  onOfflineAttempt,
+}: {
+  lesson: LessonData;
+  /** When set, exercises are graded locally instead of via the server — used by the /offline study mode. */
+  offlineGradingByExerciseId?: Record<string, OfflineGradingData>;
+  onOfflineAttempt?: (exerciseId: string, attempt: { response: string; hintsUsed: number; responseTimeMs: number; confidence?: number }) => void;
+}) {
   const [stageIndex, setStageIndex] = useState(0);
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [showDeeper, setShowDeeper] = useState(false);
@@ -125,6 +135,8 @@ export default function LessonPlayer({ lesson }: { lesson: LessonData }) {
             <ExercisePlayer
               key={lesson.exercises[exerciseIndex].id}
               exercise={lesson.exercises[exerciseIndex]}
+              offlineGrading={offlineGradingByExerciseId?.[lesson.exercises[exerciseIndex].id]}
+              onOfflineAttempt={onOfflineAttempt ? (attempt) => onOfflineAttempt(lesson.exercises[exerciseIndex].id, attempt) : undefined}
               onNext={() => {
                 if (exerciseIndex + 1 < lesson.exercises.length) setExerciseIndex((i) => i + 1);
                 else next();

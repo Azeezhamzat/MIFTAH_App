@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import ArabicText from '@/components/ArabicText';
+import { gradeShortAnswer, gradeFreeText } from '@/lib/grading';
+import type { OfflineGradingData } from '@/lib/offline/types';
 
 export interface ExerciseForPlayer {
   id: string;
@@ -26,9 +28,15 @@ interface Feedback {
 export default function ExercisePlayer({
   exercise,
   onNext,
+  offlineGrading,
+  onOfflineAttempt,
 }: {
   exercise: ExerciseForPlayer;
   onNext: () => void;
+  /** When set, the exercise is graded locally instead of via the server — used by the /offline study mode. */
+  offlineGrading?: OfflineGradingData;
+  /** Called with the raw attempt so the caller can queue it for sync once back online. */
+  onOfflineAttempt?: (attempt: { response: string; hintsUsed: number; responseTimeMs: number; confidence?: number }) => void;
 }) {
   const [response, setResponse] = useState('');
   const [hintsShown, setHintsShown] = useState(0);
@@ -39,15 +47,36 @@ export default function ExercisePlayer({
 
   async function submit() {
     setSubmitting(true);
+    const hintsUsed = hintsShown;
+    const responseTimeMs = Date.now() - startedAt;
+
+    if (offlineGrading) {
+      const shortGrade = gradeShortAnswer(response, offlineGrading.expectedAnswer, offlineGrading.acceptedVariants);
+      let isCorrect = shortGrade.isCorrect;
+      let score = shortGrade.score;
+      if (!isCorrect) {
+        const freeGrade = gradeFreeText(response, [offlineGrading.expectedAnswer, ...offlineGrading.acceptedVariants]);
+        isCorrect = freeGrade.isCorrect;
+        score = Math.max(score, freeGrade.score);
+      }
+      onOfflineAttempt?.({ response, hintsUsed, responseTimeMs, confidence: confidence ?? undefined });
+      setFeedback({
+        isCorrect,
+        score,
+        expectedAnswer: offlineGrading.expectedAnswer,
+        explanation: offlineGrading.explanation,
+        invalidPlausible: offlineGrading.invalidPlausible,
+        masteryLabel: 'pending sync',
+        misconceptionDetected: null,
+      });
+      setSubmitting(false);
+      return;
+    }
+
     const res = await fetch(`/api/exercises/${exercise.id}/attempt`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        response,
-        hintsUsed: hintsShown,
-        responseTimeMs: Date.now() - startedAt,
-        confidence,
-      }),
+      body: JSON.stringify({ response, hintsUsed, responseTimeMs, confidence }),
     });
     const data = await res.json();
     setFeedback(data);
@@ -117,6 +146,9 @@ export default function ExercisePlayer({
               {feedback.isCorrect ? 'Correct.' : `Partially there (${Math.round(feedback.score * 100)}% match).`}
             </p>
             <p className="text-sm text-ink-700 dark:text-ink-200 mt-1">You answered: <span className="italic">{response || '(blank)'}</span></p>
+            {offlineGrading && (
+              <p className="text-xs text-ink-500 mt-1">Graded offline — your mastery and review schedule will update once this device is back online and synced.</p>
+            )}
           </div>
 
           <div>

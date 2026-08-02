@@ -9,6 +9,7 @@ const NAV_GROUPS: { title: string; items: { href: string; label: string; labelAr
       { href: '/review', label: 'Review queue' },
       { href: '/curriculum', label: 'Grammar Constellation' },
       { href: '/library', label: 'Reading library' },
+      { href: '/offline', label: 'Offline study' },
     ],
   },
   {
