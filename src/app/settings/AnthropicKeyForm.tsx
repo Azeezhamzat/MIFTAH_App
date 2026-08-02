@@ -49,13 +49,14 @@ export default function AnthropicKeyForm({
       <div>
         <h2 className="text-sm font-semibold uppercase tracking-widest text-ink-400">Claude API key (optional)</h2>
         <p className="text-sm text-ink-500 mt-2">
-          The app works fully on its own, grounded entirely in verified curriculum data — no key required. If you
-          paste your own Anthropic API key, two things unlock: the Living Teacher additionally phrases its answers
-          through a real Claude call (strictly constrained to only the facts this app already retrieved), and
-          <strong> Content studio → AI drafts</strong> can draft new lessons for you to review and approve. Neither
-          ever becomes an independent source of grammatical truth — Claude phrases and drafts; this app&apos;s
-          verified data and your explicit approval decide what&apos;s true. Your key never leaves this device except
-          in calls you authorize to Anthropic&apos;s API.
+          The app works fully on its own, grounded entirely in its built-in curriculum — no key required. If you
+          paste your own Anthropic API key, two things unlock. The Living Teacher stops being limited to this
+          app&apos;s curriculum and answers with Claude&apos;s own full knowledge of Arabic — a deliberate choice,
+          since what matters is your actual understanding, not staying inside this app&apos;s chosen scope.
+          <strong> Content studio → AI drafts</strong> can also draft new lessons, though those still land as
+          drafts you review and approve before they reach the learner-facing app — that safeguard stays in place
+          since drafted lessons become part of the app&apos;s own tracked mastery and review system. Your key never
+          leaves this device except in calls you authorize to Anthropic&apos;s API.
         </p>
       </div>
 

@@ -70,7 +70,7 @@ export default function TeacherChat({ concepts }: { concepts: { code: string; ti
               {m.text.split('\n').map((line, j) => <p key={j}>{line}</p>)}
             </div>
             {m.enhancedByClaude && (
-              <p className="text-[10px] uppercase tracking-wide text-indigo-500 dark:text-indigo-300 mt-1">Phrased by Claude, grounded in this app&apos;s curriculum</p>
+              <p className="text-[10px] uppercase tracking-wide text-indigo-500 dark:text-indigo-300 mt-1">Answered by Claude — not limited to this app&apos;s built-in curriculum</p>
             )}
           </div>
         ))}

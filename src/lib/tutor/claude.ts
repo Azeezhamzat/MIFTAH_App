@@ -62,44 +62,66 @@ export async function validateAnthropicApiKey(
   }
 }
 
-export interface EnhanceAnswerParams {
+export interface LivingTeacherParams {
   apiKey: string;
   model: SupportedAnthropicModel;
   question: string;
-  groundedAnswer: string;
+  conversationHistory?: { role: 'learner' | 'tutor'; text: string }[];
+  groundedAnswer?: string;
   groundedFacts?: string[];
-  uncertain: boolean;
+  learnerContext?: string;
 }
 
 /**
- * Asks Claude to phrase the already-retrieved grounded answer more
- * naturally. Returns null (never throws) on any failure, so callers can
- * fall back to the plain grounded answer without interrupting the chat.
+ * Answers as the Living Teacher using Claude's own full knowledge of
+ * Arabic — this is a deliberate, explicit choice by this app's sole user to
+ * not restrict their own tutor to the app's built-in curriculum. It is
+ * DIFFERENT from how this function used to work (and from how every other
+ * Claude call in this app still works, e.g. draftLessonWithClaude's citation
+ * safeguard): there is no grounding constraint here. The app's own
+ * rule-based retrieval (src/lib/tutor/engine.ts) still runs first and its
+ * findings are passed in as optional, non-binding context — genuinely
+ * useful when it has something relevant, safely ignorable when it doesn't
+ * — but Claude is free to go beyond it, correct it, or answer questions
+ * entirely outside what the app currently teaches. What this app can no
+ * longer promise, once a key is connected: that every Living Teacher answer
+ * is traceable to a specific verified database row. That trade-off is the
+ * point — the learner asked for their own understanding to come first.
+ *
+ * Returns null (never throws) on failure, so callers can fall back to the
+ * grounded engine's own answer without interrupting the chat.
  */
-export async function enhanceAnswerWithClaude(params: EnhanceAnswerParams): Promise<string | null> {
-  const { apiKey, model, question, groundedAnswer, groundedFacts = [], uncertain } = params;
+export async function answerAsLivingTeacher(params: LivingTeacherParams): Promise<string | null> {
+  const { apiKey, model, question, conversationHistory = [], groundedAnswer, groundedFacts = [], learnerContext } = params;
   const client = new Anthropic({ apiKey });
 
   const systemPrompt = [
-    'You are a phrasing layer inside Miftāḥ, an Arabic Naḥw/Ṣarf teaching app.',
-    'You do NOT have independent grammatical authority. You must answer using ONLY the verified facts given below.',
-    'Do not add, correct, extend, or "improve on" the grammar with anything from your own training — the app\'s curriculum, not you, is the source of truth.',
-    'If the verified facts do not actually answer the learner\'s question, say plainly that this app does not have a verified answer for that yet, and suggest what the learner could ask instead. Do not guess.',
-    'Keep the answer concise (2-5 sentences unless the facts require a short list), warm, and precise. Use Arabic script for Arabic terms exactly as given in the facts, without altering vocalization.',
+    'You are the Living Teacher inside Miftāḥ — a personal, one-on-one Arabic Naḥw (syntax) and Ṣarf (morphology) tutor for a single adult learner.',
+    learnerContext ?? '',
+    'You have full command of Arabic grammar, morphology, vocabulary, dialectal notes, and usage. You are explicitly NOT restricted to this app\'s built-in curriculum, terminology, or scope — the learner has asked for their own understanding to come first, even where that goes beyond, corrects, or differs from this app\'s chosen framing.',
+    groundedAnswer
+      ? [
+          '',
+          'This app\'s own rule-based system retrieved the following as potentially relevant — treat it as a helpful starting point, not a constraint. Build on it, correct it if it\'s incomplete or slightly off, or set it aside entirely if a better answer exists:',
+          `- ${groundedAnswer}`,
+          ...groundedFacts.map((f) => `- ${f}`),
+        ].join('\n')
+      : '',
     '',
-    'Verified facts to draw from:',
-    `- ${groundedAnswer}`,
-    ...groundedFacts.map((f) => `- ${f}`),
-    uncertain ? '\nNote: the grounded engine itself was not confident this fully covers the question — reflect that honestly rather than papering over it.' : '',
-  ].join('\n');
+    'Teach like an excellent, patient human tutor who actually knows the learner: be genuinely rigorous about the grammar (get case, mood, root, and pattern right — do not guess or hand-wave), but prioritize the learner\'s real understanding over academic completeness or matching any single textbook\'s framing. Use fully-vocalized Arabic script for Arabic terms and examples. Match your answer\'s length to the question — expand when depth actually helps, stay tight when it doesn\'t.',
+  ].filter(Boolean).join('\n');
+
+  const messages: Anthropic.MessageParam[] = [
+    ...conversationHistory.map((m) => ({ role: (m.role === 'learner' ? 'user' : 'assistant') as 'user' | 'assistant', content: m.text })),
+    { role: 'user' as const, content: question },
+  ];
 
   try {
     const response = await client.messages.create({
       model,
-      max_tokens: 500,
-      ...(model === 'claude-sonnet-5' ? { thinking: { type: 'disabled' as const }, output_config: { effort: 'low' as const } } : {}),
+      max_tokens: 1200,
       system: systemPrompt,
-      messages: [{ role: 'user', content: question }],
+      messages,
     });
 
     if (response.stop_reason === 'refusal') return null;
@@ -115,9 +137,13 @@ export async function enhanceAnswerWithClaude(params: EnhanceAnswerParams): Prom
 
 /**
  * AI-assisted lesson drafting. This is a fundamentally different trust
- * boundary from enhanceAnswerWithClaude above: there, Claude only rephrases
- * facts the rule engine already verified. Here, Claude is asked to *write*
- * new pedagogical content and exercises — including grammatical claims
+ * boundary from answerAsLivingTeacher above: a chat answer is ephemeral
+ * advice the learner reads once, so this app's user has chosen to let it
+ * draw on Claude's full knowledge unrestricted. A drafted lesson is
+ * different — once approved, it becomes part of the app's own tracked
+ * curriculum, feeding the mastery model and spaced-review system the same
+ * way hand-authored content does. Here, Claude is asked to *write* new
+ * pedagogical content and exercises — including grammatical claims
  * (expectedAnswer, explanation) — which it has no independent authority to
  * assert as correct.
  *

@@ -11,11 +11,15 @@ implementation phases."* Below is the honest accounting.
   fallback guidance for a greenfield app.
 - **No external LLM/API key was available or requested at initial build time**, and the spec explicitly requires the
   Living Teacher to be grounded and not let an unconstrained model be the sole source of grammatical truth — so it
-  was built as a deterministic, knowledge-base-constrained engine rather than an LLM wrapper. This is a design
-  choice consistent with the spec's own requirement, not a fallback taken due to a missing capability. An optional
-  enhancement was added later: a learner may paste their own Anthropic API key (Settings) to have Claude rephrase
-  the rule engine's already-grounded answer under a strict no-new-facts system prompt — retrieval and grounding
-  remain entirely in the deterministic engine, and the key is fully optional, encrypted at rest, and never required.
+  was built as a deterministic, knowledge-base-constrained engine rather than an LLM wrapper. This remains the
+  entire experience with no key connected. An optional enhancement was added later, and was subsequently changed at
+  this app's sole user's explicit request: pasting an Anthropic API key (Settings) no longer just has Claude
+  rephrase the rule engine's answer under a no-new-facts constraint — it lets the Living Teacher answer with
+  Claude's own full knowledge of Arabic, using the rule engine's findings only as optional context. This is a
+  conscious departure from the spec's original grounding requirement, made because this is a single-user personal
+  app and its one user decided their own understanding should come first. The key remains fully optional, encrypted
+  at rest, and never required — the grounded, curriculum-only experience is still exactly what a learner gets
+  without one.
 - **The initial learner profile from spec §1** (Yorùbá L1, English instructional language, MSA-primary orientation,
   intensive study cadence) is encoded as the onboarding defaults and the demo account's profile, but the app is not
   hard-coded to only that learner — `LanguageProfile`/`LearnerProfile` are per-user and the onboarding flow lets any

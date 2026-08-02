@@ -77,7 +77,7 @@ installers for you on GitHub's own native runners, if you don't have Windows/Mac
 | Iʿrāb X-Ray (full token inspector, dependencies, reason-from-scratch) | ✅ Functional |
 | Sentence Laboratory (real transformation families, break-the-sentence) | ✅ Functional |
 | Morphology Forge (root+pattern composition, verified vs. mechanical) | ✅ Functional |
-| Living Teacher (grounded, non-LLM, admits uncertainty) | ✅ Functional |
+| Living Teacher (grounded by default; unrestricted Claude when a key is connected) | ✅ Functional |
 | Grammar Constellation (interactive prerequisite graph) | ✅ Functional |
 | Reading Library (3 passages, vocab preview, comprehension, syntax map) | ✅ Functional |
 | Root & vocabulary notebook | ✅ Functional |
@@ -107,10 +107,12 @@ See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the honest, itemized gap list and w
 Next.js 14 (App Router) + TypeScript, Tailwind CSS, Prisma + SQLite (swappable for Postgres — see
 [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)), NextAuth (credentials + JWT sessions), Vitest. No external LLM API
 dependency by default: the Living Teacher is a grounded, knowledge-base-constrained rule engine over the same
-curriculum data everything else uses — by design, per the spec's requirement that an unconstrained model must never
-be the sole source of grammatical truth. A learner may optionally paste their own Anthropic API key in Settings
-(stored AES-256-GCM encrypted) to have Claude additionally rephrase the already-grounded answer; the rule engine
-still performs all retrieval and Claude is constrained by a system prompt to never add facts beyond what it's given.
+curriculum data everything else uses. A learner may optionally paste their own Anthropic API key in Settings
+(stored AES-256-GCM encrypted) — as the app's sole user, they've chosen to have the Living Teacher stop being
+limited to this app's curriculum once a key is connected, answering with Claude's own full knowledge of Arabic
+instead. This is a deliberate, explicit trade-off: it's no longer possible to guarantee every answer traces back to
+a specific verified row once that's turned on. The grounded rule engine's findings are still passed in as helpful,
+non-binding context, and it remains the entire experience when no key is connected.
 
 ## Design
 
@@ -121,14 +123,14 @@ accessibility primitives (focus rings, high-contrast mode, combining-mark handli
 
 ## Assumptions & known limitations
 
-- **No external LLM by default.** The Living Teacher is intentionally a grounded rule/knowledge-base engine, not a
-  call to an LLM API — this matches the spec's explicit requirement and means it never hallucinates a grammatical
-  claim, but it also means its range is bounded by what's in the curriculum's knowledge base (concepts,
-  misconceptions, sentences, Yorùbá contrast notes). It says so explicitly whenever a question falls outside that
-  range. A learner can optionally connect their own Anthropic API key (Settings → "Living Teacher enhancement") so
-  Claude rephrases/expands the already-grounded answer under a strict system prompt forbidding any fact beyond what
-  was retrieved — grounding and retrieval stay entirely in the rule engine either way, and any failure of the Claude
-  call (bad key, rate limit, network) silently falls back to the plain grounded answer.
+- **No external LLM by default; unrestricted by explicit choice once a key is connected.** With no key, the Living
+  Teacher is a grounded rule/knowledge-base engine, not a call to an LLM API — it never hallucinates a grammatical
+  claim, but its range is bounded by the curriculum's knowledge base, and it says so explicitly when a question
+  falls outside it. Connecting an Anthropic API key (Settings) turns this off on purpose: the app's sole user
+  decided that their own understanding matters more than staying inside this app's chosen scope, so with a key,
+  the Living Teacher answers using Claude's full knowledge, drawing on the rule engine's findings only as optional
+  context. Any failure of the Claude call (bad key, rate limit, network) silently falls back to the plain grounded
+  answer.
 - **Placement scoring is deterministic-adaptive, not IRT-adaptive.** It presents a fixed, difficulty-ordered bank of
   18 questions and computes a recommended starting unit from per-skill-area accuracy against curriculum prerequisite
   order — genuinely adaptive in *outcome*, not in *item selection during the test*. True item-response-theory

@@ -77,32 +77,37 @@ See `prisma/schema.prisma` for the authoritative model. Key relationships:
 3. Response returns rich feedback (correct answer, why, a tempting-but-wrong alternative if catalogued, and any
    newly logged misconception) — never a bare correct/incorrect.
 
-## The Living Teacher's grounding
+## The Living Teacher: grounded by default, unrestricted by choice
 
 `src/lib/tutor/engine.ts` implements intent matching (word-level case questions, "harder example," "explain more
 simply," Yorùbā-note lookup, missing-prerequisite computation from real mastery data, alternative-analysis lookup,
 teach-back invitations) with a final fallback to keyword-overlap search across `Concept` and `Misconception` rows.
-Every answer either cites the database rows it drew from (`groundedOn`) or explicitly says it doesn't have a
-verified answer. By default there is no call to an external LLM anywhere in this path — this is deliberate (see the
-spec's "do not allow an unconstrained language model to serve as the sole source of grammatical truth" requirement)
-and means the tutor's honesty guarantees hold structurally, not by prompting.
+Every grounded answer either cites the database rows it drew from (`groundedOn`) or explicitly says it doesn't
+have a verified answer. With no Anthropic API key connected, this rule engine is the entire Living Teacher, and no
+call to an external LLM happens anywhere in this path.
 
 If a learner has connected their own Anthropic API key (`src/app/settings/AnthropicKeyForm.tsx`, encrypted at rest
-via `src/lib/crypto.ts`), `src/app/api/tutor/ask/route.ts` passes the already-grounded `answer.text` and its cited
-facts to `enhanceAnswerWithClaude` (`src/lib/tutor/claude.ts`), which calls the Claude API under a system prompt
-that explicitly forbids adding any grammatical claim beyond the supplied facts. Claude's role here is phrasing only,
-never retrieval: it never sees raw curriculum data to search, only the specific facts the rule engine already
-grounded its answer in. Any error (invalid key, rate limit, network failure, or a response the wrapper can't parse
-as compliant) causes `enhanceAnswerWithClaude` to return `null`, and the route keeps the original grounded text —
-the honesty guarantee holds structurally whether or not a key is present.
+via `src/lib/crypto.ts`), the behavior changes deliberately: `src/app/api/tutor/ask/route.ts` still runs the rule
+engine first, but passes its findings to `answerAsLivingTeacher` (`src/lib/tutor/claude.ts`) as optional,
+non-binding context rather than a hard constraint. The system prompt explicitly tells Claude it is *not* restricted
+to this app's curriculum, terminology, or scope, and may go beyond, correct, or set aside the rule engine's
+findings entirely. This is a one-user product decision, not an oversight: the spec's original "don't let an
+unconstrained model be the sole source of grammatical truth" principle is exactly what gets relaxed here, because
+this app's only user decided their own understanding matters more than that guarantee. Conversation history (the
+last 8 messages) and a short note on the learner's L1/instructional language are also passed along, so the tutor
+behaves like it remembers the conversation and can draw Yorùbá-Arabic contrasts on its own. Any error (invalid key,
+rate limit, network failure) causes `answerAsLivingTeacher` to return `null`, and the route falls back to the
+grounded engine's own answer, so the chat never breaks.
 
 ## AI-assisted lesson drafting
 
 The same connected API key can also draft new lessons — `POST /api/studio/generate-lesson` (triggered from
 `/studio`'s "AI drafts" tab) calls `draftLessonWithClaude` (`src/lib/tutor/claude.ts`). This is a different trust
-boundary from the Living Teacher's phrasing-only role above: here Claude is asked to *write* new pedagogical content
-and exercises, including grammatical claims it has no independent authority to assert. Two structural safeguards
-keep this consistent with the app's grounding principle:
+boundary from the Living Teacher's unrestricted chat above: a chat answer is read once and forgotten, while an
+approved lesson draft becomes part of the app's own tracked curriculum, feeding the same mastery model every other
+exercise does — so this path keeps a hard grounding safeguard the chat no longer has. Here Claude is asked to
+*write* new pedagogical content and exercises, including grammatical claims it has no independent authority to
+assert. Two structural safeguards keep this consistent with the app's grounding principle:
 
 1. **Closed citation list.** Claude receives a fixed list of already-verified sentence codes and may only cite from
    it (enforced via Anthropic's tool-use / structured-output feature, `DRAFT_LESSON_TOOL`); any sentence code it

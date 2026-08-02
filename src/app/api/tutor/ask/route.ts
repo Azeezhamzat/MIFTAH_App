@@ -3,7 +3,9 @@ import { prisma } from '@/lib/db';
 import { requireUser } from '@/lib/session';
 import { answerQuestion } from '@/lib/tutor/engine';
 import { decryptSecret } from '@/lib/crypto';
-import { enhanceAnswerWithClaude, isSupportedModel } from '@/lib/tutor/claude';
+import { answerAsLivingTeacher, isSupportedModel } from '@/lib/tutor/claude';
+
+const HISTORY_MESSAGES = 8;
 
 export async function POST(req: Request) {
   const user = await requireUser();
@@ -22,6 +24,12 @@ export async function POST(req: Request) {
     });
   }
 
+  const priorMessages = await prisma.tutorMessage.findMany({
+    where: { conversationId: conversation.id },
+    orderBy: { createdAt: 'desc' },
+    take: HISTORY_MESSAGES,
+  });
+
   await prisma.tutorMessage.create({
     data: { conversationId: conversation.id, role: 'learner', text: question },
   });
@@ -31,23 +39,30 @@ export async function POST(req: Request) {
   let finalText = answer.text;
   let enhancedByClaude = false;
 
-  const learnerProfile = await prisma.learnerProfile.findUnique({ where: { userId: user.id } });
+  const [learnerProfile, langProfile] = await Promise.all([
+    prisma.learnerProfile.findUnique({ where: { userId: user.id } }),
+    prisma.languageProfile.findUnique({ where: { userId: user.id } }),
+  ]);
   if (learnerProfile?.anthropicApiKeyEncrypted && isSupportedModel(learnerProfile.anthropicModel)) {
     try {
       const apiKey = decryptSecret(learnerProfile.anthropicApiKeyEncrypted);
-      const enhanced = await enhanceAnswerWithClaude({
+      const learnerContext = langProfile
+        ? `The learner's first language is ${langProfile.motherTongue}, and they study through ${langProfile.instructionalLanguage}. When a contrast with their first language would clarify something (e.g. word order, agreement, a grammatical category their language doesn't mark), draw on it.`
+        : undefined;
+      const enhanced = await answerAsLivingTeacher({
         apiKey,
         model: learnerProfile.anthropicModel,
         question,
+        conversationHistory: priorMessages.reverse().map((m) => ({ role: m.role as 'learner' | 'tutor', text: m.text })),
         groundedAnswer: answer.text,
-        uncertain: answer.uncertain,
+        learnerContext,
       });
       if (enhanced) {
         finalText = enhanced;
         enhancedByClaude = true;
       }
     } catch {
-      // Decryption or enhancement failed — silently keep the grounded answer.
+      // Decryption or the Claude call failed — silently keep the grounded answer.
     }
   }
 
