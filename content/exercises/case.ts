@@ -98,4 +98,22 @@ export const caseExercises: ExerciseSeed[] = [
     explanation: 'في is a built particle with no case of its own; الفصل is genitive, governed by في, with a visible kasrah marker.',
     estimatedSeconds: 40,
   },
+  {
+    lessonCode: 'l-diptotes', conceptCode: 'c-diptotes', sentenceCode: 'case-09-diptote-broken-plural-genitive', type: 'compare_analyses',
+    objective: 'Distinguish two independent diptote triggers.',
+    prompt: 'مِصْرَ (case-08) is diptote because it is a certain type of proper name. مَسَاجِدَ (case-09) is diptote for a completely different reason. What is it?', difficulty: 3,
+    expectedAnswer: 'مساجد is diptote because it follows the broken-plural pattern مَفَاعِل (three-plus syllables with a long vowel before the final consonant) — a shape-based trigger, unlike مصر\'s proper-name-based trigger.',
+    hints: ['مساجد is a common noun, not a name — so its diptote status cannot come from the same rule as مصر\'s.'],
+    explanation: 'Diptote status has several independent triggers (certain proper names, certain adjective patterns, certain broken-plural patterns) that a learner eventually needs to recognize as a family of related but distinct rules.',
+    estimatedSeconds: 35,
+  },
+  {
+    lessonCode: 'l-marker-types', conceptCode: 'c-marker-types', sentenceCode: 'case-10-sound-feminine-plural-accusative', type: 'compare_analyses',
+    objective: 'Contrast two different secondary-marker mechanisms.',
+    prompt: 'المعلمون (case-06/07) uses two different suffixes for nominative vs. accusative/genitive. المعلماتِ (case-10) uses the same ات suffix in all three cases. How does it still show it is accusative here?', difficulty: 3,
+    expectedAnswer: 'Only the short vowel on the ت changes: ḍammah (ـُ) for nominative becomes kasrah (ـِ) for accusative/genitive — a different mechanism from the sound masculine plural\'s two-distinct-suffix approach.',
+    hints: ['Since the suffix ات itself never changes, the marking has to be happening somewhere smaller — where?'],
+    explanation: 'This is a third distinct case-marking mechanism alongside ordinary short vowels and dedicated suffixes: a vowel swap within an otherwise-unchanging suffix.',
+    misconceptionTags: ['mis-marker-type-confusion'], estimatedSeconds: 35,
+  },
 ];

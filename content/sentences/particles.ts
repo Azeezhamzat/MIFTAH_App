@@ -114,4 +114,105 @@ export const particleSentences: SentenceSeed[] = [
       { headPosition: 1, dependentPosition: 3, relation: 'particle_governed', explanation: 'ما زال governs مجتهدًا into the accusative.' },
     ],
   },
+  {
+    code: 'part-07-asbaha-weather-cold',
+    textVocalized: 'أَصْبَحَ الْجَوُّ بَارِدًا',
+    textUnvocalized: 'أصبح الجو باردا',
+    transliteration: 'aṣbaḥa l-jawwu bāridan',
+    translationEnglish: 'The weather became cold.',
+    difficulty: 2,
+    notes: 'أَصْبَحَ ("became," originally "entered the morning [in a state]") is another sister of كان, governing exactly the same way: subject nominative, predicate accusative.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'أَصْبَحَ', surfaceUnvocalized: 'أصبح', lemma: 'أصبح', rootRadicals: 'ص ب ح', patternLabel: 'Form IV — أَفْعَلَ',
+        partOfSpeech: 'verb', person: 'third', gender: 'masculine', number: 'singular', role: 'governing verb, sister of كان (فعل ناقص)',
+        translation: 'became', explanation: 'أصبح is one of كان\'s sisters, generalized from "to enter the morning [in a state]" to a plain "became."',
+      },
+      {
+        position: 2, surfaceVocalized: 'الْجَوُّ', surfaceUnvocalized: 'الجو', lemma: 'جو', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine',
+        number: 'singular', definiteness: 'definite', grammaticalCase: 'nominative', role: 'ism aṣbaḥa (اسم أصبح)', marker: 'ḍammah (ـُ)',
+        markerType: 'visible', translation: 'the weather', explanation: 'Stays nominative — أصبح, like كان, does not touch the subject\'s case.',
+      },
+      {
+        position: 3, surfaceVocalized: 'بَارِدًا', surfaceUnvocalized: 'باردا', lemma: 'بارد', rootRadicals: 'ب ر د',
+        patternLabel: 'Active participle (Form I) — فَاعِل', partOfSpeech: 'noun', gender: 'masculine', number: 'singular',
+        definiteness: 'indefinite', grammaticalCase: 'accusative', role: 'khabar aṣbaḥa (خبر أصبح)', marker: 'fatḥah + tanwīn (ـً)',
+        markerType: 'visible', governedByPosition: 1, translation: 'cold',
+        explanation: 'Accusative predicate, governed by أصبح exactly as خبر كان would be.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'particle_governed', explanation: 'أصبح requires الجو as its nominative subject.' },
+      { headPosition: 1, dependentPosition: 3, relation: 'particle_governed', explanation: 'أصبح governs باردًا into the accusative.' },
+    ],
+  },
+  {
+    code: 'part-08-laalla-hope',
+    textVocalized: 'لَعَلَّ الطَّقْسَ جَمِيلٌ غَدًا',
+    textUnvocalized: 'لعل الطقس جميل غدا',
+    transliteration: 'laʿalla ṭ-ṭaqsa jamīlun ghadan',
+    translationEnglish: 'Perhaps the weather will be beautiful tomorrow.',
+    difficulty: 3,
+    notes: 'لَعَلَّ, a sister of إنّ expressing hope or expectation (الترجي), governs exactly like إنّ: the following noun becomes accusative, and the predicate stays nominative.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'لَعَلَّ', surfaceUnvocalized: 'لعل', lemma: 'لعل', partOfSpeech: 'particle',
+        role: 'governing particle (حرف مشبه بالفعل), sister of إنّ expressing hope/expectation', translation: 'perhaps',
+        explanation: 'لعلّ governs case exactly like إنّ, but adds a meaning of hope, expectation, or apprehension rather than plain emphasis.',
+      },
+      {
+        position: 2, surfaceVocalized: 'الطَّقْسَ', surfaceUnvocalized: 'الطقس', lemma: 'طقس', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine',
+        number: 'singular', definiteness: 'definite', grammaticalCase: 'accusative', role: 'ism laʿalla (اسم لعلّ)', marker: 'fatḥah (ـَ)',
+        markerType: 'visible', governedByPosition: 1, translation: 'the weather', explanation: 'Accusative because لعلّ governs it, exactly as إنّ would.',
+      },
+      {
+        position: 3, surfaceVocalized: 'جَمِيلٌ', surfaceUnvocalized: 'جميل', lemma: 'جميل', partOfSpeech: 'noun', gender: 'masculine', number: 'singular',
+        definiteness: 'indefinite', grammaticalCase: 'nominative', role: 'khabar laʿalla (خبر لعلّ)', marker: 'ḍammah + tanwīn (ـٌ)',
+        markerType: 'visible', translation: 'beautiful', explanation: 'Predicate, nominative as always — لعلّ, like إنّ, leaves the predicate untouched.',
+      },
+      {
+        position: 4, surfaceVocalized: 'غَدًا', surfaceUnvocalized: 'غدا', lemma: 'غد', partOfSpeech: 'noun', gender: 'masculine', number: 'singular',
+        definiteness: 'indefinite', grammaticalCase: 'accusative', role: 'ẓarf zamān (adverb of time)', marker: 'fatḥah + tanwīn (ـً)',
+        markerType: 'visible', translation: 'tomorrow',
+        explanation: 'غدًا is an ordinary noun used adverbially as a ظرف زمان (adverb of time), which is why it is accusative despite not being a direct object or governed by لعلّ — a preview of المفعول فيه, covered later.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'particle_governed', explanation: 'لعلّ governs الطقس into the accusative.' },
+      { headPosition: 2, dependentPosition: 3, relation: 'mubtada_khabar', explanation: 'جميل is predicated of الطقس, structurally parallel to an ordinary خبر إنّ.' },
+    ],
+  },
+  {
+    code: 'part-09-kana-feminine-agreement',
+    textVocalized: 'كَانَتِ الْمَدْرَسَةُ قَرِيبَةً',
+    textUnvocalized: 'كانت المدرسة قريبة',
+    transliteration: 'kānati l-madrasatu qarībatan',
+    translationEnglish: 'The school was near.',
+    difficulty: 2,
+    notes: 'كان (and its sisters) agree in gender with their اسم just like an ordinary verb agrees with its فاعل — hence the feminine ت suffix here, matching المدرسة.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'كَانَتِ', surfaceUnvocalized: 'كانت', lemma: 'كان', rootRadicals: 'ك و ن', stem: 'كان', suffix: 'ت',
+        partOfSpeech: 'verb', person: 'third', gender: 'feminine', number: 'singular', role: 'governing verb (فعل ناقص), feminine-agreeing form of كان',
+        translation: 'was',
+        explanation: 'The ت suffix marks feminine agreement with المدرسة — كان agrees in gender with its اسم exactly as an ordinary verb agrees with its فاعل.',
+      },
+      {
+        position: 2, surfaceVocalized: 'الْمَدْرَسَةُ', surfaceUnvocalized: 'المدرسة', lemma: 'مدرسة', rootRadicals: 'د ر س',
+        patternLabel: 'Noun of place (feminine) — مَفْعَلة', prefix: 'ال', suffix: 'ة', partOfSpeech: 'noun', gender: 'feminine', number: 'singular',
+        definiteness: 'definite', grammaticalCase: 'nominative', role: 'ism kāna (اسم كان)', marker: 'ḍammah (ـُ)', markerType: 'visible',
+        translation: 'the school', explanation: 'Nominative subject, unaffected by كان\'s presence.',
+      },
+      {
+        position: 3, surfaceVocalized: 'قَرِيبَةً', surfaceUnvocalized: 'قريبة', lemma: 'قريب', suffix: 'ة', partOfSpeech: 'adjective',
+        gender: 'feminine', number: 'singular', definiteness: 'indefinite', grammaticalCase: 'accusative', role: 'khabar kāna (خبر كان)',
+        marker: 'fatḥah + tanwīn (ـً)', markerType: 'visible', governedByPosition: 1, translation: 'near',
+        explanation: 'Accusative predicate, feminine to agree with المدرسة, governed by كان exactly as in part-03.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'particle_governed', explanation: 'كانت requires المدرسة as its nominative subject.' },
+      { headPosition: 1, dependentPosition: 3, relation: 'particle_governed', explanation: 'كانت governs قريبةً into the accusative.' },
+    ],
+  },
 ];

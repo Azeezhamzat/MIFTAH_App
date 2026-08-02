@@ -32,13 +32,14 @@ a real seeded database — not mocked.
 
 ## Known gaps, and why they're gaps rather than architecture limits
 
-1. **Content volume below the spec's stretch targets.** Seeded: 40 concepts (target: full domain coverage — met),
-   37 lessons (target ≥30 — met), 185 exercises (target ≥250 — partial), 47 fully-annotated sentences (target
-   ≥100 — partial), 34 roots (target ≥25 — met). The gap is entirely in hand-authoring volume for exercises and
-   sentences, which is genuinely slow to do well (each annotated sentence requires per-token linguistic review).
-   The pipeline (`content/*.ts` → `prisma/seed.ts`, validated by `tests/content-integrity.test.ts`) scales to the
-   full targets with no code changes — it's pure content-authoring time, tracked in
-   `docs/CONTENT_AUTHORING.md`.
+1. **Content volume below the spec's stretch targets, though narrowed since the initial build.** Seeded: 40
+   concepts (target: full domain coverage — met), 37 lessons (target ≥30 — met), 230 exercises — 106 hand-authored
+   plus 124 algorithmically generated from the sentence bank (target ≥250 — partial, up from 185), 62
+   fully-annotated sentences (target ≥100 — partial, up from 47), 34 roots (target ≥25 — met). The remaining gap
+   is entirely in hand-authoring volume for exercises and sentences, which is genuinely slow to do well (each
+   annotated sentence requires per-token linguistic review). The pipeline (`content/*.ts` → `prisma/seed.ts`,
+   validated by `tests/content-integrity.test.ts`) scales to the full targets with no code changes — it's pure
+   content-authoring time, tracked in `docs/CONTENT_AUTHORING.md`.
 2. **Content-authoring studio is browse-and-flag, not a full in-app editor.** `/studio` lets a reviewer browse
    seeded lessons/exercises/sentences/concepts and push them through the review-workflow states
    (`ContentReview` rows), but authoring new content still happens by editing `content/*.ts` and re-seeding, not

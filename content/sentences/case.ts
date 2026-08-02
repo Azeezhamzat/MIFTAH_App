@@ -113,4 +113,61 @@ export const caseSentences: SentenceSeed[] = [
     ],
     dependencies: [{ headPosition: 2, dependentPosition: 3, relation: 'preposition_object', explanation: 'إلى governs مصر, whose genitive shows as a diptote fatḥah.' }],
   },
+  {
+    code: 'case-09-diptote-broken-plural-genitive',
+    textVocalized: 'صَلَّيْتُ فِي مَسَاجِدَ',
+    textUnvocalized: 'صليت في مساجد',
+    transliteration: 'ṣallaytu fī masājida',
+    translationEnglish: 'I prayed in mosques.',
+    difficulty: 3,
+    notes: 'A second diptote category, distinct from case-08\'s proper-name class: broken plurals of the pattern مَفَاعِل (three or more syllables with a long vowel before the final consonant) are also diptote — فتحة for the genitive, no تنوين, even while remaining indefinite in meaning.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'صَلَّيْتُ', surfaceUnvocalized: 'صليت', lemma: 'صلى', rootRadicals: 'ص ل و', patternLabel: 'Form II — فَعَّلَ',
+        stem: 'صلي', suffix: 'تُ', partOfSpeech: 'verb', person: 'first', number: 'singular',
+        role: 'the verb, with its own attached subject pronoun', translation: 'I prayed',
+        explanation: 'Form II of the defective root ص ل و, with the attached first-person suffix.',
+      },
+      {
+        position: 2, surfaceVocalized: 'فِي', surfaceUnvocalized: 'في', lemma: 'في', partOfSpeech: 'particle', role: 'preposition (location)',
+        translation: 'in', explanation: 'Governs مساجد into the genitive.',
+      },
+      {
+        position: 3, surfaceVocalized: 'مَسَاجِدَ', surfaceUnvocalized: 'مساجد', lemma: 'مسجد', rootRadicals: 'س ج د', patternLabel: 'Diptote broken plural — مَفَاعِل',
+        partOfSpeech: 'noun', gender: 'masculine', number: 'plural', definiteness: 'indefinite', grammaticalCase: 'genitive',
+        role: 'majrūr', marker: 'fatḥah, no tanwīn (diptote genitive)', markerType: 'secondary', translation: 'mosques',
+        explanation: 'مساجد follows the diptote plural pattern مَفَاعِل — it takes فتحة instead of كسرة for the genitive and never carries تنوين, even though it remains indefinite in meaning. This is a different diptote trigger from case-08\'s proper name: broken plurals of this shape are diptote as a category, regardless of what they name.',
+        traditionalExplanation: 'اسم مجرور وعلامة جره الفتحة نيابة عن الكسرة لأنه ممنوع من الصرف على وزن منتهى الجموع.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 2, dependentPosition: 3, relation: 'preposition_object', explanation: 'في governs مساجد, whose genitive appears as a diptote fatḥah rather than the expected kasrah.' },
+    ],
+  },
+  {
+    code: 'case-10-sound-feminine-plural-accusative',
+    textVocalized: 'رَأَيْتُ الْمُعَلِّمَاتِ',
+    textUnvocalized: 'رأيت المعلمات',
+    transliteration: 'raʾaytu l-muʿallimāti',
+    translationEnglish: 'I saw the female teachers.',
+    difficulty: 2,
+    notes: 'The sound feminine plural (جمع المؤنث السالم) marks accusative and genitive identically — not with a distinct suffix the way the dual and sound masculine plural do, but by swapping the final short vowel: ḍammah in the nominative becomes kasrah here.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'رَأَيْتُ', surfaceUnvocalized: 'رأيت', lemma: 'رأى', stem: 'رأي', suffix: 'تُ', partOfSpeech: 'verb',
+        person: 'first', number: 'singular', role: 'the verb, with its own attached subject pronoun', translation: 'I saw',
+        explanation: 'Same verb as case-02 and case-05.',
+      },
+      {
+        position: 2, surfaceVocalized: 'الْمُعَلِّمَاتِ', surfaceUnvocalized: 'المعلمات', lemma: 'معلمة', rootRadicals: 'ع ل م', prefix: 'ال', suffix: 'ات',
+        partOfSpeech: 'noun', gender: 'feminine', number: 'plural', definiteness: 'definite', grammaticalCase: 'accusative', role: 'mafʿūl bihi',
+        marker: 'kasrah (ـِ) — sound feminine plural accusative/genitive marker, substituting for fatḥah', markerType: 'secondary',
+        translation: 'the female teachers',
+        explanation: 'المعلمات keeps the same ات suffix in the nominative, accusative, and genitive alike; only the short vowel on ت changes (ḍammah → kasrah) to signal that it is no longer nominative. This is a third distinct mechanism for marking non-default case, alongside the dual\'s and sound-masculine-plural\'s dedicated suffixes.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'verb_object', explanation: 'المعلماتِ is what is seen; its accusative shows as كسرة rather than فتحة.' },
+    ],
+  },
 ];

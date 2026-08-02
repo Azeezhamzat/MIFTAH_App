@@ -6,8 +6,8 @@ Miftāḥ is a complete, interactive personal teacher of Arabic Naḥw (syntax) 
 adult learner — built around discovery-based lessons, four signature laboratories, a knowledge-base-grounded
 conversational tutor, an explainable mastery and spaced-review engine, and a personalized misconception clinic.
 
-This is a real, running application with a seeded curriculum, not a mockup: 40 concepts, 37 lessons, 47 fully
-annotated Arabic sentences, 34 roots, 23 morphological patterns, 85 lexemes, 185 exercises, 15 tracked
+This is a real, running application with a seeded curriculum, not a mockup: 40 concepts, 37 lessons, 62 fully
+annotated Arabic sentences, 34 roots, 23 morphological patterns, 85 lexemes, 230 exercises, 15 tracked
 misconceptions, an 18-question adaptive placement assessment, and 3 connected reading passages, all backed by a
 real database and a real mastery/spaced-repetition engine.
 

@@ -107,4 +107,22 @@ export const morphologyExercises: ExerciseSeed[] = [
     explanation: 'مفتوح demonstrates that a passive participle behaves as a regular noun/adjective once formed — its case comes from its syntactic role, unrelated to its morphological shape.',
     misconceptionTags: ['mis-pattern-vs-role'], estimatedSeconds: 30,
   },
+  {
+    lessonCode: 'l-masdar', conceptCode: 'c-verbal-noun', sentenceCode: 'morph-11-verbal-noun-reading', type: 'identify_role',
+    objective: 'Contrast a مصدر with a conjugated verb from the same root.',
+    prompt: 'الْقِرَاءَةُ مُفِيدَةٌ — what grammatical category is القراءة itself (independent of its role as مبتدأ here), and how does that differ from a conjugated verb like قَرَأَ؟', difficulty: 2,
+    expectedAnswer: 'القراءة is a مصدر (verbal noun) — it names the action of reading without any person, gender, number, or tense, unlike قرأ, which is locked to third-person masculine singular past.',
+    hints: ['Ask whether القراءة tells you who read, or when.'],
+    explanation: 'Once formed, a مصدر behaves as an ordinary noun (here, as مبتدأ) even though it names an action.',
+    estimatedSeconds: 25,
+  },
+  {
+    lessonCode: 'l-participles', conceptCode: 'c-active-passive-participle', sentenceCode: 'morph-12-passive-participle-letter', type: 'identify_role',
+    objective: 'Recognize a feminine passive participle used as an ordinary predicate.',
+    prompt: 'In الرِّسَالَةُ مَكْتُوبَةٌ بِخَطٍّ جَمِيلٍ, what pattern is مكتوبة, and what syntactic role does it play?', difficulty: 2,
+    expectedAnswer: 'It is a Form I passive participle (مَفْعُول pattern, feminine مَفْعُولة), and here it plays the role of خبر — an ordinary predicate adjective meaning "written."',
+    hints: ['Separate the two questions: what shape is the word, and what job does it do in this specific sentence?'],
+    explanation: 'Like مفتوح in nom-07, مكتوبة shows that a passive participle\'s case and role come from its syntactic position, not from its morphological shape.',
+    misconceptionTags: ['mis-pattern-vs-role'], estimatedSeconds: 30,
+  },
 ];

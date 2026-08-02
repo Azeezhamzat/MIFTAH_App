@@ -183,4 +183,70 @@ export const morphologySentences: SentenceSeed[] = [
       { headPosition: 1, dependentPosition: 3, relation: 'verb_object', explanation: 'الكتاب is found.' },
     ],
   },
+  {
+    code: 'morph-11-verbal-noun-reading',
+    textVocalized: 'الْقِرَاءَةُ مُفِيدَةٌ',
+    textUnvocalized: 'القراءة مفيدة',
+    transliteration: 'al-qirāʾatu mufīdatun',
+    translationEnglish: 'Reading is beneficial.',
+    difficulty: 2,
+    notes: 'القراءة is a مصدر (verbal noun) — a noun naming the action of قرأ itself, "the act of reading" — used here as an ordinary noun functioning as mubtada, exactly like any other noun.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'الْقِرَاءَةُ', surfaceUnvocalized: 'القراءة', lemma: 'قراءة', rootRadicals: 'ق ر أ',
+        patternLabel: 'Verbal noun (Form I) — فِعَالَة', prefix: 'ال', partOfSpeech: 'noun', gender: 'feminine', number: 'singular',
+        definiteness: 'definite', grammaticalCase: 'nominative', role: 'mubtada', marker: 'ḍammah (ـُ)', markerType: 'visible', translation: 'reading',
+        explanation: 'القراءة is the مصدر (verbal noun) of قرأ, naming the action itself rather than describing an agent or a result — grammatically it behaves exactly like any other noun once formed.',
+      },
+      {
+        position: 2, surfaceVocalized: 'مُفِيدَةٌ', surfaceUnvocalized: 'مفيدة', lemma: 'مفيد', rootRadicals: 'ف ي د',
+        patternLabel: 'Active participle (Form IV) — مُفْعِل', suffix: 'ة', partOfSpeech: 'adjective', gender: 'feminine', number: 'singular',
+        definiteness: 'indefinite', grammaticalCase: 'nominative', role: 'khabar', marker: 'ḍammah + tanwīn (ـٌ)', markerType: 'visible',
+        translation: 'beneficial', explanation: 'مفيد is the Form IV active participle of أفاد, "to benefit" — used adjectivally, with the feminine ة agreeing with القراءة.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'mubtada_khabar', explanation: 'مفيدة is predicated of القراءة.' },
+    ],
+  },
+  {
+    code: 'morph-12-passive-participle-letter',
+    textVocalized: 'الرِّسَالَةُ مَكْتُوبَةٌ بِخَطٍّ جَمِيلٍ',
+    textUnvocalized: 'الرسالة مكتوبة بخط جميل',
+    transliteration: 'ar-risālatu maktūbatun bi-khaṭṭin jamīlin',
+    translationEnglish: 'The letter is written in beautiful handwriting.',
+    difficulty: 3,
+    notes: 'مَكْتُوبَةٌ is the اسم مفعول (passive participle) of كتب, used as an ordinary predicate adjective. بِخَطٍّ fuses the inseparable preposition بِ onto the noun خطّ, exactly as بِ fuses onto its noun in case-03.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'الرِّسَالَةُ', surfaceUnvocalized: 'الرسالة', lemma: 'رسالة', rootRadicals: 'ر س ل', prefix: 'ال',
+        suffix: 'ة', partOfSpeech: 'noun', gender: 'feminine', number: 'singular', definiteness: 'definite', grammaticalCase: 'nominative',
+        role: 'mubtada', marker: 'ḍammah (ـُ)', markerType: 'visible', translation: 'the letter', explanation: 'Definite noun, mubtada.',
+      },
+      {
+        position: 2, surfaceVocalized: 'مَكْتُوبَةٌ', surfaceUnvocalized: 'مكتوبة', lemma: 'مكتوب', rootRadicals: 'ك ت ب',
+        patternLabel: 'Passive participle (Form I) — مَفْعُول', suffix: 'ة', partOfSpeech: 'adjective', gender: 'feminine', number: 'singular',
+        definiteness: 'indefinite', grammaticalCase: 'nominative', role: 'khabar', marker: 'ḍammah + tanwīn (ـٌ)', markerType: 'visible',
+        translation: 'written',
+        explanation: 'مكتوبة is the اسم المفعول (passive participle) of كتب — "having been written" — used here as an ordinary predicate adjective, feminine to agree with الرسالة.',
+      },
+      {
+        position: 3, surfaceVocalized: 'بِخَطٍّ', surfaceUnvocalized: 'بخط', lemma: 'خط', rootRadicals: 'خ ط ط', prefix: 'ب',
+        partOfSpeech: 'noun', gender: 'masculine', number: 'singular', definiteness: 'indefinite', grammaticalCase: 'genitive',
+        role: 'preposition بِ + majrūr (object of the preposition)', marker: 'kasrah + tanwīn (ـٍ)', markerType: 'visible',
+        translation: 'in [a certain] handwriting',
+        explanation: 'بِ here means "with / by means of," governing خطّ (a doubled root, خ ط ط, "line" → "handwriting") into the genitive — fused onto its noun exactly as بِ does in case-03\'s بِالطَّالِبِ.',
+      },
+      {
+        position: 4, surfaceVocalized: 'جَمِيلٍ', surfaceUnvocalized: 'جميل', lemma: 'جميل', partOfSpeech: 'adjective', gender: 'masculine',
+        number: 'singular', definiteness: 'indefinite', grammaticalCase: 'genitive', role: 'naʿt of خطّ', marker: 'kasrah + tanwīn (ـٍ)',
+        markerType: 'visible', translation: 'beautiful', explanation: 'Agrees with خطّ in all four features, including its genitive case.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'mubtada_khabar', explanation: 'مكتوبة is predicated of الرسالة.' },
+      { headPosition: 2, dependentPosition: 3, relation: 'preposition_object', explanation: 'مكتوبة is described as happening بِخَطٍّ — بِ governs خطّ into the genitive.' },
+      { headPosition: 3, dependentPosition: 4, relation: 'noun_adjective', explanation: 'جميل describes خطّ and matches its case (genitive) and other features.' },
+    ],
+  },
 ];
