@@ -104,6 +104,14 @@ describe('content integrity: exercises', () => {
       expect(e.explanation.length).toBeGreaterThan(0);
     }
   });
+
+  it('every hand-authored choices list actually contains the correct answer', () => {
+    for (const e of allHandAuthoredExercises) {
+      if (e.choices && e.choices.length > 0) {
+        expect(e.choices, `exercise "${e.prompt.slice(0, 30)}" choices include expectedAnswer`).toContain(e.expectedAnswer);
+      }
+    }
+  });
 });
 
 describe('content integrity: morphology', () => {

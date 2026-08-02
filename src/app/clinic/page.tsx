@@ -2,6 +2,7 @@ import { prisma } from '@/lib/db';
 import { requireOnboardedUser } from '@/lib/session';
 import NavShell from '@/components/NavShell';
 import ClinicView from './ClinicView';
+import { computeChoices } from '@/lib/exerciseChoices';
 
 export default async function ClinicPage() {
   const user = await requireOnboardedUser();
@@ -12,7 +13,10 @@ export default async function ClinicPage() {
     orderBy: { detectedAt: 'desc' },
   });
 
-  const allExercises = await prisma.exercise.findMany({ where: { status: 'published' }, include: { hints: { orderBy: { level: 'asc' } } } });
+  const allExercises = await prisma.exercise.findMany({
+    where: { status: 'published' },
+    include: { hints: { orderBy: { level: 'asc' } }, sentence: { include: { tokens: true } } },
+  });
 
   const items = logs.map((log) => {
     const repairExercise = allExercises.find((e) => {
@@ -41,6 +45,10 @@ export default async function ClinicPage() {
             promptArabic: repairExercise.promptArabic,
             difficulty: repairExercise.difficulty,
             hints: repairExercise.hints.map((h) => ({ level: h.level, text: h.text })),
+            choices: computeChoices(
+              { type: repairExercise.type, expectedAnswer: JSON.parse(repairExercise.expectedAnswer) as string, choices: JSON.parse(repairExercise.choices) as string[] },
+              repairExercise.sentence?.tokens.map((t) => t.surfaceVocalized) ?? [],
+            ),
           }
         : null,
     };

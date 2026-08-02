@@ -30,7 +30,12 @@ export default async function DashboardPage() {
         </div>
 
         <section>
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-ink-400 mb-3">What should I study now?</h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold uppercase tracking-widest text-ink-400">What should I study now?</h2>
+            <Link href="/lessons" className="text-xs font-medium text-indigo-700 dark:text-indigo-300">
+              Or pick a topic yourself →
+            </Link>
+          </div>
           <div className="grid md:grid-cols-2 gap-4">
             {data.recommendations.map((r) => (
               <Link key={r.title} href={r.href} className="card p-5 hover:border-jade-400 hover:shadow-sm transition-all block">

@@ -15,6 +15,8 @@ export interface ExerciseSeed {
   expectedAnswer: unknown;
   acceptedVariants?: string[];
   invalidPlausible?: InvalidPlausible[];
+  /** Explicit closed-answer options for select_ending exercises whose answer isn't a sentence token (see src/lib/exerciseChoices.ts). */
+  choices?: string[];
   hints: string[];
   explanation: string;
   misconceptionTags?: string[];

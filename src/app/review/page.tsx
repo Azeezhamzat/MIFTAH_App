@@ -4,6 +4,7 @@ import NavShell from '@/components/NavShell';
 import ReviewRunner from './ReviewRunner';
 import { explainWhyReview } from '@/lib/mastery';
 import { isDue } from '@/lib/srs';
+import { computeChoices } from '@/lib/exerciseChoices';
 
 export default async function ReviewPage() {
   const user = await requireOnboardedUser();
@@ -25,7 +26,7 @@ export default async function ReviewPage() {
   for (const s of due) {
     const exercise = await prisma.exercise.findFirst({
       where: { conceptId: s.conceptId, status: 'published' },
-      include: { hints: { orderBy: { level: 'asc' } } },
+      include: { hints: { orderBy: { level: 'asc' } }, sentence: { include: { tokens: true } } },
       orderBy: { reviewPriority: 'desc' },
     });
     if (!exercise) continue;
@@ -48,6 +49,10 @@ export default async function ReviewPage() {
         promptArabic: exercise.promptArabic,
         difficulty: exercise.difficulty,
         hints: exercise.hints.map((h) => ({ level: h.level, text: h.text })),
+        choices: computeChoices(
+          { type: exercise.type, expectedAnswer: JSON.parse(exercise.expectedAnswer) as string, choices: JSON.parse(exercise.choices) as string[] },
+          exercise.sentence?.tokens.map((t) => t.surfaceVocalized) ?? [],
+        ),
       },
     });
   }

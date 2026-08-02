@@ -84,6 +84,12 @@ a real seeded database — not mocked.
    itself inside an Android app) — it reuses the offline PWA mechanism for genuine offline study once the
    curriculum has been downloaded once, but building the actual APK needs the Android SDK, which this sandbox also
    lacks; a second GitHub Actions workflow builds the debug APK on a runner that has it.
+9. **"Too boring and basic" feedback was addressed on three specific fronts, not a general redesign.** This app's
+   user asked for commercial-app-level quality but, when asked which aspects mattered most, specifically named
+   richer practice interactions, being able to choose any topic directly, and deeper lesson content — not
+   gamification, visual polish, or audio, which remain undone by explicit choice. See `/lessons` (the new lesson
+   catalog), the click-to-answer exercise UI (`src/lib/exerciseChoices.ts`), and the Explain-stage word-by-word
+   breakdown (`src/components/SentenceBreakdown.tsx`).
 
 ## Suggested Phase 5/6 order (if continuing this project)
 

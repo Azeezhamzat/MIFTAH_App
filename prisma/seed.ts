@@ -343,6 +343,7 @@ async function main() {
         expectedAnswer: JSON.stringify(e.expectedAnswer),
         acceptedVariants: JSON.stringify(e.acceptedVariants ?? []),
         invalidPlausible: JSON.stringify(e.invalidPlausible ?? []),
+        choices: JSON.stringify(e.choices ?? []),
         explanation: e.explanation,
         misconceptionTags: JSON.stringify(e.misconceptionTags ?? []),
         estimatedSeconds: e.estimatedSeconds ?? 30,

@@ -21,6 +21,7 @@ export interface OfflineExercise {
   conceptCode: string;
   conceptTitle: string;
   lessonCode?: string | null;
+  choices?: string[];
 }
 
 export interface OfflineLesson {
@@ -34,7 +35,10 @@ export interface OfflineLesson {
   deeperDetail?: string | null;
   discoveryPrompt: string;
   concepts: { code: string; title: string; titleArabic: string }[];
-  observeSentences: { id: string; textVocalized: string; translationEnglish: string; notes?: string | null }[];
+  observeSentences: {
+    id: string; textVocalized: string; translationEnglish: string; notes?: string | null;
+    tokens: { position: number; surfaceVocalized: string; role: string; grammaticalCase: string | null; mood: string | null; marker: string | null; translation: string; explanation: string }[];
+  }[];
   exerciseIds: string[];
 }
 

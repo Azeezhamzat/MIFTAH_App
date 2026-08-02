@@ -6,6 +6,7 @@ const NAV_GROUPS: { title: string; items: { href: string; label: string; labelAr
     title: 'Learn',
     items: [
       { href: '/dashboard', label: 'Home' },
+      { href: '/lessons', label: 'All lessons' },
       { href: '/review', label: 'Review queue' },
       { href: '/curriculum', label: 'Grammar Constellation' },
       { href: '/library', label: 'Reading library' },

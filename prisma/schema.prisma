@@ -364,6 +364,7 @@ model Exercise {
   expectedAnswer   String   // JSON
   acceptedVariants String   @default("[]") // JSON array of strings
   invalidPlausible String   @default("[]") // JSON array of {answer, why}
+  choices          String   @default("[]") // JSON array of strings — hand-authored closed-answer options (e.g. select_ending); when empty, identify_role/identify_governor exercises fall back to deriving clickable options from their linked sentence's tokens at serve time
   explanation      String
   misconceptionTags String  @default("[]") // JSON array of misconception codes
   estimatedSeconds Int      @default(45)

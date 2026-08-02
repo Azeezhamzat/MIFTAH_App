@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import ArabicText from '@/components/ArabicText';
 import ExercisePlayer, { type ExerciseForPlayer } from '@/components/ExercisePlayer';
+import SentenceBreakdown, { type BreakdownToken } from '@/components/SentenceBreakdown';
 import type { OfflineGradingData } from '@/lib/offline/types';
 
 type Stage = 'observe' | 'discover' | 'explain' | 'practice' | 'reflect';
@@ -20,7 +21,7 @@ interface LessonData {
   deeperDetail?: string | null;
   discoveryPrompt: string;
   concepts: { code: string; title: string; titleArabic: string }[];
-  observeSentences: { id: string; textVocalized: string; translationEnglish: string; notes?: string | null }[];
+  observeSentences: { id: string; textVocalized: string; translationEnglish: string; notes?: string | null; tokens?: BreakdownToken[] }[];
   exercises: ExerciseForPlayer[];
 }
 
@@ -117,6 +118,23 @@ export default function LessonPlayer({
               </div>
             )}
           </div>
+
+          {lesson.observeSentences.some((s) => s.tokens && s.tokens.length > 0) && (
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-ink-400 mb-3">
+                Now see it applied, word by word
+              </h3>
+              <div className="space-y-3">
+                {lesson.observeSentences.map((s) => (
+                  <div key={s.id} className="card p-5">
+                    <ArabicText text={s.textVocalized} size="lg" as="div" />
+                    <p className="text-sm text-ink-600 dark:text-ink-300 mt-1">{s.translationEnglish}</p>
+                    {s.tokens && <SentenceBreakdown tokens={s.tokens} />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <button onClick={next} className="w-full rounded-lg bg-indigo-700 hover:bg-indigo-600 text-white font-medium py-3 transition-colors">
             Practice this
           </button>

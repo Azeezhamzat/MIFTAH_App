@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { requireUser } from '@/lib/session';
+import { computeChoices } from '@/lib/exerciseChoices';
 import type { OfflineBundle, OfflineExercise, OfflineGradingData, OfflineLesson } from '@/lib/offline/types';
 
 // Everything a learner needs to study and practice with no network at all:
@@ -28,7 +29,7 @@ export async function GET() {
     }),
     prisma.exercise.findMany({
       where: { status: 'published' },
-      include: { hints: { orderBy: { level: 'asc' } }, concept: true, lesson: { select: { code: true } } },
+      include: { hints: { orderBy: { level: 'asc' } }, concept: true, lesson: { select: { code: true } }, sentence: { include: { tokens: true } } },
       orderBy: { order: 'asc' },
     }),
   ]);
@@ -36,7 +37,10 @@ export async function GET() {
   const sentenceCodes = Array.from(
     new Set(lessons.flatMap((l) => JSON.parse(l.observePrompt ?? '[]') as string[])),
   );
-  const sentences = await prisma.arabicSentence.findMany({ where: { code: { in: sentenceCodes } } });
+  const sentences = await prisma.arabicSentence.findMany({
+    where: { code: { in: sentenceCodes } },
+    include: { tokens: { orderBy: { position: 'asc' } } },
+  });
   const sentenceByCode = new Map(sentences.map((s) => [s.code, s]));
 
   const offlineLessons: OfflineLesson[] = lessons.map((l) => {
@@ -56,7 +60,14 @@ export async function GET() {
       observeSentences: observeCodes
         .map((c) => sentenceByCode.get(c))
         .filter((s): s is NonNullable<typeof s> => !!s)
-        .map((s) => ({ id: s.id, textVocalized: s.textVocalized, translationEnglish: s.translationEnglish, notes: s.notes })),
+        .map((s) => ({
+          id: s.id, textVocalized: s.textVocalized, translationEnglish: s.translationEnglish, notes: s.notes,
+          tokens: s.tokens.map((t) => ({
+            position: t.position, surfaceVocalized: t.surfaceVocalized, role: t.role,
+            grammaticalCase: t.grammaticalCase, mood: t.mood, marker: t.marker,
+            translation: t.translation, explanation: t.explanation,
+          })),
+        })),
       exerciseIds: l.exercises.map((e) => e.id),
     };
   });
@@ -64,6 +75,7 @@ export async function GET() {
   const offlineExercises: OfflineExercise[] = [];
   const grading: Record<string, OfflineGradingData> = {};
   for (const e of exercises) {
+    const expectedAnswer = JSON.parse(e.expectedAnswer) as string;
     offlineExercises.push({
       id: e.id,
       type: e.type,
@@ -75,9 +87,13 @@ export async function GET() {
       conceptCode: e.concept.code,
       conceptTitle: e.concept.title,
       lessonCode: e.lesson?.code ?? null,
+      choices: computeChoices(
+        { type: e.type, expectedAnswer, choices: JSON.parse(e.choices) as string[] },
+        e.sentence?.tokens.map((t) => t.surfaceVocalized) ?? [],
+      ),
     });
     grading[e.id] = {
-      expectedAnswer: JSON.parse(e.expectedAnswer) as string,
+      expectedAnswer,
       acceptedVariants: JSON.parse(e.acceptedVariants) as string[],
       invalidPlausible: JSON.parse(e.invalidPlausible) as { answer: string; why: string }[],
       explanation: e.explanation,

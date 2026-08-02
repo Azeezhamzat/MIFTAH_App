@@ -146,7 +146,7 @@ export default function OfflineStudio() {
     const exercises: ExerciseForPlayer[] = lesson.exerciseIds
       .map((id) => bundle.exercises.find((e) => e.id === id))
       .filter((e): e is NonNullable<typeof e> => !!e)
-      .map((e) => ({ id: e.id, type: e.type, objective: e.objective, prompt: e.prompt, promptArabic: e.promptArabic, difficulty: e.difficulty, hints: e.hints }));
+      .map((e) => ({ id: e.id, type: e.type, objective: e.objective, prompt: e.prompt, promptArabic: e.promptArabic, difficulty: e.difficulty, hints: e.hints, choices: e.choices }));
     const gradingByExerciseId = Object.fromEntries(lesson.exerciseIds.map((id) => [id, bundle.grading[id]]).filter(([, g]) => g));
 
     return (

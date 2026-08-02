@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import { requireOnboardedUser } from '@/lib/session';
 import NavShell from '@/components/NavShell';
 import LessonPlayer from './LessonPlayer';
+import { computeChoices } from '@/lib/exerciseChoices';
 
 export default async function LessonPage({ params }: { params: { code: string } }) {
   const user = await requireOnboardedUser();
@@ -12,7 +13,11 @@ export default async function LessonPage({ params }: { params: { code: string } 
     include: {
       unit: { include: { domain: true } },
       concepts: { include: { concept: true } },
-      exercises: { where: { status: 'published' }, include: { hints: { orderBy: { level: 'asc' } } }, orderBy: { order: 'asc' } },
+      exercises: {
+        where: { status: 'published' },
+        include: { hints: { orderBy: { level: 'asc' } }, sentence: { include: { tokens: true } } },
+        orderBy: { order: 'asc' },
+      },
     },
   });
   // Draft lessons (e.g. AI-generated, pending review in /studio) are never
@@ -20,7 +25,10 @@ export default async function LessonPage({ params }: { params: { code: string } 
   if (!lesson || lesson.status !== 'published') notFound();
 
   const observeCodes = JSON.parse(lesson.observePrompt ?? '[]') as string[];
-  const observeSentences = await prisma.arabicSentence.findMany({ where: { code: { in: observeCodes } } });
+  const observeSentences = await prisma.arabicSentence.findMany({
+    where: { code: { in: observeCodes } },
+    include: { tokens: { orderBy: { position: 'asc' } } },
+  });
   const orderedObserve = observeCodes.map((c) => observeSentences.find((s) => s.code === c)).filter(Boolean);
   const discovery = JSON.parse(lesson.discoveryJson ?? '{}') as { prompt: string };
 
@@ -40,10 +48,19 @@ export default async function LessonPage({ params }: { params: { code: string } 
           concepts: lesson.concepts.map((lc) => ({ code: lc.concept.code, title: lc.concept.title, titleArabic: lc.concept.titleArabic })),
           observeSentences: orderedObserve.map((s) => ({
             id: s!.id, textVocalized: s!.textVocalized, translationEnglish: s!.translationEnglish, notes: s!.notes,
+            tokens: s!.tokens.map((t) => ({
+              position: t.position, surfaceVocalized: t.surfaceVocalized, role: t.role,
+              grammaticalCase: t.grammaticalCase, mood: t.mood, marker: t.marker,
+              translation: t.translation, explanation: t.explanation,
+            })),
           })),
           exercises: lesson.exercises.map((e) => ({
             id: e.id, type: e.type, objective: e.objective, prompt: e.prompt, promptArabic: e.promptArabic,
             difficulty: e.difficulty, hints: e.hints.map((h) => ({ level: h.level, text: h.text })),
+            choices: computeChoices(
+              { type: e.type, expectedAnswer: JSON.parse(e.expectedAnswer) as string, choices: JSON.parse(e.choices) as string[] },
+              e.sentence?.tokens.map((t) => t.surfaceVocalized) ?? [],
+            ),
           })),
         }}
       />

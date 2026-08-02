@@ -13,6 +13,8 @@ export interface ExerciseForPlayer {
   promptArabic?: string | null;
   difficulty: number;
   hints: { level: number; text: string }[];
+  /** When present, the exercise is answered by picking one of these instead of typing — see src/lib/exerciseChoices.ts. */
+  choices?: string[];
 }
 
 interface Feedback {
@@ -103,13 +105,31 @@ export default function ExercisePlayer({
 
       {!feedback && (
         <>
-          <textarea
-            value={response}
-            onChange={(e) => setResponse(e.target.value)}
-            rows={3}
-            placeholder="Type your answer…"
-            className="w-full rounded-lg border border-ink-900/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-3"
-          />
+          {exercise.choices && exercise.choices.length > 0 ? (
+            <div className="grid gap-2 mb-3" style={{ gridTemplateColumns: `repeat(${Math.min(exercise.choices.length, 2)}, minmax(0, 1fr))` }}>
+              {exercise.choices.map((choice) => (
+                <button
+                  key={choice}
+                  onClick={() => setResponse(choice)}
+                  className={`rounded-lg border px-4 py-3 text-center transition-colors ${
+                    response === choice
+                      ? 'border-jade-500 bg-jade-50 dark:bg-jade-900/30'
+                      : 'border-ink-900/10 dark:border-white/10 hover:border-jade-400'
+                  }`}
+                >
+                  <ArabicText text={choice} size="lg" />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <textarea
+              value={response}
+              onChange={(e) => setResponse(e.target.value)}
+              rows={3}
+              placeholder="Type your answer…"
+              className="w-full rounded-lg border border-ink-900/10 dark:border-white/10 bg-transparent px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-3"
+            />
+          )}
 
           {exercise.hints.length > 0 && (
             <div className="mb-4 space-y-2">

@@ -69,8 +69,9 @@ installers for you on GitHub's own native runners, if you don't have Windows/Mac
 | Onboarding, learner/language profile, goals | ✅ Functional |
 | Adaptive placement assessment + scoring engine | ✅ Functional (see [Assumptions](#assumptions--known-limitations)) |
 | Daily dashboard (8 key questions from the spec) | ✅ Functional |
-| Lesson player (Observe → Discover → Explain → Practice → Reflect) | ✅ Functional |
-| Exercise engine (20 exercise types, hint ladders, rich feedback) | ✅ Functional |
+| Lesson catalog (`/lessons` — pick any of the 37 lessons directly, no gating) | ✅ Functional |
+| Lesson player (Observe → Discover → Explain → Practice → Reflect, with a word-by-word grammatical breakdown of every observed sentence at the Explain stage) | ✅ Functional |
+| Exercise engine (20 exercise types, hint ladders, rich feedback, click-to-answer for identify_role/identify_governor/select_ending exercises) | ✅ Functional |
 | Mastery model (6 dimensions, humane labels, explainable) | ✅ Functional |
 | Spaced review scheduler (SM-2-derived, same-day guard) | ✅ Functional |
 | Misconception Clinic (detection, repair loop, retest) | ✅ Functional |
@@ -123,6 +124,18 @@ accessibility primitives (focus rings, high-contrast mode, combining-mark handli
 
 ## Assumptions & known limitations
 
+- **Click-to-answer covers the exercise types where it's safe to derive, not all 20 types.** `identify_role` and
+  `identify_governor` exercises linked to a sentence now offer that sentence's own words as clickable choices
+  instead of a text box — no new content-authoring needed, since the sentence's tokens are already an
+  always-correct option set (`src/lib/exerciseChoices.ts`). `select_ending` exercises use explicitly authored
+  choices where the answer format is a genuine two-option pick. Open-ended types (`explain_rule`, `teach_back`,
+  `full_irab`, `analyze_passage`, `free_production`, etc.) are still free text on purpose — a real answer there
+  can't be reduced to a button. If an exercise has no derivable or authored choices, it falls back to free text
+  automatically, so nothing breaks.
+- **The lesson's "word-by-word breakdown" reuses already-authored data, not new writing.** Every sentence in this
+  app already has full per-token role/case/marker/explanation data (originally built for the Iʿrāb X-Ray tool);
+  the Explain stage of every lesson now surfaces that same analysis inline, so depth didn't require re-authoring
+  37 lessons' worth of new prose — it required surfacing data that already existed but wasn't shown there before.
 - **No external LLM by default; unrestricted by explicit choice once a key is connected.** With no key, the Living
   Teacher is a grounded rule/knowledge-base engine, not a call to an LLM API — it never hallucinates a grammatical
   claim, but its range is bounded by the curriculum's knowledge base, and it says so explicitly when a question
