@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface Message {
   role: 'learner' | 'tutor';
@@ -18,13 +18,20 @@ const SUGGESTIONS = [
   'Test me without multiple choice.',
 ];
 
-export default function TeacherChat({ concepts }: { concepts: { code: string; title: string }[] }) {
+export default function TeacherChat({ concepts, initialQuestion }: { concepts: { code: string; title: string }[]; initialQuestion?: string }) {
   const [contextConceptCode, setContextConceptCode] = useState('');
   const [messages, setMessages] = useState<Message[]>([
     { role: 'tutor', text: 'Ask me anything about what you\'re studying. Pick a concept below to focus my answers, or just ask.' },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Arriving from "Ask the Living Teacher about this" on a missed exercise
+    // — send that question immediately rather than making the learner retype it.
+    if (initialQuestion) send(initialQuestion);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function send(text: string) {
     if (!text.trim()) return;

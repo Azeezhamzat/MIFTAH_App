@@ -35,6 +35,16 @@ export const weakVerbExercises: ExerciseSeed[] = [
     explanation: 'حَبَبْتُ is correct; حَبَّتُ incorrectly keeps the merge in a position where the split is required.', estimatedSeconds: 30,
   },
   {
+    lessonCode: 'l-doubled', conceptCode: 'c-doubled-verbs', type: 'compare_analyses',
+    objective: 'Predict whether a doubled-verb suffix triggers merging or splitting.',
+    prompt: 'مَدَّ ("he extended") merges its two دs. Would you expect the split or the merged form before the suffix ـَا ("they two")? Why?', difficulty: 3,
+    expectedAnswer: 'Merged: مَدَّا — the suffix ـَا begins with a vowel, so nothing separates the two identical letters and they stay merged.',
+    invalidPlausible: [{ answer: 'مَدَدَا (split)', why: 'Splitting only happens when a consonant-initial suffix like ـتُ would otherwise force a vowel between the two identical letters; ـَا is vowel-initial, so no split is triggered.' }],
+    hints: ['Splitting is triggered only by a consonant-initial suffix — check what letter ـَا starts with.'],
+    explanation: 'مَدَّا keeps the merge because the following suffix already starts with a vowel, so the two identical letters never need to be separated.',
+    misconceptionTags: [], estimatedSeconds: 30,
+  },
+  {
     lessonCode: 'l-hollow', conceptCode: 'c-hollow-verbs', sentenceCode: 'morph-06-hollow-first-person-resurfaces', type: 'transform_word',
     objective: 'Conjugate a hollow verb before a consonant-initial suffix.',
     prompt: 'قَالَ means "he said." Conjugate it for "I": أنا ___.', difficulty: 3,

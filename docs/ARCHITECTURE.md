@@ -56,7 +56,12 @@ See `prisma/schema.prisma` for the authoritative model. Key relationships:
 - **Assessment**: `Exercise → Hint`, `Exercise → Attempt`, with `Exercise.expectedAnswer` /
   `acceptedVariants` / `invalidPlausible` stored as JSON (SQLite has no native array/JSON column type in the
   Prisma sense, so these are `String` columns holding `JSON.stringify`d data — see `src/lib/grading.ts` for how
-  they're graded).
+  they're graded). `Exercise.lessonId` is optional: hand-authored exercises tied to one specific lesson set it,
+  while the drill exercises `seed.ts` generates from the sentence bank leave it null and carry only a `conceptId`.
+  A lesson's Practice stage (`src/app/lessons/[code]/page.tsx`, mirrored in the offline bundle route) queries both
+  — its own `lessonId` matches plus every unassigned exercise sharing one of its concepts — capped at 8 per
+  sitting, so the much larger concept-linked pool (previously reachable only from `/review` or `/offline`) is
+  actually used where a learner meets the concept for the first time.
 - **Mastery & review**: `ConceptMastery` (six dimension scores + overall + humane label + distinct-days-practiced
   counter) and `ReviewSchedule` (interval/ease/repetitions/dueAt/lastReason) are both keyed `(userId, conceptId)`.
 - **Misconceptions**: `Misconception` (static, authored) and `MisconceptionLog` (per-user, per-detection, with a
@@ -70,8 +75,17 @@ See `prisma/schema.prisma` for the authoritative model. Key relationships:
 1. Client (`ExercisePlayer`) posts `{ response, hintsUsed, responseTimeMs, confidence }` to
    `POST /api/exercises/[id]/attempt`.
 2. `gradeAndRecordAttempt` (`src/lib/engine/grade.ts`):
-   - Grades the response (`src/lib/grading.ts`: exact/variant match first, lenient keyword-overlap fallback).
-   - Records an `Attempt` row.
+   - Grades the response (`src/lib/grading.ts`: exact/variant match first, lenient keyword-overlap fallback). This
+     deterministic pass is the entire grading experience with no Anthropic key connected, and is what the offline
+     study mode (`ExercisePlayer`'s `offlineGrading` prop) reuses client-side with no server round-trip at all.
+   - If that still says wrong, the exercise's type is one of `AI_GRADABLE_EXERCISE_TYPES` (`src/lib/types.ts` — the
+     open-ended, prose-answer types like `explain_rule`/`teach_back`/`free_production`, never the closed-form types
+     where exact wording is the point), and the learner has connected an Anthropic key, `gradeWithAI`
+     (`src/lib/tutor/claude.ts`) asks Claude to judge semantic equivalence against the exercise's already-verified
+     expected answer and explanation — never to independently assert what's grammatically correct. A returned
+     verdict can upgrade `isCorrect`/`score` and adds `aiFeedback` to the response; any failure (no key, decryption
+     error, API error) silently keeps the deterministic grade, so this is strictly additive.
+   - Records an `Attempt` row (with whichever of the above grades ultimately applied).
    - Updates `ConceptMastery` via `applyEvidence` (maps the exercise's `type` to the mastery dimension(s) it's
      evidence for) and `scoreToLabel` (the same-day-mastery-illusion guard lives here).
    - Updates `ReviewSchedule` via `scheduleNextReview`.

@@ -2,7 +2,9 @@ import { prisma } from '@/lib/db';
 import { gradeShortAnswer, gradeFreeText } from '@/lib/grading';
 import { applyEvidence, applyRetentionEvidence, computeOverallScore, scoreToLabel } from '@/lib/mastery';
 import { scheduleNextReview, crossesRetentionThreshold } from '@/lib/srs';
-import type { ExerciseType, ReviewResult } from '@/lib/types';
+import { AI_GRADABLE_EXERCISE_TYPES, type ExerciseType, type ReviewResult } from '@/lib/types';
+import { decryptSecret } from '@/lib/crypto';
+import { gradeWithAI, isSupportedModel } from '@/lib/tutor/claude';
 
 export interface GradeInput {
   userId: string;
@@ -24,6 +26,9 @@ export interface GradeFeedback {
   missedTerms?: string[];
   masteryLabel: string;
   misconceptionDetected: { code: string; title: string } | null;
+  /** True when an AI-assisted grading pass (see below) changed or confirmed the verdict on a paraphrased answer. */
+  aiAssisted?: boolean;
+  aiFeedback?: string;
 }
 
 function scoreToReviewResult(score: number, hintsUsed: number): ReviewResult {
@@ -57,6 +62,42 @@ export async function gradeAndRecordAttempt(input: GradeInput): Promise<GradeFee
     score = Math.max(score, freeGrade.score);
     matchedTerms = freeGrade.matchedTerms;
     missedTerms = freeGrade.missedTerms;
+  }
+
+  // AI-assisted grading pass: only for open-ended exercise types where exact
+  // wording isn't the point (see AI_GRADABLE_EXERCISE_TYPES), only when the
+  // deterministic pass above already marked it wrong, and only when the
+  // learner has connected their own Anthropic key — this is an optional
+  // enhancement layered on top of grading that already works fully offline,
+  // never a replacement for it.
+  let aiAssisted = false;
+  let aiFeedback: string | undefined;
+  if (!isCorrect && input.response.trim() && AI_GRADABLE_EXERCISE_TYPES.includes(exercise.type as ExerciseType)) {
+    const learnerProfile = await prisma.learnerProfile.findUnique({ where: { userId: input.userId } });
+    if (learnerProfile?.anthropicApiKeyEncrypted && isSupportedModel(learnerProfile.anthropicModel)) {
+      try {
+        const apiKey = decryptSecret(learnerProfile.anthropicApiKeyEncrypted);
+        const aiGrade = await gradeWithAI({
+          apiKey,
+          model: learnerProfile.anthropicModel,
+          objective: exercise.objective,
+          prompt: exercise.prompt,
+          promptArabic: exercise.promptArabic,
+          expectedAnswer,
+          acceptedVariants,
+          explanation: exercise.explanation,
+          learnerResponse: input.response,
+        });
+        if (aiGrade) {
+          isCorrect = aiGrade.isCorrect;
+          score = Math.max(score, aiGrade.score);
+          aiAssisted = true;
+          aiFeedback = aiGrade.feedback;
+        }
+      } catch {
+        // Decryption or the Claude call failed — silently keep the deterministic grade.
+      }
+    }
   }
 
   await prisma.attempt.create({
@@ -187,5 +228,7 @@ export async function gradeAndRecordAttempt(input: GradeInput): Promise<GradeFee
     missedTerms,
     masteryLabel: label,
     misconceptionDetected,
+    aiAssisted,
+    aiFeedback,
   };
 }

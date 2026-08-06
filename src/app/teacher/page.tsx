@@ -3,7 +3,7 @@ import { requireOnboardedUser } from '@/lib/session';
 import NavShell from '@/components/NavShell';
 import TeacherChat from './TeacherChat';
 
-export default async function TeacherPage() {
+export default async function TeacherPage({ searchParams }: { searchParams: { q?: string } }) {
   const user = await requireOnboardedUser();
   const concepts = await prisma.concept.findMany({ orderBy: { order: 'asc' }, select: { code: true, title: true } });
 
@@ -15,7 +15,7 @@ export default async function TeacherPage() {
           Answers are grounded in this app's verified grammatical knowledge base — not an open-ended guess. When it
           isn't sure, it says so.
         </p>
-        <TeacherChat concepts={concepts} />
+        <TeacherChat concepts={concepts} initialQuestion={searchParams.q} />
       </div>
     </NavShell>
   );

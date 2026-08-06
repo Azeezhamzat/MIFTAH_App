@@ -47,6 +47,28 @@ export const EXERCISE_TYPES = [
 ] as const;
 export type ExerciseType = (typeof EXERCISE_TYPES)[number];
 
+// Exercise types whose expected answer is genuinely open-ended prose (an
+// explanation, a translation, a teach-back) rather than a specific word, case
+// ending, or form — these are the types where a strict/keyword-overlap match
+// unfairly marks a correctly-reasoned but differently-worded answer wrong,
+// so they're the ones eligible for the optional AI-assisted grading pass in
+// gradeAndRecordAttempt (src/lib/engine/grade.ts). Closed-form types like
+// identify_role or select_ending are deliberately excluded: for those, exact
+// wording IS the point (a case ending or role label has one correct name),
+// so a semantic-equivalence judgment would be the wrong kind of leniency.
+export const AI_GRADABLE_EXERCISE_TYPES: readonly ExerciseType[] = [
+  'transform_sentence',
+  'repair_error',
+  'translate_to_structure',
+  'compare_analyses',
+  'explain_rule',
+  'partial_irab',
+  'full_irab',
+  'analyze_passage',
+  'free_production',
+  'teach_back',
+];
+
 export const SESSION_LENGTHS = [3, 7, 15, 25, 45, 0] as const; // 0 = open study
 export type SessionLength = (typeof SESSION_LENGTHS)[number];
 

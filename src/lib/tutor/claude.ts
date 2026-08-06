@@ -136,6 +136,101 @@ export async function answerAsLivingTeacher(params: LivingTeacherParams): Promis
 }
 
 /**
+ * AI-assisted grading for open-ended exercises. This app's default grading
+ * (src/lib/grading.ts) is deterministic and offline-friendly by design —
+ * exact/variant match first, then a lenient keyword-overlap fallback — but a
+ * keyword-overlap check unavoidably marks a correctly-reasoned answer wrong
+ * when a learner phrases it in genuinely different words. Once a key is
+ * connected, this gives gradeAndRecordAttempt a way to ask Claude to judge
+ * semantic equivalence for exactly the exercise types where that's the right
+ * kind of leniency (AI_GRADABLE_EXERCISE_TYPES in src/lib/types.ts) — never
+ * for exercises whose answer IS a specific grammatical term or ending, where
+ * exact wording is the actual point.
+ *
+ * This keeps the same trust boundary as draftLessonWithClaude, not the
+ * unrestricted one answerAsLivingTeacher uses: Claude is given the already-
+ * verified expected answer and explanation and asked only to compare the
+ * learner's wording against it, never to independently decide what correct
+ * Arabic grammar is. Returns null (never throws) on any failure so callers
+ * always have the deterministic local grade to fall back to.
+ */
+
+export interface AIGradeParams {
+  apiKey: string;
+  model: SupportedAnthropicModel;
+  objective: string;
+  prompt: string;
+  promptArabic?: string | null;
+  expectedAnswer: string;
+  acceptedVariants: string[];
+  explanation: string;
+  learnerResponse: string;
+}
+
+export interface AIGradeResult {
+  isCorrect: boolean;
+  score: number;
+  feedback: string;
+}
+
+const GRADE_RESPONSE_TOOL: Anthropic.Tool = {
+  name: 'grade_response',
+  description: "Submit a grading judgment for a learner's free-text answer.",
+  input_schema: {
+    type: 'object',
+    properties: {
+      isCorrect: {
+        type: 'boolean',
+        description: "True if the learner's answer is semantically equivalent to the model answer — same grammatical claim, even if worded completely differently.",
+      },
+      score: { type: 'number', minimum: 0, maximum: 1, description: '0 = no relevant content or the wrong grammatical claim, 1 = fully equivalent to the model answer.' },
+      feedback: {
+        type: 'string',
+        description: "One or two sentences telling the learner specifically what their own answer got right or missed, compared to the model answer.",
+      },
+    },
+    required: ['isCorrect', 'score', 'feedback'],
+  },
+};
+
+export async function gradeWithAI(params: AIGradeParams): Promise<AIGradeResult | null> {
+  const { apiKey, model, objective, prompt, promptArabic, expectedAnswer, acceptedVariants, explanation, learnerResponse } = params;
+  const client = new Anthropic({ apiKey });
+
+  const systemPrompt = [
+    "You are grading one learner answer for an Arabic grammar exercise inside Miftāḥ.",
+    "Your ONLY job is to judge whether the learner's answer is semantically equivalent to the already-verified model answer below — you are not being asked to independently decide what is grammatically true, and you have no authority to overrule the model answer even if you believe a different analysis is also defensible.",
+    "Be lenient about wording, phrasing, which language they answered in, synonyms, and sentence structure. Be strict about the actual grammatical claim (case, role, root, pattern, meaning) being right — a well-written answer that names the wrong grammatical category is still wrong.",
+    '',
+    `Exercise objective: ${objective}`,
+    `Prompt: ${prompt}${promptArabic ? ` (${promptArabic})` : ''}`,
+    `Model answer: ${expectedAnswer}`,
+    acceptedVariants.length ? `Other accepted phrasings: ${acceptedVariants.join(' | ')}` : '',
+    `Why this is the correct answer: ${explanation}`,
+  ].filter(Boolean).join('\n');
+
+  try {
+    const response = await client.messages.create({
+      model,
+      max_tokens: 500,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: `Learner's answer: ${learnerResponse || '(blank)'}\n\nGrade it via the grade_response tool.` }],
+      tools: [GRADE_RESPONSE_TOOL],
+      tool_choice: { type: 'tool', name: 'grade_response' },
+    });
+
+    if (response.stop_reason === 'refusal') return null;
+    const toolUse = response.content.find((b): b is Anthropic.ToolUseBlock => b.type === 'tool_use' && b.name === 'grade_response');
+    if (!toolUse) return null;
+    const input = toolUse.input as Record<string, unknown>;
+    if (typeof input.isCorrect !== 'boolean' || typeof input.score !== 'number' || typeof input.feedback !== 'string') return null;
+    return { isCorrect: input.isCorrect, score: Math.max(0, Math.min(1, input.score)), feedback: input.feedback };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * AI-assisted lesson drafting. This is a fundamentally different trust
  * boundary from answerAsLivingTeacher above: a chat answer is ephemeral
  * advice the learner reads once, so this app's user has chosen to let it

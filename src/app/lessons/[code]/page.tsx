@@ -13,11 +13,6 @@ export default async function LessonPage({ params }: { params: { code: string } 
     include: {
       unit: { include: { domain: true } },
       concepts: { include: { concept: true } },
-      exercises: {
-        where: { status: 'published' },
-        include: { hints: { orderBy: { level: 'asc' } }, sentence: { include: { tokens: true } } },
-        orderBy: { order: 'asc' },
-      },
     },
   });
   // Draft lessons (e.g. AI-generated, pending review in /studio) are never
@@ -27,6 +22,28 @@ export default async function LessonPage({ params }: { params: { code: string } 
   const conceptIds = lesson.concepts.map((lc) => lc.conceptId);
   const relatedMisconceptions = await prisma.misconception.findMany({
     where: { concepts: { some: { conceptId: { in: conceptIds } } } },
+  });
+
+  // The Practice stage draws on every exercise hand-authored for THIS lesson,
+  // plus every concept-linked drill exercise (the ones seed.ts generates from
+  // the sentence bank, which carry a conceptId but no lessonId) for any
+  // concept this lesson teaches — not only the small hand-authored subset
+  // explicitly tagged with this lesson's code. Before this, that larger pool
+  // sat unused by the lesson flow (only reachable via /review or /offline),
+  // which is why lessons could feel like they rushed straight from a short
+  // explanation into just one or two exercises. Exercises hand-authored for a
+  // *different* lesson keep their own lessonId and are deliberately excluded
+  // here, so a lesson never borrows another lesson's specifically-written
+  // examples — only the shared, lesson-agnostic drill pool.
+  const MAX_PRACTICE_EXERCISES = 8;
+  const practiceExercises = await prisma.exercise.findMany({
+    where: {
+      status: 'published',
+      OR: [{ lessonId: lesson.id }, { lessonId: null, conceptId: { in: conceptIds } }],
+    },
+    include: { hints: { orderBy: { level: 'asc' } }, sentence: { include: { tokens: true } } },
+    orderBy: { order: 'asc' },
+    take: MAX_PRACTICE_EXERCISES,
   });
 
   const observeCodes = JSON.parse(lesson.observePrompt ?? '[]') as string[];
@@ -65,7 +82,7 @@ export default async function LessonPage({ params }: { params: { code: string } 
               translation: t.translation, explanation: t.explanation,
             })),
           })),
-          exercises: lesson.exercises.map((e) => ({
+          exercises: practiceExercises.map((e) => ({
             id: e.id, type: e.type, objective: e.objective, prompt: e.prompt, promptArabic: e.promptArabic,
             difficulty: e.difficulty, hints: e.hints.map((h) => ({ level: h.level, text: h.text })),
             choices: computeChoices(

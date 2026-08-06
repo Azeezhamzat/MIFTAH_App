@@ -23,7 +23,6 @@ export async function GET() {
       include: {
         unit: { include: { domain: true } },
         concepts: { include: { concept: true } },
-        exercises: { where: { status: 'published' }, select: { id: true } },
       },
       orderBy: { order: 'asc' },
     }),
@@ -33,6 +32,37 @@ export async function GET() {
       orderBy: { order: 'asc' },
     }),
   ]);
+
+  // Mirrors the online lesson page's practice-pool logic (see
+  // src/app/lessons/[code]/page.tsx): a lesson's practice set is every
+  // exercise hand-authored for it, plus the shared, lesson-agnostic
+  // concept-linked drill pool, capped so offline practice matches what the
+  // online lesson player shows.
+  const MAX_PRACTICE_EXERCISES = 8;
+  const exercisesByLessonId = new Map<string, typeof exercises>();
+  const exercisesByConceptIdUnassigned = new Map<string, typeof exercises>();
+  for (const e of exercises) {
+    if (e.lessonId) {
+      const list = exercisesByLessonId.get(e.lessonId) ?? [];
+      list.push(e);
+      exercisesByLessonId.set(e.lessonId, list);
+    } else {
+      const list = exercisesByConceptIdUnassigned.get(e.conceptId) ?? [];
+      list.push(e);
+      exercisesByConceptIdUnassigned.set(e.conceptId, list);
+    }
+  }
+  function practiceExerciseIdsForLesson(lesson: (typeof lessons)[number]): string[] {
+    const conceptIds = lesson.concepts.map((lc) => lc.conceptId);
+    const pool = [
+      ...(exercisesByLessonId.get(lesson.id) ?? []),
+      ...conceptIds.flatMap((cid) => exercisesByConceptIdUnassigned.get(cid) ?? []),
+    ];
+    return Array.from(new Map(pool.map((e) => [e.id, e])).values())
+      .sort((a, b) => a.order - b.order)
+      .slice(0, MAX_PRACTICE_EXERCISES)
+      .map((e) => e.id);
+  }
 
   const sentenceCodes = Array.from(
     new Set(lessons.flatMap((l) => JSON.parse(l.observePrompt ?? '[]') as string[])),
@@ -87,7 +117,7 @@ export async function GET() {
             translation: t.translation, explanation: t.explanation,
           })),
         })),
-      exerciseIds: l.exercises.map((e) => e.id),
+      exerciseIds: practiceExerciseIdsForLesson(l),
     };
   });
 

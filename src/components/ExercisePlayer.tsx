@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import ArabicText from '@/components/ArabicText';
 import { gradeShortAnswer, gradeFreeText } from '@/lib/grading';
+import { AI_GRADABLE_EXERCISE_TYPES, type ExerciseType } from '@/lib/types';
 import type { OfflineGradingData } from '@/lib/offline/types';
 
 export interface ExerciseForPlayer {
@@ -25,6 +27,8 @@ interface Feedback {
   invalidPlausible: { answer: string; why: string }[];
   masteryLabel: string;
   misconceptionDetected: { code: string; title: string } | null;
+  aiAssisted?: boolean;
+  aiFeedback?: string;
 }
 
 export default function ExercisePlayer({
@@ -180,6 +184,29 @@ export default function ExercisePlayer({
             <p className="text-xs uppercase tracking-wide text-ink-400 mb-1">Why</p>
             <p className="text-sm text-ink-700 dark:text-ink-200">{feedback.explanation}</p>
           </div>
+
+          {feedback.aiFeedback && (
+            <div className="rounded-lg bg-indigo-50 dark:bg-indigo-900/30 px-4 py-3">
+              <p className="text-xs uppercase tracking-wide text-indigo-700 dark:text-indigo-300 mb-1">AI-assisted grading</p>
+              <p className="text-sm text-ink-700 dark:text-ink-200">{feedback.aiFeedback}</p>
+            </div>
+          )}
+
+          {!feedback.isCorrect && !feedback.aiAssisted && AI_GRADABLE_EXERCISE_TYPES.includes(exercise.type as ExerciseType) && (
+            <p className="text-xs text-ink-400">
+              If your answer captures the same idea in different words, connect an Anthropic key in Settings for
+              AI-assisted grading of open-ended answers like this one.
+            </p>
+          )}
+
+          {!feedback.isCorrect && (
+            <Link
+              href={`/teacher?q=${encodeURIComponent(`I answered "${response || '(blank)'}" for this exercise: ${exercise.prompt} — why is that wrong, and what's the reasoning behind the correct answer?`)}`}
+              className="inline-block text-sm text-indigo-700 dark:text-indigo-300 font-medium"
+            >
+              Ask the Living Teacher about this →
+            </Link>
+          )}
 
           {feedback.invalidPlausible.length > 0 && (
             <div>

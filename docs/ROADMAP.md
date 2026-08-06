@@ -37,7 +37,7 @@ a real seeded database — not mocked.
 ## Known gaps, and why they're gaps rather than architecture limits
 
 1. **Content volume below the spec's stretch targets, though narrowed since the initial build.** Seeded: 40
-   concepts (target: full domain coverage — met), 37 lessons (target ≥30 — met), 230 exercises — 106 hand-authored
+   concepts (target: full domain coverage — met), 37 lessons (target ≥30 — met), 235 exercises — 111 hand-authored
    plus 124 algorithmically generated from the sentence bank (target ≥250 — partial, up from 185), 62
    fully-annotated sentences (target ≥100 — partial, up from 47), 34 roots (target ≥25 — met). The remaining gap
    is entirely in hand-authoring volume for exercises and sentences, which is genuinely slow to do well (each
@@ -104,6 +104,39 @@ a real seeded database — not mocked.
     (`src/lib/offline/types.ts`, `src/app/api/offline/bundle/route.ts`) for parity. This addresses explanation
     *depth* specifically; content *breadth* (item 1 above), the AI tutor experience, and overall visual polish were
     not in scope for this round and remain open if that turns out to be what "still not deep" actually meant.
+11. **A third, specific round of feedback named exactly what "still deep" had left out — thin lessons that rush to
+    testing, exact-wording grading, and an AI confined to one chat page — and each was traced to a concrete,
+    verifiable cause rather than answered with more polish.**
+    - *Lessons rush from a short explanation to testing*: turned out to be a real query bug, not a content problem.
+      The Practice stage only ever queried exercises hand-authored *for that specific lesson*
+      (`Exercise.lessonId`), silently ignoring the much larger pool of concept-linked drill exercises `seed.ts`
+      already generates from the sentence bank (`conceptId` set, `lessonId` null) — reachable from `/review` and
+      `/offline` but never from the lesson itself. 11 of 37 lessons had only 1–2 practice items as a result; the
+      average was 2.8. `src/app/lessons/[code]/page.tsx` (mirrored in the offline bundle route) now pulls a
+      lesson's full concept-linked pool, not only its own subset, capped at 8 per sitting — the new floor is 3 and
+      the average is 6.2. A genuine remaining content gap under three of the thinnest concepts (Form I verbs,
+      doubled verbs, what makes an utterance complete) got 1–2 newly hand-authored exercises each so the floor
+      wasn't just "3, but two of them are duplicates of the same idea."
+    - *Exact-wording grading marking correct paraphrases as "0% match"*: the deterministic grader
+      (`src/lib/grading.ts`) is unchanged and still the entire experience offline — it was never going to stop
+      being exact/variant-match-first, since that's what keeps grading working with no network and no API key. What
+      changed is `gradeAndRecordAttempt` (`src/lib/engine/grade.ts`) now has an optional second pass: for exercise
+      types whose answer is genuine prose (`AI_GRADABLE_EXERCISE_TYPES` in `src/lib/types.ts` —
+      `explain_rule`, `teach_back`, `analyze_passage`, `free_production`, and similar), if the deterministic grade
+      says wrong and a key is connected, Claude judges semantic equivalence against the already-verified expected
+      answer (`gradeWithAI` in `src/lib/tutor/claude.ts`) — the same grounded-comparison trust boundary
+      `draftLessonWithClaude` uses, not the unrestricted one the chat uses. Exercise types where the answer *is* a
+      specific case ending or role label are deliberately excluded from this — there, exact wording is correct to
+      require.
+    - *AI limited to the Living Teacher, not integrated elsewhere*: the grading pass above is itself a second,
+      learner-facing AI touchpoint. A third was added alongside it: every wrong exercise answer now shows an
+      "Ask the Living Teacher about this →" link that opens `/teacher` with a prefilled question naming the exact
+      exercise and the learner's own answer, instead of leaving them to retype the context from scratch on a
+      separate page. AI-assisted lesson drafting (`/studio`) already existed as a fourth, non-learner-facing
+      touchpoint — so "only the Living Teacher" was accurate before this round and isn't now.
+    
+    Content breadth beyond these targeted additions (the full 250-exercise/100-sentence curriculum) remains the
+    larger, honestly-unfinished item — see item 1.
 
 ## Suggested Phase 5/6 order (if continuing this project)
 

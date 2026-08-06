@@ -7,7 +7,7 @@ adult learner — built around discovery-based lessons, four signature laborator
 conversational tutor, an explainable mastery and spaced-review engine, and a personalized misconception clinic.
 
 This is a real, running application with a seeded curriculum, not a mockup: 40 concepts, 37 lessons, 62 fully
-annotated Arabic sentences, 34 roots, 23 morphological patterns, 85 lexemes, 230 exercises, 15 tracked
+annotated Arabic sentences, 34 roots, 23 morphological patterns, 85 lexemes, 235 exercises, 15 tracked
 misconceptions, an 18-question adaptive placement assessment, and 3 connected reading passages, all backed by a
 real database and a real mastery/spaced-repetition engine.
 
@@ -71,14 +71,14 @@ installers for you on GitHub's own native runners, if you don't have Windows/Mac
 | Daily dashboard (8 key questions from the spec) | ✅ Functional |
 | Lesson catalog (`/lessons` — pick any of the 37 lessons directly, no gating) | ✅ Functional |
 | Lesson player (Observe → Discover → Explain → Practice → Reflect, with a word-by-word grammatical breakdown, a "Common mistakes" section drawn from the misconception bank, and a full "Go deeper" explanation for every one of the 37 lessons) | ✅ Functional |
-| Exercise engine (20 exercise types, hint ladders, rich feedback, click-to-answer for identify_role/identify_governor/select_ending exercises) | ✅ Functional |
+| Exercise engine (20 exercise types, hint ladders, rich feedback, click-to-answer for identify_role/identify_governor/select_ending exercises, a lesson's Practice stage now draws on its full concept-linked exercise pool — not only exercises hand-authored for that specific lesson — capped at 8 per sitting) | ✅ Functional |
 | Mastery model (6 dimensions, humane labels, explainable) | ✅ Functional |
 | Spaced review scheduler (SM-2-derived, same-day guard) | ✅ Functional |
 | Misconception Clinic (detection, repair loop, retest) | ✅ Functional |
 | Iʿrāb X-Ray (full token inspector, dependencies, reason-from-scratch) | ✅ Functional |
 | Sentence Laboratory (real transformation families, break-the-sentence) | ✅ Functional |
 | Morphology Forge (root+pattern composition, verified vs. mechanical) | ✅ Functional |
-| Living Teacher (grounded by default; unrestricted Claude when a key is connected) | ✅ Functional |
+| Living Teacher (grounded by default; unrestricted Claude when a key is connected) — Claude is no longer confined to this one chat surface: it also optionally grades paraphrased open-ended exercise answers, and a wrong answer links straight into a prefilled Living Teacher question | ✅ Functional |
 | Grammar Constellation (interactive prerequisite graph) | ✅ Functional |
 | Reading Library (3 passages, vocab preview, comprehension, syntax map) | ✅ Functional |
 | Root & vocabulary notebook | ✅ Functional |
@@ -136,6 +136,33 @@ accessibility primitives (focus rings, high-contrast mode, combining-mark handli
   app already has full per-token role/case/marker/explanation data (originally built for the Iʿrāb X-Ray tool);
   the Explain stage of every lesson now surfaces that same analysis inline, so depth didn't require re-authoring
   37 lessons' worth of new prose — it required surfacing data that already existed but wasn't shown there before.
+- **"Lessons rush from a short explanation straight to testing" traced to a real query bug, not a content-depth
+  problem — most of the practice content already existed and simply wasn't being shown.** A direct count found the
+  curriculum held 230+ exercises, but a lesson's Practice stage only ever queried exercises explicitly authored
+  *for that specific lesson* (`Exercise.lessonId`) — ignoring the larger pool of concept-linked drill exercises
+  `prisma/seed.ts` generates from the sentence bank, which carry a `conceptId` but no `lessonId` and were only ever
+  reachable from `/review` or `/offline`. 11 of the 37 lessons had just 1–2 practice items because of this; the
+  average across all lessons was 2.8. The Practice stage (`src/app/lessons/[code]/page.tsx`, mirrored in the
+  offline bundle) now pulls every exercise tagged with the lesson's own concepts, not only the lesson-specific
+  subset — capped at 8 per sitting so the longest concept pools don't turn into a marathon. The new floor is 3 and
+  the average is 6.2; a few of the very thinnest concepts (Form I verbs, doubled verbs, what makes an utterance
+  complete) had a real content gap underneath the query bug too and got 1–2 newly hand-authored exercises each to
+  clear a minimum of 3.
+- **Exact-wording grading on open-ended exercises now has an optional AI-assisted second pass, not just a
+  keyword-overlap fallback.** The deterministic grader (`src/lib/grading.ts`) still runs first and still works
+  fully offline — exact/variant match, then a keyword-overlap check — but a keyword check will mark a genuinely
+  correct, differently-worded explanation as a "0% match." For the exercise types where the answer is real prose
+  rather than a specific grammatical term (`explain_rule`, `teach_back`, `analyze_passage`, `free_production`, and
+  similarly open-ended types — see `AI_GRADABLE_EXERCISE_TYPES` in `src/lib/types.ts`), if the deterministic grade
+  comes back wrong and the learner has connected their own Anthropic key, `gradeAndRecordAttempt`
+  (`src/lib/engine/grade.ts`) asks Claude to judge semantic equivalence against the already-verified expected
+  answer — the same "compare to verified truth, don't invent new truth" trust boundary `draftLessonWithClaude`
+  already uses, not the unrestricted one the chat uses. Exercise types where the answer *is* a specific case
+  ending, role label, or form (`identify_role`, `select_ending`, `complete_paradigm`, etc.) are deliberately
+  excluded — there, exact wording is the actual point, and AI leniency would be the wrong kind of leniency. This
+  is also the first place in the app besides the Living Teacher chat where a connected key does something: each
+  wrong answer on an exercise now also links straight to a prefilled Living Teacher question about that specific
+  mistake (`Ask the Living Teacher about this →`), so the tutor isn't a separate, undiscoverable page anymore.
 - **No external LLM by default; unrestricted by explicit choice once a key is connected.** With no key, the Living
   Teacher is a grounded rule/knowledge-base engine, not a call to an LLM API — it never hallucinates a grammatical
   claim, but its range is bounded by the curriculum's knowledge base, and it says so explicitly when a question
