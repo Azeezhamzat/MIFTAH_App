@@ -28,7 +28,7 @@ export const lessons: LessonSeed[] = [
     order: 1,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-word-classes', role: 'introduces' }],
-    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'verb-01-basic-vso', 'nom-04-khabar-shibh-jumla'],
+    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'verb-01-basic-vso', 'nom-04-khabar-shibh-jumla', 'verb-15-word-classes-mixed'],
     discoveryPrompt:
       'Look at الطَّالِبُ, مُجْتَهِدٌ, كَتَبَ, and عَلَى across these three sentences. Two of these words could be pointed at and asked "what is it?" One describes an action locked to a time. One means nothing at all until it attaches to something else. Sort all four into three piles before reading on.',
     microExplanation:
@@ -48,7 +48,7 @@ export const lessons: LessonSeed[] = [
       { conceptCode: 'c-complete-utterance', role: 'introduces' },
       { conceptCode: 'c-nominal-vs-verbal', role: 'introduces' },
     ],
-    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'verb-01-basic-vso'],
+    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'verb-01-basic-vso', 'nom-13-nominal-with-verbal-khabar'],
     discoveryPrompt:
       'الطَّالِبُ مُجْتَهِدٌ and كَتَبَ الطَّالِبُ الدَّرْسَ both leave you satisfied — nothing more is needed. What is the very first word of each? Is it the same kind of word in both?',
     microExplanation:
@@ -65,7 +65,7 @@ export const lessons: LessonSeed[] = [
     order: 1,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-demonstratives', role: 'introduces' }],
-    observeSentenceCodes: ['nom-02-demonstrative-indefinite-khabar', 'nom-03-demonstrative-feminine-adjective'],
+    observeSentenceCodes: ['nom-02-demonstrative-indefinite-khabar', 'nom-03-demonstrative-feminine-adjective', 'nom-18-demonstrative-plural', 'nom-22-demonstrative-dual'],
     discoveryPrompt: 'هَذَا كِتَابٌ vs. هَذِهِ الْمَدْرَسَةُ جَمِيلَةٌ — what changes about the pointing word, and why, given كِتَاب is masculine and مَدْرَسَة is feminine?',
     microExplanation:
       'هذا (m.), هذه (f.), هذان/هاتان (dual), and هؤلاء (plural) point at something instead of naming it, and must agree with what they point at in gender and number. They are built words (مبني): they never change ending for case, even though a case role is still assigned to them.',
@@ -81,7 +81,7 @@ export const lessons: LessonSeed[] = [
     order: 2,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-personal-pronouns', role: 'introduces' }],
-    observeSentenceCodes: ['case-02-accusative-triplet', 'verb-04-fronted-subject-full-agreement'],
+    observeSentenceCodes: ['nom-09-pronoun-mubtada-plural-khabar', 'verb-14-attached-object-pronoun'],
     discoveryPrompt: 'رَأَيْتُ ends in ـتُ, and كَتَبُوا ends in ـوا. Neither sentence has a separate word for "I" or "they." Where did those meanings go?',
     microExplanation:
       'Arabic distinguishes gender in "you" and "they" where English does not, and marks person, gender, and number on attached pronoun suffixes fused directly onto verbs — ـتُ ("I"), ـوا ("they, m."). Detached pronouns (أنا، هو، هي، أنتَ، أنتِ، نحن، هم، هنّ) are used mainly when no verb is present to carry that information, or for emphasis.',
@@ -100,7 +100,7 @@ export const lessons: LessonSeed[] = [
       { conceptCode: 'c-questions', role: 'introduces' },
       { conceptCode: 'c-negation-basic', role: 'introduces' },
     ],
-    observeSentenceCodes: ['part-05-laysa-negation'],
+    observeSentenceCodes: ['nom-10-interrogative-khabar-muqaddam', 'part-05-laysa-negation'],
     discoveryPrompt: 'لَيْسَ الطَّالِبُ غَائِبًا — غَائِبًا is accusative, yet nothing "did" anything to it. What kind of word could reach in and change a noun\'s case without being a preposition or a verb of action?',
     microExplanation:
       'هل and أَ ask yes/no questions without reordering the sentence; مَن، ما/ماذا، أين، متى، كيف، كم ask for specific information and take on a grammatical role inside the sentence they open. Of the three negators, لا and ما negate plainly, while ليس is grammatically a verb that pushes a nominal sentence\'s predicate into the accusative — your first hint that "government" is coming.',
@@ -116,7 +116,7 @@ export const lessons: LessonSeed[] = [
     order: 4,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-prepositional-phrase', role: 'introduces' }],
-    observeSentenceCodes: ['nom-04-khabar-shibh-jumla', 'nom-08-plural-mubtada-shibh-jumla'],
+    observeSentenceCodes: ['nom-04-khabar-shibh-jumla', 'nom-08-plural-mubtada-shibh-jumla', 'pass-05-book-found'],
     discoveryPrompt: 'عَلَى الطَّاوِلَةِ and فِي الْفَصْلِ: both nouns end in kasrah. Both follow a particle. Coincidence?',
     microExplanation:
       'A preposition (حرف جر) always forces the following noun into the genitive — this is grammatical government (العامل) in its simplest, most reliable form. The whole pair (جار ومجرور) then behaves as a single unit that can serve as a khabar, an adjective-equivalent, or other roles.',
@@ -132,7 +132,7 @@ export const lessons: LessonSeed[] = [
     order: 1,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-mubtada-khabar', role: 'introduces' }],
-    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'nom-02-demonstrative-indefinite-khabar'],
+    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'nom-02-demonstrative-indefinite-khabar', 'nom-14-mubtada-khabar-feminine'],
     discoveryPrompt: 'In الطَّالِبُ مُجْتَهِدٌ, which word is the sentence "about," and which word tells you something new about it? Check both words\' final vowel — what do you notice?',
     microExplanation:
       'The مبتدأ is the noun the sentence is about — typically definite, typically first. The خبر is what is said about it. Both are nominative by default. Every later complication in the nominal sentence (إنّ, كان, fronting, omission) is defined relative to this pair.',
@@ -148,7 +148,7 @@ export const lessons: LessonSeed[] = [
     order: 2,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-khabar-types', role: 'introduces' }],
-    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'nom-04-khabar-shibh-jumla', 'part-04-kana-imperfect'],
+    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'nom-04-khabar-shibh-jumla', 'part-04-kana-imperfect', 'nom-15-khabar-zarf', 'nom-20-khabar-types-verbal-sentence'],
     discoveryPrompt: 'Compare the خبر in all three example sentences: مُجْتَهِدٌ, عَلَى الطَّاوِلَةِ, and يَكْتُبُ الدَّرْسَ. Which one is a single word? Which is a phrase? Which is a whole miniature sentence?',
     microExplanation:
       'A خبر can be a single word (مفرد), a prepositional phrase (شبه جملة), or a full embedded sentence (جملة) with its own internal فاعل/مفعول أو مبتدأ/خبر — while still, as a whole, doing one job: being predicated of the mubtada.',
@@ -164,7 +164,7 @@ export const lessons: LessonSeed[] = [
     order: 3,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-definiteness', role: 'introduces' }],
-    observeSentenceCodes: ['nom-06-idafa-basic', 'case-08-diptote-genitive'],
+    observeSentenceCodes: ['nom-06-idafa-basic', 'case-08-diptote-genitive', 'nom-16-definiteness-via-idafa', 'nom-21-definiteness-fronted-khabar'],
     discoveryPrompt: 'كِتَابُ الطَّالِبِ is "the student\'s book" — definite — but neither word carries ال. Where did "the" come from?',
     microExplanation:
       'A noun becomes definite with ال, as a proper name, as a pronoun, as a demonstrative\'s referent, as a relative noun, or — critically — by being the first term of an إضافة whose second term is already definite. Anything else is indefinite (نكرة).',
@@ -180,7 +180,7 @@ export const lessons: LessonSeed[] = [
     order: 4,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-adjective-agreement', role: 'introduces' }],
-    observeSentenceCodes: ['nom-05-adjective-agreement-definite', 'nom-01-mubtada-khabar-basic'],
+    observeSentenceCodes: ['nom-05-adjective-agreement-definite', 'nom-01-mubtada-khabar-basic', 'pass-04-heard-strange-sound', 'nom-17-attributive-adjective'],
     discoveryPrompt: 'الطَّالِبُ الْمُجْتَهِدُ حَاضِرٌ has three nominative words in a row, but only two of them form a matched pair. Which two, and on how many features do they match?',
     microExplanation:
       'A نعت agrees with its noun in gender, number, definiteness, and case — all four simultaneously. Contrast this with a خبر (as in nom-01), which only shares case with its mubtada, not definiteness: مُجْتَهِدٌ can be indefinite while الطالب is definite, because خبر and نعت are different jobs with different agreement rules.',
@@ -196,7 +196,7 @@ export const lessons: LessonSeed[] = [
     order: 5,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-idafa', role: 'introduces' }],
-    observeSentenceCodes: ['nom-06-idafa-basic', 'nom-07-idafa-passive-participle-khabar'],
+    observeSentenceCodes: ['nom-06-idafa-basic', 'nom-07-idafa-passive-participle-khabar', 'nom-12-idafa-chain', 'nom-23-idafa-pronoun'],
     discoveryPrompt: 'كِتَابُ الطَّالِبِ has no تنوين on كتاب and no ال on either word, yet the whole phrase is definite. Try adding ال to كتاب — native intuition (and the rule) says you cannot. Why not?',
     microExplanation:
       'Two nouns in a row form an إضافة: the first (المضاف) never takes ال or تنوين, and the second (المضاف إليه) is always genitive and supplies the whole phrase\'s definiteness. This has no direct English equivalent — English\'s "the student\'s book" marks definiteness once, on "the," while Arabic marks it structurally, through position.',
@@ -215,7 +215,7 @@ export const lessons: LessonSeed[] = [
       { conceptCode: 'c-gender-number-of-nouns', role: 'introduces' },
       { conceptCode: 'c-dual-and-sound-plurals', role: 'introduces' },
     ],
-    observeSentenceCodes: ['case-04-dual-predicate', 'case-05-dual-accusative', 'case-06-sound-plural-predicate', 'case-07-sound-plural-accusative'],
+    observeSentenceCodes: ['case-04-dual-predicate', 'case-05-dual-accusative', 'case-06-sound-plural-predicate', 'case-07-sound-plural-accusative', 'nom-11-dual-teachers-busy', 'case-10-sound-feminine-plural-accusative'],
     discoveryPrompt: 'الطَّالِبَانِ (nominative) vs. الطَّالِبَيْنِ (accusative) — and الْمُعَلِّمُونَ vs. الْمُعَلِّمِينَ. What part of the word is changing? Is it the same kind of change you\'ve seen on singular nouns?',
     microExplanation:
       'The dual marks case with ـَانِ (nominative) vs. ـَيْنِ (accusative/genitive combined); the sound masculine plural marks it with ـُونَ vs. ـِينَ. These are secondary markers — a different mechanism from a singular noun\'s short-vowel change, but still fully regular and predictable.',
@@ -231,7 +231,7 @@ export const lessons: LessonSeed[] = [
     order: 7,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-inna-wa-akhawatuha', role: 'introduces' }],
-    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'part-01-inna-basic', 'part-02-lakinna-contrast'],
+    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'part-01-inna-basic', 'part-02-lakinna-contrast', 'part-08-laalla-hope'],
     discoveryPrompt: 'الطَّالِبُ مُجْتَهِدٌ vs. إِنَّ الطَّالِبَ مُجْتَهِدٌ — track the ending on الطالب across both sentences. What changed, and what did not?',
     microExplanation:
       'إنّ، أنّ، كأنّ، لكنّ، ليت، لعلّ push the following noun (now called اسم إنّ) into the accusative, while the predicate (خبر إنّ) stays nominative. This is grammatical government reaching into a sentence type — the nominal sentence — that otherwise has no verb to do the governing.',
@@ -247,7 +247,7 @@ export const lessons: LessonSeed[] = [
     order: 8,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-kana-wa-akhawatuha', role: 'introduces' }],
-    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'part-03-kana-basic', 'part-05-laysa-negation', 'part-06-maa-zaala'],
+    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'part-03-kana-basic', 'part-05-laysa-negation', 'part-06-maa-zaala', 'part-07-asbaha-weather-cold', 'part-09-kana-feminine-agreement'],
     discoveryPrompt: 'الطَّالِبُ مُجْتَهِدٌ vs. كَانَ الطَّالِبُ مُجْتَهِدًا — this time track مُجْتَهِدٌ/مُجْتَهِدًا. Compare with what إنّ did in the previous lesson: same target, or different?',
     microExplanation:
       'كان، أصبح، ظلّ، أمسى، بات، صار، ما زال، ليس keep the subject (اسم كان) nominative but push the predicate (خبر كان) into the accusative — the reverse of إنّ\'s target. Contrasting the two side by side is the fastest way to stop confusing which governor touches which word.',
@@ -263,7 +263,7 @@ export const lessons: LessonSeed[] = [
     order: 1,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-fi-l-fa-il', role: 'introduces' }],
-    observeSentenceCodes: ['verb-01-basic-vso', 'verb-07-intransitive-no-object'],
+    observeSentenceCodes: ['verb-01-basic-vso', 'verb-07-intransitive-no-object', 'verb-16-simple-vs-laugh'],
     discoveryPrompt: 'كَتَبَ الطَّالِبُ الدَّرْسَ — in English word order this reads "wrote the-student the-lesson." Which word is doing the writing? How do you know, if not from position?',
     microExplanation:
       'In a verbal sentence, the فاعل is whoever performs the action, and it is always nominative — regardless of position, and regardless of what an English translation\'s word order might suggest. Arabic sentences default to verb-first order, so the very first noun after the verb is usually, but not definitionally, the فاعل.',
@@ -279,7 +279,7 @@ export const lessons: LessonSeed[] = [
     order: 2,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-verb-subject-agreement', role: 'introduces' }],
-    observeSentenceCodes: ['verb-01-basic-vso', 'verb-02-dual-subject-singular-verb', 'verb-03-plural-subject-singular-verb', 'verb-04-fronted-subject-full-agreement'],
+    observeSentenceCodes: ['verb-01-basic-vso', 'verb-02-dual-subject-singular-verb', 'verb-03-plural-subject-singular-verb', 'verb-04-fronted-subject-full-agreement', 'verb-17-sound-fem-plural-agreement'],
     discoveryPrompt: 'كَتَبَ stays exactly the same in all three of the first sentences, even though the فاعل changes from singular to dual to plural. Then in the fourth sentence, the verb suddenly becomes كَتَبُوا. What changed about the sentence itself, not just the noun?',
     microExplanation:
       'A verb before its فاعل stays grammatically singular no matter the فاعل\'s real number (though it still agrees in gender). Once the subject is fronted, the sentence becomes structurally nominal with an embedded verbal khabar, and that embedded verb carries its own attached pronoun, which does fully agree.',
@@ -295,7 +295,7 @@ export const lessons: LessonSeed[] = [
     order: 3,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-maful-bihi', role: 'introduces' }],
-    observeSentenceCodes: ['verb-01-basic-vso', 'verb-07-intransitive-no-object', 'verb-10-ditransitive'],
+    observeSentenceCodes: ['verb-01-basic-vso', 'verb-07-intransitive-no-object', 'verb-10-ditransitive', 'verb-18-maful-apple'],
     discoveryPrompt: 'جَلَسَ الْوَلَدُ has no object at all, while أَعْطَى الْمُعَلِّمُ الطَّالِبَ كِتَابًا has two. What decides whether a verb needs، allows, or forbids a مفعول به?',
     microExplanation:
       'A transitive verb\'s مفعول به is accusative — the thing acted upon. Some verbs are intransitive (لازم) and take none; a few take two, both marked identically as accusative even when one maps to an English indirect object.',
@@ -311,7 +311,7 @@ export const lessons: LessonSeed[] = [
     order: 4,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-passive-voice', role: 'introduces' }],
-    observeSentenceCodes: ['verb-01-basic-vso', 'pass-01-anchor'],
+    observeSentenceCodes: ['verb-01-basic-vso', 'pass-01-anchor', 'pass-02-door-opened', 'pass-03-two-object-verb-passive'],
     discoveryPrompt: 'كَتَبَ الطَّالِبُ الدَّرْسَ becomes كُتِبَ الدَّرْسُ. الدَّرْسَ was accusative; الدَّرْسُ is nominative. Did its meaning in the sentence change, or just its grammatical role?',
     microExplanation:
       'When the agent is unknown, unimportant, or hidden on purpose, the verb\'s internal vowels shift and the former مفعول به is promoted to نائب الفاعل — nominative, exactly like a real فاعل — even though it is still semantically the one acted upon. Case tracks syntactic role, not real-world meaning.',
@@ -327,7 +327,7 @@ export const lessons: LessonSeed[] = [
     order: 1,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-irab-concept', role: 'introduces' }],
-    observeSentenceCodes: ['case-01-nominative-triplet', 'case-02-accusative-triplet', 'case-03-genitive-triplet'],
+    observeSentenceCodes: ['case-01-nominative-triplet', 'case-02-accusative-triplet', 'case-03-genitive-triplet', 'case-11-irab-concept-mixed'],
     discoveryPrompt: 'الطَّالِبُ، الطَّالِبَ، الطَّالِبِ — same word, three different endings, across three sentences. What changed between the sentences that could explain each ending?',
     microExplanation:
       'إعراب is the system by which a word\'s ending changes to reveal its grammatical role — the ending is evidence of the role, not the rule itself. Most nouns and present-tense verbs change this way (معرب); a smaller set of words never change regardless of role (مبني).',
@@ -343,7 +343,7 @@ export const lessons: LessonSeed[] = [
     order: 2,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-three-cases', role: 'reinforces' }],
-    observeSentenceCodes: ['verb-01-basic-vso', 'nom-04-khabar-shibh-jumla'],
+    observeSentenceCodes: ['verb-01-basic-vso', 'nom-04-khabar-shibh-jumla', 'case-12-three-cases-coffee'],
     discoveryPrompt: 'List every role you have learned so far — مبتدأ، خبر، فاعل، مفعول به، مجرور بحرف جر. Which case does each one live in by default?',
     microExplanation:
       'رفع is the default state, home to مبتدأ، خبر، and فاعل. نصب is the state a governor imposes, most often on مفعول به. جر only ever happens after a preposition or as a مضاف إليه. Once you can name a word\'s role, its case is a lookup, not a guess.',
@@ -359,7 +359,7 @@ export const lessons: LessonSeed[] = [
     order: 3,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-marker-types', role: 'introduces' }],
-    observeSentenceCodes: ['case-01-nominative-triplet', 'case-04-dual-predicate', 'case-08-diptote-genitive'],
+    observeSentenceCodes: ['case-01-nominative-triplet', 'case-04-dual-predicate', 'case-08-diptote-genitive', 'case-13-estimated-marker-fatan', 'case-15-sound-masc-plural-marker'],
     discoveryPrompt: 'الطَّالِبُ shows case with a short vowel. الطَّالِبَانِ shows it with a whole suffix. مِصْرَ shows genitive with the "wrong" vowel and no تنوين at all. Are all three of these "exceptions," or is something more organized going on?',
     microExplanation:
       'A visible marker is an ordinary short vowel. A secondary marker is a dedicated suffix, as with duals and sound plurals. An estimated marker means the case is grammatically present but cannot be physically pronounced — most often because the noun\'s final letter cannot carry a short vowel at all.',
@@ -375,7 +375,7 @@ export const lessons: LessonSeed[] = [
     order: 4,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-diptotes', role: 'introduces' }],
-    observeSentenceCodes: ['case-08-diptote-genitive'],
+    observeSentenceCodes: ['case-08-diptote-genitive', 'case-09-diptote-broken-plural-genitive', 'case-14-diptote-proper-noun'],
     discoveryPrompt: 'سَافَرْتُ إِلَى مِصْرَ — إلى should govern a genitive, which should show as kasrah. It doesn\'t. Is this a mistake, or a rule you haven\'t met yet?',
     microExplanation:
       'Diptotes — many proper names, the أَفْعَل/فَعْلَاء pattern family, and certain broken plurals — take فتحة for both accusative and genitive, and never take تنوين. This is a fixed, learnable list of shapes, not a random irregularity.',
@@ -391,7 +391,7 @@ export const lessons: LessonSeed[] = [
     order: 1,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-root-and-pattern', role: 'introduces' }],
-    observeSentenceCodes: ['morph-01-form2-causative', 'nom-06-idafa-basic'],
+    observeSentenceCodes: ['morph-01-form2-causative', 'nom-06-idafa-basic', 'morph-13-root-pattern-triple', 'morph-19-root-pattern-daras'],
     discoveryPrompt: 'كَاتِب، مَكْتُوب، كِتَابَة، مَكْتَب all share ك ت ب but sound and mean different things. What is staying constant, and what is changing?',
     microExplanation:
       'Almost every Arabic word is built from a root of (usually) three consonants carrying a core meaning, poured into a pattern that adds grammatical shape and a fairly predictable derivational meaning. Learning to extract the root and recognize the pattern turns an unfamiliar word into something decodable.',
@@ -407,7 +407,7 @@ export const lessons: LessonSeed[] = [
     order: 2,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-form-i-verb', role: 'introduces' }],
-    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'nom-07-idafa-passive-participle-khabar'],
+    observeSentenceCodes: ['nom-01-mubtada-khabar-basic', 'nom-07-idafa-passive-participle-khabar', 'morph-10-assimilated'],
     discoveryPrompt: 'كَتَبَ، كَاتِب، مَكْتُوب، كِتَابَة — one verb and three related nouns. What job does each one do in a sentence?',
     microExplanation:
       'Form I is the bare, underived verb a root starts from. From it come the active participle (فَاعِل — the doer), the passive participle (مَفْعُول — the one acted upon), and a مصدر whose exact shape must be learned per verb (unlike the derived forms, whose مصادر are far more predictable).',
@@ -423,7 +423,7 @@ export const lessons: LessonSeed[] = [
     order: 3,
     estimatedMinutes: 25,
     concepts: [{ conceptCode: 'c-derived-forms', role: 'introduces' }],
-    observeSentenceCodes: ['morph-01-form2-causative', 'morph-02-form5-reflexive', 'morph-03-form8-reciprocal-effort', 'morph-04-form7-vs-form1-transitivity'],
+    observeSentenceCodes: ['morph-01-form2-causative', 'morph-02-form5-reflexive', 'morph-03-form8-reciprocal-effort', 'morph-04-form7-vs-form1-transitivity', 'morph-14-form4-causative', 'morph-20-form10-istaqbala'],
     discoveryPrompt: 'دَرَسَ ("studied") → دَرَّسَ ("taught"). عَلَّمَ ("taught") → تَعَلَّمَ ("learned"). كَسَرَ ("broke it") → انْكَسَرَ ("it broke"). What is the pattern behind each shift in meaning?',
     microExplanation:
       'Augmenting Form I with doubling, a prefixed أ، an infixed ت or ن, or other changes produces Forms II–X, each with recurring (not exceptionless) meaning tendencies: II often causative, III often "toward another party," V often reflexive-of-II, VII often passive/reflexive, VIII often reflexive-or-effortful, X often "to seek."',
@@ -439,7 +439,7 @@ export const lessons: LessonSeed[] = [
     order: 4,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-active-passive-participle', role: 'introduces' }],
-    observeSentenceCodes: ['verb-01-basic-vso', 'nom-07-idafa-passive-participle-khabar'],
+    observeSentenceCodes: ['verb-01-basic-vso', 'nom-07-idafa-passive-participle-khabar', 'morph-12-passive-participle-letter'],
     discoveryPrompt: 'الطَّالِبُ ("the student," from a Form-I active participle of ط ل ب) is فاعل in كتب الطالب الدرس. Is "طالب" (the shape of the word) the same thing as "فاعل" (the job it does in this sentence)?',
     microExplanation:
       'اسم الفاعل (فَاعِل for Form I) names the doer of an action; اسم المفعول (مَفْعُول for Form I) names the one acted upon. Both behave as ordinary nouns or adjectives afterward — a shape a word has is not the same thing as فاعل, the syntactic subject job a word can perform in a sentence.',
@@ -455,7 +455,7 @@ export const lessons: LessonSeed[] = [
     order: 5,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-verbal-noun', role: 'introduces' }],
-    observeSentenceCodes: ['morph-09-hamzated-cognate-object'],
+    observeSentenceCodes: ['morph-09-hamzated-cognate-object', 'morph-11-verbal-noun-reading'],
     discoveryPrompt: 'كِتَابَة means "writing" with no one doing it and no time attached — compare to كَتَبَ ("he wrote," locked to third-person-past). What did the pattern shift accomplish?',
     microExplanation:
       'المصدر abstracts the action from any doer or time — كِتَابَة, "writing" (the act itself). Every verb has at least one مصدر; derived forms\' مصادر are largely predictable even though Form I\'s is not.',
@@ -471,7 +471,7 @@ export const lessons: LessonSeed[] = [
     order: 1,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-perfect-tense', role: 'introduces' }],
-    observeSentenceCodes: ['case-02-accusative-triplet', 'verb-04-fronted-subject-full-agreement', 'verb-05-feminine-intransitive'],
+    observeSentenceCodes: ['case-02-accusative-triplet', 'verb-04-fronted-subject-full-agreement', 'verb-05-feminine-intransitive', 'verb-19-perfect-family-travel', 'verb-22-perfect-first-person'],
     discoveryPrompt: 'رَأَيْتُ، كَتَبُوا، ذَهَبَتِ — three different suffixes on three different verbs. What information does each suffix carry?',
     microExplanation:
       'The perfect marks a completed action by attaching suffixes that encode person, gender, and number directly onto the stem. Because subject information is fused into the verb, a single fully conjugated verb can be a complete sentence with no separate subject word.',
@@ -487,7 +487,7 @@ export const lessons: LessonSeed[] = [
     order: 2,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-imperfect-tense', role: 'introduces' }],
-    observeSentenceCodes: ['verb-06-imperfect-indefinite-object', 'part-04-kana-imperfect'],
+    observeSentenceCodes: ['verb-06-imperfect-indefinite-object', 'part-04-kana-imperfect', 'verb-20-imperfect-plural-library'],
     discoveryPrompt: 'يَكْتُبُ starts with ي, not a suffix. Compare to كَتَبَ. Where did the person-marking move?',
     microExplanation:
       'The imperfect marks an ongoing, habitual, or future action with a prefix encoding person (and often gender): يَكْتُبُ (he writes), تَكْتُبُ (she writes / you, m., write). Unlike the perfect, its ending changes with mood — the doorway into Domain D and F\'s mood system.',
@@ -503,7 +503,7 @@ export const lessons: LessonSeed[] = [
     order: 3,
     estimatedMinutes: 15,
     concepts: [{ conceptCode: 'c-imperative', role: 'introduces' }],
-    observeSentenceCodes: ['verb-06-imperfect-indefinite-object'],
+    observeSentenceCodes: ['verb-06-imperfect-indefinite-object', 'verb-11-imperative'],
     discoveryPrompt: 'يَكْتُبُ means "he writes." Strip the ي and add a helping أ at the front: what command does اُكْتُبْ give, and to whom?',
     microExplanation:
       'The imperative is derived from the jussive form of the imperfect by stripping the subject prefix, sometimes adding a helping همزة: اكْتُبْ (write!, to a man), اكْتُبِي (write!, to a woman) — a derived form, not an independent fourth tense to memorize from scratch.',
@@ -519,7 +519,7 @@ export const lessons: LessonSeed[] = [
     order: 4,
     estimatedMinutes: 25,
     concepts: [{ conceptCode: 'c-mood-jussive-subjunctive', role: 'introduces' }],
-    observeSentenceCodes: ['verb-06-imperfect-indefinite-object'],
+    observeSentenceCodes: ['verb-06-imperfect-indefinite-object', 'verb-12-negation-jussive-lam', 'verb-13-subjunctive-an', 'part-10-lan-subjunctive'],
     discoveryPrompt: 'يَكْتُبُ ends in ḍammah by default. If a particle like لن or لم precedes it, tradition says that final vowel must change. Which system have you already learned that behaves exactly this way?',
     microExplanation:
       'The imperfect verb\'s final vowel (or final letter, for weak/plural forms) changes with mood: رفع (indicative, default), نصب (subjunctive, triggered by particles like أن، لن، كي), جزم (jussive, triggered by لم، لا الناهية، or conditional particles) — verbal إعراب, running on the same logic as nominal case.',
@@ -535,7 +535,7 @@ export const lessons: LessonSeed[] = [
     order: 1,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-hamzated-verbs', role: 'introduces' }],
-    observeSentenceCodes: ['morph-09-hamzated-cognate-object'],
+    observeSentenceCodes: ['morph-09-hamzated-cognate-object', 'morph-15-hamzated-qaraa', 'morph-21-hamzated-initial-akhadha'],
     discoveryPrompt: 'سَأَلَ has a همزة as its middle letter, seated on ا. Does the root itself ever actually disappear in any conjugated form?',
     microExplanation:
       'A verb with همزة as one of its root letters (أَكَلَ، سَأَلَ، قَرَأَ) conjugates on entirely regular lines — only the همزة\'s written seat (ء/أ/إ/ؤ) shifts as the surrounding vowels change. The root consonants themselves never vanish.',
@@ -551,7 +551,7 @@ export const lessons: LessonSeed[] = [
     order: 2,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-doubled-verbs', role: 'introduces' }],
-    observeSentenceCodes: ['case-03-genitive-triplet'],
+    observeSentenceCodes: ['case-03-genitive-triplet', 'morph-16-doubled-ahabbat', 'morph-22-doubled-madda-sentence'],
     discoveryPrompt: 'مَرَرْتُ keeps both رs separate, spelled out. Would you expect حَبَّ ("he loved") to do the same before ـتُ?',
     microExplanation:
       'When a verb\'s second and third root letters are identical (م د د، ح ب ب), they merge (إدغام) in most forms — مَدَّ، حَبَّ — but split back apart wherever a vowel would otherwise fall between them, as with the تُ suffix: مَدَدْتُ، حَبَبْتُ.',
@@ -567,7 +567,7 @@ export const lessons: LessonSeed[] = [
     order: 3,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-hollow-verbs', role: 'introduces' }],
-    observeSentenceCodes: ['morph-05-hollow-perfect-contracted', 'morph-06-hollow-first-person-resurfaces'],
+    observeSentenceCodes: ['morph-05-hollow-perfect-contracted', 'morph-06-hollow-first-person-resurfaces', 'morph-17-hollow-zaara', 'morph-23-hollow-baa'],
     discoveryPrompt: 'قَالَ vs. قُلْتُ — these look like two unrelated verbs at first glance. What is the same in both, and what predicts the difference?',
     microExplanation:
       'A verb with و or ي as its middle root letter (ق و ل، ب ي ع) contracts that letter into a long vowel in most forms — قَالَ، بَاعَ — but the weak letter resurfaces as a short vowel once a consonant-initial suffix follows: قُلْتُ، بِعْتُ. One rule explains both surface shapes.',
@@ -583,7 +583,7 @@ export const lessons: LessonSeed[] = [
     order: 4,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-defective-verbs', role: 'introduces' }],
-    observeSentenceCodes: ['morph-07-defective-ya', 'morph-08-defective-waw'],
+    observeSentenceCodes: ['morph-07-defective-ya', 'morph-08-defective-waw', 'morph-18-defective-daaa', 'morph-24-defective-rama'],
     discoveryPrompt: 'نَسِيَ ends in ي؛ دَعَا ends in a long ا that is really a hidden و. Both are "defective" for different underlying reasons — can you tell which final radical each one hides?',
     microExplanation:
       'A verb with و or ي as its final root letter shows that weak letter as a long vowel in most forms — دَعَا، نَسِيَ — but drops or shortens it in others. Because the final letter is already weak, jussive and subjunctive show up here as the letter dropping outright, rather than as a separate vowel change.',
@@ -599,7 +599,7 @@ export const lessons: LessonSeed[] = [
     order: 1,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-ellipsis-and-estimation', role: 'introduces' }],
-    observeSentenceCodes: ['nom-02-demonstrative-indefinite-khabar'],
+    observeSentenceCodes: ['nom-02-demonstrative-indefinite-khabar', 'part-11-vocative-ellipsis'],
     discoveryPrompt: 'A sign reading simply "ممنوعٌ" ("forbidden") is a complete, understood sentence in context, even with no visible مبتدأ. What is the missing word doing?',
     microExplanation:
       'Arabic regularly omits a word whose identity is fully recoverable from context or convention, while the role that word would have played is still "estimated" (مُقدَّر) for the purposes of analysis. Without this concept, an omission looks like a broken sentence instead of a normal compression.',
@@ -615,7 +615,7 @@ export const lessons: LessonSeed[] = [
     order: 2,
     estimatedMinutes: 20,
     concepts: [{ conceptCode: 'c-mahall-al-jumla', role: 'introduces' }],
-    observeSentenceCodes: ['part-04-kana-imperfect', 'verb-04-fronted-subject-full-agreement'],
+    observeSentenceCodes: ['part-04-kana-imperfect', 'verb-04-fronted-subject-full-agreement', 'nom-19-mahall-relative-clause-mubtada', 'verb-21-mahall-clause-object'],
     discoveryPrompt: 'يَكْتُبُ الدَّرْسَ, as the خبر of كَانَ, has no case ending of its own — a whole clause can\'t take a single vowel. So in what sense is it still "accusative"?',
     microExplanation:
       'An embedded clause has no case ending, yet it still occupies a syntactic slot equivalent to whatever single word could have filled it — grammarians say it "has a position" (لها محل). This is what makes full إعراب of sentences with embedded clauses possible.',

@@ -36,14 +36,16 @@ a real seeded database — not mocked.
 
 ## Known gaps, and why they're gaps rather than architecture limits
 
-1. **Content volume below the spec's stretch targets, though narrowed since the initial build.** Seeded: 40
-   concepts (target: full domain coverage — met), 37 lessons (target ≥30 — met), 235 exercises — 111 hand-authored
-   plus 124 algorithmically generated from the sentence bank (target ≥250 — partial, up from 185), 62
-   fully-annotated sentences (target ≥100 — partial, up from 47), 34 roots (target ≥25 — met). The remaining gap
-   is entirely in hand-authoring volume for exercises and sentences, which is genuinely slow to do well (each
-   annotated sentence requires per-token linguistic review). The pipeline (`content/*.ts` → `prisma/seed.ts`,
-   validated by `tests/content-integrity.test.ts`) scales to the full targets with no code changes — it's pure
-   content-authoring time, tracked in `docs/CONTENT_AUTHORING.md`.
+1. **~~Content volume below the spec's stretch targets.~~ Resolved — all numeric targets are now met.** Seeded: 40
+   concepts (target: full domain coverage — met), 37 lessons (target ≥30 — met), 311 exercises — 111 hand-authored
+   plus 200 algorithmically generated from the sentence bank (target ≥250 — met, up from 185), 100 fully-annotated
+   sentences (target ≥100 — met, up from 47), 34 roots (target ≥25 — met). What remains open is not raw count but
+   *even breadth*: the deepest, most example-rich coverage still concentrates in 5 core units (nominal sentence,
+   verbal sentence, case foundations, roots & patterns, basic verb conjugation) — meeting "≥100 sentences" is not
+   the same claim as "every unit has textbook-level depth," and a future pass could still choose to grow the
+   thinner units (advanced analysis, weak verbs) further even though no numeric target requires it. The pipeline
+   (`content/*.ts` → `prisma/seed.ts`, validated by `tests/content-integrity.test.ts`) scales with no code changes
+   — it's pure content-authoring time, tracked in `docs/CONTENT_AUTHORING.md`.
 2. **Content-authoring studio is browse-and-flag plus AI-assisted drafting, not a full in-app editor.** `/studio`
    lets a reviewer browse seeded lessons/exercises/sentences/concepts and push them through the review-workflow
    states (`ContentReview` rows). It can also draft an entirely new lesson using a connected Anthropic API key
@@ -135,18 +137,32 @@ a real seeded database — not mocked.
       separate page. AI-assisted lesson drafting (`/studio`) already existed as a fourth, non-learner-facing
       touchpoint — so "only the Living Teacher" was accurate before this round and isn't now.
     
-    Content breadth beyond these targeted additions (the full 250-exercise/100-sentence curriculum) remains the
-    larger, honestly-unfinished item — see item 1.
+    Content breadth beyond these targeted fixes was picked up immediately after in the very next round — see
+    item 12 below — and the 250-exercise/100-sentence targets referenced above are now met.
+12. **Content breadth: the 250-exercise/100-sentence targets are now met, reached by fixing a second unwired-content
+    bug plus 38 newly authored sentences spread across every lesson, not concentrated in a few units.** Auditing the
+    sentence bank the same way item 11 audited the exercise pool found 20 more fully-annotated, previously-authored
+    sentences — a real imperative example, real jussive/subjunctive examples, all of كان's other sisters, three more
+    passive-voice sentences, a masdar-as-subject example, a passive-participle example — that had never been
+    referenced by any lesson's `observeSentenceCodes`. That silence had two effects: the sentences never appeared in
+    any lesson's Observe/Explain stage, and their auto-generated drill exercises were silently misattributed to a
+    coarse fallback concept (a `verb-`-prefixed code defaults to "fāʿil," regardless of what it's actually about)
+    instead of the concept they actually demonstrate. Wiring those 20 in was free — no new content, just correct
+    attribution. The remaining gap to 100 sentences/250 exercises was closed with 38 newly authored sentences (see
+    `content/sentences/*.ts`), deliberately distributed one or two per lesson across all 37 lessons — including a
+    few genuinely new grammatical points the bank hadn't covered yet (a Form IV causative, a Form X verb, an
+    indefinite-mubtada-forces-fronted-khabar example, both textbook `مَحَلّ` cases — nominative and accusative). Final
+    numbers: 100 sentences (up from 62), 311 exercises (up from 235), and the per-lesson practice floor from item 11
+    rose again, from 3 to 5 (average 6.2 → 7.1), since every lesson now has more concept-linked material feeding its
+    Practice stage. `docs/CONTENT_AUTHORING.md` documents the wiring requirement so this doesn't quietly recur.
 
 ## Suggested Phase 5/6 order (if continuing this project)
 
-1. Expand `content/sentences/*.ts` toward 100+ fully annotated sentences, prioritizing Domain C/D depth and a few
-   verified Qur'anic examples with the safeguards in `docs/LINGUISTIC_REVIEW.md`.
-2. Expand exercise banks toward 250+, leaning on the algorithmic-drill-generation pattern already in `seed.ts`
-   (e.g. a generated `transform_sentence` drill per Sentence Laboratory family).
-3. Build the full in-app content-authoring editor (structured forms over the same `content/*.ts` shapes, with a
+1. Grow sentence/exercise *breadth* further in the currently-thinner units (advanced analysis, weak verbs) even
+   though the ≥100/≥250 numeric targets are now met — see item 12's note on even breadth vs. raw count.
+2. Build the full in-app content-authoring editor (structured forms over the same `content/*.ts` shapes, with a
    "commit to file + reseed" or a direct-to-database mode with proper versioning) — the AI-drafting path in
    `/studio` covers lesson/exercise generation, but hand-authoring still means editing `content/*.ts` directly.
-4. Add pronunciation audio (recorded or TTS) with transcripts, and voice recording for teach-back.
-5. Move the placement assessment to IRT-based adaptive item selection once the question bank is large enough to
+3. Add pronunciation audio (recorded or TTS) with transcripts, and voice recording for teach-back.
+4. Move the placement assessment to IRT-based adaptive item selection once the question bank is large enough to
    support it.

@@ -6,8 +6,8 @@ Miftāḥ is a complete, interactive personal teacher of Arabic Naḥw (syntax) 
 adult learner — built around discovery-based lessons, four signature laboratories, a knowledge-base-grounded
 conversational tutor, an explainable mastery and spaced-review engine, and a personalized misconception clinic.
 
-This is a real, running application with a seeded curriculum, not a mockup: 40 concepts, 37 lessons, 62 fully
-annotated Arabic sentences, 34 roots, 23 morphological patterns, 85 lexemes, 235 exercises, 15 tracked
+This is a real, running application with a seeded curriculum, not a mockup: 40 concepts, 37 lessons, 100 fully
+annotated Arabic sentences, 34 roots, 23 morphological patterns, 85 lexemes, 311 exercises, 15 tracked
 misconceptions, an 18-question adaptive placement assessment, and 3 connected reading passages, all backed by a
 real database and a real mastery/spaced-repetition engine.
 
@@ -90,7 +90,7 @@ installers for you on GitHub's own native runners, if you don't have Windows/Mac
 | Offline PWA (full curriculum + exercise bank downloadable, local grading, sync queue) | ✅ Functional |
 | Desktop app (Linux/Windows/macOS installers, Electron) | ✅ Functional — see [`docs/DESKTOP.md`](docs/DESKTOP.md) |
 | Android app (Capacitor WebView + offline PWA) | ✅ Scaffolded & verified where this sandbox allows — see [`docs/MOBILE.md`](docs/MOBILE.md) |
-| Full 250-exercise / 100-sentence content targets | ⚠️ Partial — see below |
+| Full 250-exercise / 100-sentence content targets | ✅ Met — 311 exercises, 100 sentences (see below) |
 
 See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the honest, itemized gap list and what Phase 5/6 would add.
 
@@ -178,8 +178,14 @@ accessibility primitives (focus rings, high-contrast mode, combining-mark handli
 - **Grammar Constellation renders prerequisite edges as straight SVG lines on a deterministic grid**, not a
   force-directed layout — fully functional and navigable, but a canvas/force-graph library would look more organic
   at a larger scale.
-- **Seeded content covers 5 complete units** (nominal sentence, verbal sentence, case foundations, roots & patterns,
-  basic verb conjugation) plus solid foundational and advanced-preview material, rather than the full 30-lesson /
-  250-exercise / 100-sentence targets. This was a deliberate choice to preserve linguistic accuracy and pedagogical
-  depth per item rather than pad counts — the content-authoring pipeline (`content/*.ts` → `prisma/seed.ts`) is built
-  to scale to the full targets without any architecture changes. See `docs/ROADMAP.md`.
+- **The 30-lesson / 250-exercise / 100-sentence numeric targets are now all met** (37 lessons, 311 exercises, 100
+  sentences), reached the same way the rest of this app's content has been grown throughout — real linguistic
+  accuracy per item, not padding. The last 38 sentences were added deliberately spread across all 37 lessons (one
+  or two fresh, differently-worded examples per lesson, reusing existing vocabulary and root families where it made
+  sense) rather than piled onto a handful of units, specifically so depth grew everywhere rather than in just the
+  units that already had the most content. Seeded content still concentrates its *deepest* coverage in 5 core units
+  (nominal sentence, verbal sentence, case foundations, roots & patterns, basic verb conjugation) plus solid
+  foundational and advanced-preview material elsewhere — meeting the numeric targets is not the same claim as
+  "every domain has textbook-level breadth," and `docs/ROADMAP.md` is explicit about where that distinction still
+  matters. The content-authoring pipeline (`content/*.ts` → `prisma/seed.ts`) continues to scale with no
+  architecture changes if further breadth is wanted.

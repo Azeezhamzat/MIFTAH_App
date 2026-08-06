@@ -59,14 +59,32 @@ worked examples.
 `explanation` per token is worth more than five thin ones. If you're not certain of an analysis, add it to
 `alternatives` rather than asserting it as the primary one, and flag it via the Content Studio's review workflow.
 
+**Wire every new sentence into a lesson's `observeSentenceCodes`, or it silently gets a wrong concept and stays
+invisible in the lesson flow.** `prisma/seed.ts` decides which `Concept` a sentence's auto-generated drill exercises
+(see "Adding exercises" below) attach to by first checking whether any lesson lists that sentence's code in its
+`observeSentenceCodes` — if so, the lesson's own primary concept is used. Only if no lesson references the sentence
+at all does it fall back to a coarse code-prefix heuristic (`conceptForSentencePrefix` in `seed.ts` — `nom-` →
+mubtada/khabar, `verb-` → fāʿil, `case-` → the three cases, `part-` → إنّ, `morph-` → root-and-pattern, everything
+else → word classes). That fallback is a last resort, not a real concept match, and a sentence that only ever
+reaches it is also invisible everywhere except `/xray`, `/review`, and `/offline` — it never appears in any lesson's
+Observe stage or word-by-word Explain-stage breakdown. This exact gap sat undetected for 20 sentences and reduced
+several lessons to 1–2 practice exercises before being found and fixed. When you add a sentence, always add its code
+to the `observeSentenceCodes` of whichever lesson actually teaches the concept it demonstrates — even a lesson that
+already has 1–2 observe sentences benefits from one more, since it both deepens that lesson's Explain stage and
+correctly feeds its Practice-stage exercise pool (see "Adding a lesson" below).
+
 ## Adding a lesson
 
 Edit `content/lessons.ts`. A lesson needs:
 
 - `unitCode` (must exist in `content/units.ts`)
 - `concepts: [{ conceptCode, role }]` — at least one, `role` is `introduces | reinforces | reviews`
-- `observeSentenceCodes` — 2–4 sentence codes for the "meaning before labels" contrast set shown before any
-  terminology is introduced (per the spec's inductive-first pedagogy)
+- `observeSentenceCodes` — 2–4+ sentence codes for the "meaning before labels" contrast set shown before any
+  terminology is introduced (per the spec's inductive-first pedagogy). This list does double duty: it also
+  determines which sentences' auto-generated drill exercises count toward *this* lesson's Practice-stage pool
+  (`src/app/lessons/[code]/page.tsx` queries every published exercise tagged with the lesson's concepts) — see the
+  wiring note under "Adding an annotated sentence" above. A lesson with only 1–2 sentences here will also have a
+  thin Practice stage, even if the wider sentence bank has plenty of material for that concept sitting unattached.
 - `discoveryPrompt` — a guided question the learner reflects on before the explanation is revealed
 - `microExplanation` — the simplest accurate explanation, written to stand alone (don't assume the learner
   remembers the discovery prompt's exact wording)

@@ -215,4 +215,60 @@ export const particleSentences: SentenceSeed[] = [
       { headPosition: 1, dependentPosition: 3, relation: 'particle_governed', explanation: 'كانت governs قريبةً into the accusative.' },
     ],
   },
+  {
+    code: 'part-10-lan-subjunctive',
+    textVocalized: 'لَنْ أَذْهَبَ غَدًا',
+    textUnvocalized: 'لن أذهب غدا',
+    transliteration: 'lan adhhaba ghadan',
+    translationEnglish: 'I will not go tomorrow.',
+    difficulty: 3,
+    notes: 'A second نصب (subjunctive) trigger beyond أنْ (verb-13): لن negates the future and, like every نصب-triggering particle, forces the following imperfect verb\'s final vowel to فتحة.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'لَنْ', surfaceUnvocalized: 'لن', lemma: 'لن', partOfSpeech: 'particle', role: 'ḥarf naṣb (subjunctive-governing particle, negates the future)',
+        marker: 'built (مبني)', markerType: 'positional', translation: 'will not',
+        explanation: 'لَنْ functions here as ḥarf naṣb (subjunctive-governing particle, negates the future).',
+      },
+      {
+        position: 2, surfaceVocalized: 'أَذْهَبَ', surfaceUnvocalized: 'أذهب', lemma: 'ذهب', rootRadicals: 'ذ ه ب', partOfSpeech: 'verb', person: 'first',
+        number: 'singular', mood: 'subjunctive', role: 'the verb, governed into the subjunctive by لن', marker: 'fatḥah (ـَ)', markerType: 'visible',
+        translation: 'I go',
+        explanation: 'أذهب would end in ḍammah (أَذْهَبُ) in the plain indicative — لن forces the same فتحة ending أنْ does in verb-13, confirming this is a general نصب rule, not something specific to one particle.',
+      },
+      {
+        position: 3, surfaceVocalized: 'غَدًا', surfaceUnvocalized: 'غدا', lemma: 'غد', partOfSpeech: 'noun', number: 'singular', definiteness: 'indefinite',
+        grammaticalCase: 'accusative', role: 'ẓarf zamān (adverb of time)', marker: 'fatḥah + tanwīn (ـً)', markerType: 'visible', translation: 'tomorrow',
+        explanation: 'غَدًا functions here as ẓarf zamān (adverb of time).',
+      },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'particle_governed', explanation: 'لن governs أذهب into the subjunctive mood.' },
+    ],
+  },
+  {
+    code: 'part-11-vocative-ellipsis',
+    textVocalized: 'يَا مُحَمَّدُ',
+    textUnvocalized: 'يا محمد',
+    transliteration: 'yā muḥammadu',
+    translationEnglish: 'O Muhammad!',
+    difficulty: 3,
+    notes: "The standard textbook example of حذف الفعل (verb ellipsis): traditional grammar analyzes يا as standing in for an elided verb of calling, تقديره (its estimated original) أُنَادِي محمدًا (\"I am calling Muhammad\") — يا itself is the نائب عن الفعل المحذوف, the particle that substitutes for the missing verb.",
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'يَا', surfaceUnvocalized: 'يا', lemma: 'يا', partOfSpeech: 'particle',
+        role: 'ḥarf nidāʾ (vocative particle) — نائب عن الفعل المحذوف (substitutes for an elided verb of calling)',
+        marker: 'built (مبني)', markerType: 'positional', translation: 'O',
+        explanation: 'يا does not mean anything by itself the way a preposition governs a noun — traditional grammar treats it as standing in for a whole missing verb, تقديره أُنادي ("I call/summon"), which is why the noun that follows still needs its own case assignment as if that verb were actually there.',
+      },
+      {
+        position: 2, surfaceVocalized: 'مُحَمَّدُ', surfaceUnvocalized: 'محمد', lemma: 'محمد', partOfSpeech: 'proper noun', gender: 'masculine',
+        number: 'singular', definiteness: 'definite', grammaticalCase: 'accusative', role: 'munādā (vocative), built on ḍammah in place of the accusative a bare proper name would otherwise take',
+        marker: 'built on ḍammah, estimated accusative', markerType: 'estimated', translation: 'Muhammad',
+        explanation: 'A single definite proper name used as a منادى is built on ḍammah rather than showing a normal accusative ending — its case is estimated (في محل نصب) as the مفعول به of the elided verb أُنادي, even though the visible ending looks nominative.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'particle_governed', explanation: 'يا introduces محمد as the person being addressed, standing in for the elided verb أُنادي that would ordinarily govern it.' },
+    ],
+  },
 ];

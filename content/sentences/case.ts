@@ -170,4 +170,173 @@ export const caseSentences: SentenceSeed[] = [
       { headPosition: 1, dependentPosition: 2, relation: 'verb_object', explanation: 'المعلماتِ is what is seen; its accusative shows as كسرة rather than فتحة.' },
     ],
   },
+  {
+    code: 'case-11-irab-concept-mixed',
+    textVocalized: 'رَأَى الْمُعَلِّمُ طَالِبًا فِي الْفَصْلِ',
+    textUnvocalized: 'رأى المعلم طالبا في الفصل',
+    transliteration: 'raʾā l-muʿallimu ṭāliban fī l-faṣli',
+    translationEnglish: 'The teacher saw a student in the classroom.',
+    difficulty: 3,
+    notes: 'All three cases inside a single sentence: nominative (fāʿil), accusative (mafʿūl bihi), and genitive (after a preposition) — the clearest possible one-sentence illustration of what إعراب actually tracks.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'رَأَى', surfaceUnvocalized: 'رأى', lemma: 'رأى', rootRadicals: 'ر أ ي', partOfSpeech: 'verb', person: 'third',
+        gender: 'masculine', number: 'singular', role: 'fiʿl', marker: 'estimated fatḥah (blocked by the final ى)', markerType: 'estimated', translation: 'saw',
+        explanation: 'رأى ends in ى (a defective root, ر أ ي), so its own fatḥah is estimated rather than pronounced.',
+      },
+      {
+        position: 2, surfaceVocalized: 'الْمُعَلِّمُ', surfaceUnvocalized: 'المعلم', lemma: 'معلم', rootRadicals: 'ع ل م', prefix: 'ال', partOfSpeech: 'noun',
+        gender: 'masculine', number: 'singular', definiteness: 'definite', grammaticalCase: 'nominative', role: 'fāʿil',
+        marker: 'ḍammah (ـُ)', markerType: 'visible', translation: 'the teacher',
+        explanation: 'المعلم performs the seeing, so it is nominative as فاعل.',
+      },
+      {
+        position: 3, surfaceVocalized: 'طَالِبًا', surfaceUnvocalized: 'طالبا', lemma: 'طالب', rootRadicals: 'ط ل ب', partOfSpeech: 'noun',
+        gender: 'masculine', number: 'singular', definiteness: 'indefinite', grammaticalCase: 'accusative', role: 'mafʿūl bihi',
+        marker: 'fatḥah + tanwīn (ـً)', markerType: 'visible', translation: 'a student',
+        explanation: 'طالبًا is what is seen, so it is accusative as مفعول به.',
+      },
+      {
+        position: 4, surfaceVocalized: 'فِي', surfaceUnvocalized: 'في', lemma: 'في', partOfSpeech: 'particle', role: 'ḥarf jarr (preposition)',
+        marker: 'built (مبني)', markerType: 'positional', translation: 'in',
+        explanation: 'في never takes a case ending itself — it governs the following noun into the genitive.',
+      },
+      {
+        position: 5, surfaceVocalized: 'الْفَصْلِ', surfaceUnvocalized: 'الفصل', lemma: 'فصل', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine',
+        number: 'singular', definiteness: 'definite', grammaticalCase: 'genitive', role: 'majrūr of في', marker: 'kasrah (ـِ)', markerType: 'visible',
+        translation: 'the classroom',
+        explanation: 'Three words, three cases, three different jobs: المعلم does the seeing (rafʿ), طالبًا receives the seeing (naṣb), and الفصل is merely located by a preposition (jarr) — this is the whole scope of إعراب in miniature.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'verb_subject', explanation: 'المعلم performs the seeing.' },
+      { headPosition: 1, dependentPosition: 3, relation: 'verb_object', explanation: 'طالبًا is what/who is seen.' },
+      { headPosition: 4, dependentPosition: 5, relation: 'preposition_object', explanation: 'الفصل is majrūr, governed by في.' },
+    ],
+  },
+  {
+    code: 'case-12-three-cases-coffee',
+    textVocalized: 'شَرِبَ الرَّجُلُ الْقَهْوَةَ فِي الصَّبَاحِ',
+    textUnvocalized: 'شرب الرجل القهوة في الصباح',
+    transliteration: 'shariba r-rajulu l-qahwata fī ṣ-ṣabāḥi',
+    translationEnglish: 'The man drank the coffee in the morning.',
+    difficulty: 3,
+    notes: 'A second three-case-in-one-sentence example with entirely different vocabulary from case-11, so the pattern generalizes rather than being tied to one memorized sentence.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'شَرِبَ', surfaceUnvocalized: 'شرب', lemma: 'شرب', rootRadicals: 'ش ر ب', partOfSpeech: 'verb', person: 'third',
+        gender: 'masculine', number: 'singular', role: 'fiʿl', marker: 'fatḥah', markerType: 'visible', translation: 'drank',
+        explanation: 'شرب is a plain, transitive Form I verb.',
+      },
+      {
+        position: 2, surfaceVocalized: 'الرَّجُلُ', surfaceUnvocalized: 'الرجل', lemma: 'رجل', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine',
+        number: 'singular', definiteness: 'definite', grammaticalCase: 'nominative', role: 'fāʿil', marker: 'ḍammah (ـُ)', markerType: 'visible',
+        translation: 'the man',
+        explanation: 'الرجل performs the drinking, so it is nominative as فاعل.',
+      },
+      {
+        position: 3, surfaceVocalized: 'الْقَهْوَةَ', surfaceUnvocalized: 'القهوة', lemma: 'قهوة', prefix: 'ال', partOfSpeech: 'noun', gender: 'feminine',
+        number: 'singular', definiteness: 'definite', grammaticalCase: 'accusative', role: 'mafʿūl bihi', marker: 'fatḥah (ـَ)', markerType: 'visible',
+        translation: 'the coffee',
+        explanation: 'Definite direct objects take a plain fatḥah with no tanwīn, unlike the indefinite طالبًا in case-11 — تنوين only appears on indefinite nouns.',
+      },
+      {
+        position: 4, surfaceVocalized: 'فِي', surfaceUnvocalized: 'في', lemma: 'في', partOfSpeech: 'particle', role: 'ḥarf jarr (preposition)',
+        marker: 'built (مبني)', markerType: 'positional', translation: 'in',
+        explanation: 'في governs الصباح into the genitive.',
+      },
+      {
+        position: 5, surfaceVocalized: 'الصَّبَاحِ', surfaceUnvocalized: 'الصباح', lemma: 'صباح', prefix: 'ال', partOfSpeech: 'noun', gender: 'masculine',
+        number: 'singular', definiteness: 'definite', grammaticalCase: 'genitive', role: 'majrūr of في', marker: 'kasrah (ـِ)', markerType: 'visible',
+        translation: 'the morning',
+        explanation: 'الصباح is genitive purely because في governs it.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'verb_subject', explanation: 'الرجل performs the drinking.' },
+      { headPosition: 1, dependentPosition: 3, relation: 'verb_object', explanation: 'القهوة is what is drunk.' },
+      { headPosition: 4, dependentPosition: 5, relation: 'preposition_object', explanation: 'الصباح is majrūr, governed by في.' },
+    ],
+  },
+  {
+    code: 'case-13-estimated-marker-fatan',
+    textVocalized: 'رَأَيْتُ فَتًى',
+    textUnvocalized: 'رأيت فتى',
+    transliteration: 'raʾaytu fatan',
+    translationEnglish: 'I saw a young man.',
+    difficulty: 3,
+    notes: 'فتى ends in ألف مقصورة (a fixed, unchangeable long-ā-like letter) — its case is estimated (مقدّرة) rather than shown by any visible vowel, in every one of the three cases, not only when built like a demonstrative.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'رَأَيْتُ', surfaceUnvocalized: 'رأيت', lemma: 'رأى', suffix: 'تُ', partOfSpeech: 'verb', person: 'first',
+        number: 'singular', role: 'fiʿl, with its own attached subject pronoun', translation: 'I saw',
+        explanation: 'The attached تُ is the first-person subject pronoun fused onto the perfect stem.',
+      },
+      {
+        position: 2, surfaceVocalized: 'فَتًى', surfaceUnvocalized: 'فتى', lemma: 'فتى', partOfSpeech: 'noun', gender: 'masculine', number: 'singular',
+        definiteness: 'indefinite', grammaticalCase: 'accusative', role: 'mafʿūl bihi', marker: 'estimated fatḥah (the ألف مقصورة never changes shape)',
+        markerType: 'estimated', translation: 'a young man',
+        explanation: 'Unlike a demonstrative, فتى is an ordinary noun that fully participates in إعراب — it is genuinely accusative here — but its final ألف مقصورة is a fixed letter that cannot carry a short vowel, so the accusative marker is estimated rather than heard. The same estimation happens in the nominative (فتًى) and genitive (فتًى) — all three cases look identical on the page.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'verb_object', explanation: 'فتًى is what is seen, even though its case ending is never actually pronounced.' },
+    ],
+  },
+  {
+    code: 'case-14-diptote-proper-noun',
+    textVocalized: 'سَلَّمْتُ عَلَى أَحْمَدَ',
+    textUnvocalized: 'سلمت على أحمد',
+    transliteration: 'sallamtu ʿalā aḥmada',
+    translationEnglish: 'I greeted Ahmad.',
+    difficulty: 3,
+    notes: 'A second diptote example beyond a broken plural (case-08): أحمد is diptote because, as a proper name, it happens to share the pattern أَفْعَل with the comparative/elative — one of the recognized diptote-triggering categories for names.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'سَلَّمْتُ', surfaceUnvocalized: 'سلمت', lemma: 'سلّم', rootRadicals: 'س ل م', suffix: 'تُ', partOfSpeech: 'verb',
+        person: 'first', number: 'singular', role: 'fiʿl (Form II — سَلَّمَ عَلَى, "to greet"), with its own attached subject pronoun',
+        translation: 'I greeted',
+        explanation: 'سلّم is Form II (فَعَّلَ) of س ل م, idiomatically paired with the preposition على to mean "to greet."',
+      },
+      {
+        position: 2, surfaceVocalized: 'عَلَى', surfaceUnvocalized: 'على', lemma: 'على', partOfSpeech: 'particle', role: 'ḥarf jarr (preposition, required by سلّم على)',
+        marker: 'built (مبني)', markerType: 'positional', translation: 'upon/to',
+        explanation: 'على governs أحمد into the genitive, here as part of the fixed idiom سلّم على.',
+      },
+      {
+        position: 3, surfaceVocalized: 'أَحْمَدَ', surfaceUnvocalized: 'أحمد', lemma: 'أحمد', patternLabel: 'Elative pattern — أَفْعَل', partOfSpeech: 'proper noun',
+        gender: 'masculine', number: 'singular', definiteness: 'definite', grammaticalCase: 'genitive', role: 'majrūr of على (diptote — ممنوع من الصرف)',
+        marker: 'fatḥah, no tanwīn (diptote genitive marker)', markerType: 'secondary', translation: 'Ahmad',
+        explanation: 'A proper name built on the أَفْعَل pattern is one of the standard diptote triggers — أحمد takes فتحة instead of كسرة in the genitive, and could never take تنوين even though it is definite by being a name.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 2, dependentPosition: 3, relation: 'preposition_object', explanation: 'أحمد is majrūr, governed by على, but shows فتحة instead of كسرة because it is a diptote.' },
+    ],
+  },
+  {
+    code: 'case-15-sound-masc-plural-marker',
+    textVocalized: 'نَجَحَ الْمُهَنْدِسُونَ',
+    textUnvocalized: 'نجح المهندسون',
+    transliteration: 'najaḥa l-muhandisūna',
+    translationEnglish: 'The engineers succeeded.',
+    difficulty: 2,
+    notes: 'A clean example of the secondary marker type on its own: the sound masculine plural marks nominative with the letter و itself, not a vowel.',
+    tokens: [
+      {
+        position: 1, surfaceVocalized: 'نَجَحَ', surfaceUnvocalized: 'نجح', lemma: 'نجح', rootRadicals: 'ن ج ح', partOfSpeech: 'verb', person: 'third',
+        gender: 'masculine', number: 'singular', role: 'fiʿl', marker: 'fatḥah', markerType: 'visible', translation: 'succeeded',
+        explanation: 'نجح is a plain intransitive Form I verb.',
+      },
+      {
+        position: 2, surfaceVocalized: 'الْمُهَنْدِسُونَ', surfaceUnvocalized: 'المهندسون', lemma: 'مهندس', rootRadicals: 'ه ن د س', prefix: 'ال', suffix: 'ونَ',
+        partOfSpeech: 'noun', number: 'plural', definiteness: 'definite', grammaticalCase: 'nominative', role: 'fāʿil',
+        marker: 'وَاو + نَ (sound masculine plural nominative marker)', markerType: 'secondary', translation: 'the engineers',
+        explanation: 'المهندسون marks its nominative case with the letter و itself rather than a vowel — in the accusative/genitive it would become المهندسينَ, swapping و for ي, exactly the same secondary-marker mechanism as the dual\'s ا/ي.',
+      },
+    ],
+    dependencies: [
+      { headPosition: 1, dependentPosition: 2, relation: 'verb_subject', explanation: 'المهندسون performs the succeeding.' },
+    ],
+  },
 ];
