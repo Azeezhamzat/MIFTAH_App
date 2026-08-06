@@ -33,6 +33,7 @@ export interface OfflineLesson {
   domainTitle: string;
   microExplanation: string;
   deeperDetail?: string | null;
+  commonMistakes: { title: string; description: string; correctModel: string; contrastExample: string }[];
   discoveryPrompt: string;
   concepts: { code: string; title: string; titleArabic: string }[];
   observeSentences: {

@@ -159,7 +159,7 @@ export default function OfflineStudio() {
           lesson={{
             code: lesson.code, title: lesson.title, titleArabic: lesson.titleArabic, summary: lesson.summary,
             unitTitle: lesson.unitTitle, domainTitle: lesson.domainTitle, microExplanation: lesson.microExplanation,
-            deeperDetail: lesson.deeperDetail, discoveryPrompt: lesson.discoveryPrompt, concepts: lesson.concepts,
+            deeperDetail: lesson.deeperDetail, commonMistakes: lesson.commonMistakes, discoveryPrompt: lesson.discoveryPrompt, concepts: lesson.concepts,
             observeSentences: lesson.observeSentences, exercises,
           }}
           offlineGradingByExerciseId={gradingByExerciseId}

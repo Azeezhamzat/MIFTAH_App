@@ -24,6 +24,11 @@ export default async function LessonPage({ params }: { params: { code: string } 
   // shown to the learner — only fully approved, published content is.
   if (!lesson || lesson.status !== 'published') notFound();
 
+  const conceptIds = lesson.concepts.map((lc) => lc.conceptId);
+  const relatedMisconceptions = await prisma.misconception.findMany({
+    where: { concepts: { some: { conceptId: { in: conceptIds } } } },
+  });
+
   const observeCodes = JSON.parse(lesson.observePrompt ?? '[]') as string[];
   const observeSentences = await prisma.arabicSentence.findMany({
     where: { code: { in: observeCodes } },
@@ -44,6 +49,12 @@ export default async function LessonPage({ params }: { params: { code: string } 
           domainTitle: lesson.unit.domain.title,
           microExplanation: lesson.microExplanation,
           deeperDetail: lesson.deeperDetail,
+          commonMistakes: relatedMisconceptions.map((m) => ({
+            title: m.title,
+            description: m.description,
+            correctModel: m.correctModel,
+            contrastExample: m.contrastExample,
+          })),
           discoveryPrompt: discovery.prompt ?? '',
           concepts: lesson.concepts.map((lc) => ({ code: lc.concept.code, title: lc.concept.title, titleArabic: lc.concept.titleArabic })),
           observeSentences: orderedObserve.map((s) => ({

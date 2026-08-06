@@ -90,6 +90,20 @@ a real seeded database — not mocked.
    gamification, visual polish, or audio, which remain undone by explicit choice. See `/lessons` (the new lesson
    catalog), the click-to-answer exercise UI (`src/lib/exerciseChoices.ts`), and the Explain-stage word-by-word
    breakdown (`src/components/SentenceBreakdown.tsx`).
+10. **"Still not strong or deep" was followed up with a second, unanswered round of clarification, then resolved
+    against two concrete, verifiable gaps found by direct inspection rather than guessed at.** A second "not deep
+    enough" report came in with no answer to the specific follow-up question of which aspect was thin. Rather than
+    guess at vague "more polish," the codebase itself was audited: 35 of the 37 lessons had no `deeperDetail`
+    field at all, meaning the Explain stage's "Go deeper" button silently didn't render for 95% of lessons — a
+    real gap, not a subjective one. Separately, all 15 authored `Misconception` rows (evidence pattern, correct
+    model, contrast example, repair guidance) were only ever surfaced in the standalone Misconception Clinic, never
+    inside the lesson flow itself where a learner first meets the concept. Both are now fixed: every one of the 37
+    lessons has a genuine, linguistically substantive `deeperDetail` paragraph (worked examples, exceptions,
+    cross-references — not filler), and the Explain stage now shows a "Common mistakes at this stage" section
+    listing every misconception tied to that lesson's concepts, mirrored into the offline bundle
+    (`src/lib/offline/types.ts`, `src/app/api/offline/bundle/route.ts`) for parity. This addresses explanation
+    *depth* specifically; content *breadth* (item 1 above), the AI tutor experience, and overall visual polish were
+    not in scope for this round and remain open if that turns out to be what "still not deep" actually meant.
 
 ## Suggested Phase 5/6 order (if continuing this project)
 

@@ -43,6 +43,20 @@ export async function GET() {
   });
   const sentenceByCode = new Map(sentences.map((s) => [s.code, s]));
 
+  const allConceptIds = Array.from(new Set(lessons.flatMap((l) => l.concepts.map((lc) => lc.conceptId))));
+  const misconceptions = await prisma.misconception.findMany({
+    where: { concepts: { some: { conceptId: { in: allConceptIds } } } },
+    include: { concepts: true },
+  });
+  const misconceptionsByConceptId = new Map<string, typeof misconceptions>();
+  for (const m of misconceptions) {
+    for (const mc of m.concepts) {
+      const list = misconceptionsByConceptId.get(mc.conceptId) ?? [];
+      list.push(m);
+      misconceptionsByConceptId.set(mc.conceptId, list);
+    }
+  }
+
   const offlineLessons: OfflineLesson[] = lessons.map((l) => {
     const observeCodes = JSON.parse(l.observePrompt ?? '[]') as string[];
     const discovery = JSON.parse(l.discoveryJson ?? '{}') as { prompt: string };
@@ -55,6 +69,11 @@ export async function GET() {
       domainTitle: l.unit.domain.title,
       microExplanation: l.microExplanation,
       deeperDetail: l.deeperDetail,
+      commonMistakes: Array.from(
+        new Map(
+          l.concepts.flatMap((lc) => misconceptionsByConceptId.get(lc.conceptId) ?? []).map((m) => [m.id, m]),
+        ).values(),
+      ).map((m) => ({ title: m.title, description: m.description, correctModel: m.correctModel, contrastExample: m.contrastExample })),
       discoveryPrompt: discovery.prompt ?? '',
       concepts: l.concepts.map((lc) => ({ code: lc.concept.code, title: lc.concept.title, titleArabic: lc.concept.titleArabic })),
       observeSentences: observeCodes

@@ -60,7 +60,10 @@ See `prisma/schema.prisma` for the authoritative model. Key relationships:
 - **Mastery & review**: `ConceptMastery` (six dimension scores + overall + humane label + distinct-days-practiced
   counter) and `ReviewSchedule` (interval/ease/repetitions/dueAt/lastReason) are both keyed `(userId, conceptId)`.
 - **Misconceptions**: `Misconception` (static, authored) and `MisconceptionLog` (per-user, per-detection, with a
-  `status` lifecycle: `active → repaired → retested_pass/fail`).
+  `status` lifecycle: `active → repaired → retested_pass/fail`). `Misconception` rows are tagged to one or more
+  `Concept`s via `MisconceptionConcept`; both `src/app/lessons/[code]/page.tsx` and the offline bundle route use
+  that join to surface every misconception relevant to a lesson's concepts directly inside the lesson's Explain
+  stage ("Common mistakes at this stage"), not only inside the standalone Misconception Clinic.
 
 ## Request flow: an exercise attempt
 

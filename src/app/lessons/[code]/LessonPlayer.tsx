@@ -19,6 +19,7 @@ interface LessonData {
   domainTitle: string;
   microExplanation: string;
   deeperDetail?: string | null;
+  commonMistakes?: { title: string; description: string; correctModel: string; contrastExample: string }[];
   discoveryPrompt: string;
   concepts: { code: string; title: string; titleArabic: string }[];
   observeSentences: { id: string; textVocalized: string; translationEnglish: string; notes?: string | null; tokens?: BreakdownToken[] }[];
@@ -135,6 +136,25 @@ export default function LessonPlayer({
               </div>
             </div>
           )}
+
+          {lesson.commonMistakes && lesson.commonMistakes.length > 0 && (
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-ink-400 mb-3">
+                Common mistakes at this stage
+              </h3>
+              <div className="space-y-3">
+                {lesson.commonMistakes.map((m) => (
+                  <div key={m.title} className="rounded-lg bg-gold-400/10 px-4 py-3">
+                    <p className="text-sm font-medium text-gold-700 dark:text-gold-400">{m.title}</p>
+                    <p className="text-sm text-ink-700 dark:text-ink-200 mt-1">{m.description}</p>
+                    <p className="text-sm text-ink-600 dark:text-ink-300 mt-2"><span className="font-medium">Instead:</span> {m.correctModel}</p>
+                    <p className="text-xs text-ink-500 mt-2">{m.contrastExample}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <button onClick={next} className="w-full rounded-lg bg-indigo-700 hover:bg-indigo-600 text-white font-medium py-3 transition-colors">
             Practice this
           </button>

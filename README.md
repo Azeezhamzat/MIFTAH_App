@@ -70,7 +70,7 @@ installers for you on GitHub's own native runners, if you don't have Windows/Mac
 | Adaptive placement assessment + scoring engine | ✅ Functional (see [Assumptions](#assumptions--known-limitations)) |
 | Daily dashboard (8 key questions from the spec) | ✅ Functional |
 | Lesson catalog (`/lessons` — pick any of the 37 lessons directly, no gating) | ✅ Functional |
-| Lesson player (Observe → Discover → Explain → Practice → Reflect, with a word-by-word grammatical breakdown of every observed sentence at the Explain stage) | ✅ Functional |
+| Lesson player (Observe → Discover → Explain → Practice → Reflect, with a word-by-word grammatical breakdown, a "Common mistakes" section drawn from the misconception bank, and a full "Go deeper" explanation for every one of the 37 lessons) | ✅ Functional |
 | Exercise engine (20 exercise types, hint ladders, rich feedback, click-to-answer for identify_role/identify_governor/select_ending exercises) | ✅ Functional |
 | Mastery model (6 dimensions, humane labels, explainable) | ✅ Functional |
 | Spaced review scheduler (SM-2-derived, same-day guard) | ✅ Functional |
