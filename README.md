@@ -7,7 +7,7 @@ adult learner — built around discovery-based lessons, four signature laborator
 conversational tutor, an explainable mastery and spaced-review engine, and a personalized misconception clinic.
 
 This is a real, running application with a seeded curriculum, not a mockup: 40 concepts, 37 lessons, 100 fully
-annotated Arabic sentences, 34 roots, 23 morphological patterns, 85 lexemes, 311 exercises, 15 tracked
+annotated Arabic sentences, 34 roots, 23 morphological patterns, 85 lexemes, 343 exercises, 15 tracked
 misconceptions, an 18-question adaptive placement assessment, and 3 connected reading passages, all backed by a
 real database and a real mastery/spaced-repetition engine.
 
@@ -71,7 +71,7 @@ installers for you on GitHub's own native runners, if you don't have Windows/Mac
 | Daily dashboard (8 key questions from the spec) | ✅ Functional |
 | Lesson catalog (`/lessons` — pick any of the 37 lessons directly, no gating) | ✅ Functional |
 | Lesson player (Observe → Discover → Explain → Practice → Reflect, with a word-by-word grammatical breakdown, a "Common mistakes" section drawn from the misconception bank, and a full "Go deeper" explanation for every one of the 37 lessons) | ✅ Functional |
-| Exercise engine (20 exercise types, hint ladders, rich feedback, click-to-answer for identify_role/identify_governor/select_ending exercises, a lesson's Practice stage now draws on its full concept-linked exercise pool — not only exercises hand-authored for that specific lesson — capped at 8 per sitting) | ✅ Functional |
+| Exercise engine (20 exercise types, hint ladders, rich feedback, click-to-answer for identify_role/identify_governor/select_ending exercises, a lesson's Practice stage draws on its full concept-linked exercise pool, capped at 8 per sitting — every one of the 37 lessons now reaches that full 8-exercise cap, not just the ones that happened to have enough hand-authored content already) | ✅ Functional |
 | Mastery model (6 dimensions, humane labels, explainable) | ✅ Functional |
 | Spaced review scheduler (SM-2-derived, same-day guard) | ✅ Functional |
 | Misconception Clinic (detection, repair loop, retest) | ✅ Functional |
@@ -178,14 +178,15 @@ accessibility primitives (focus rings, high-contrast mode, combining-mark handli
 - **Grammar Constellation renders prerequisite edges as straight SVG lines on a deterministic grid**, not a
   force-directed layout — fully functional and navigable, but a canvas/force-graph library would look more organic
   at a larger scale.
-- **The 30-lesson / 250-exercise / 100-sentence numeric targets are now all met** (37 lessons, 311 exercises, 100
+- **The 30-lesson / 250-exercise / 100-sentence numeric targets are now all met** (37 lessons, 343 exercises, 100
   sentences), reached the same way the rest of this app's content has been grown throughout — real linguistic
-  accuracy per item, not padding. The last 38 sentences were added deliberately spread across all 37 lessons (one
-  or two fresh, differently-worded examples per lesson, reusing existing vocabulary and root families where it made
-  sense) rather than piled onto a handful of units, specifically so depth grew everywhere rather than in just the
-  units that already had the most content. Seeded content still concentrates its *deepest* coverage in 5 core units
-  (nominal sentence, verbal sentence, case foundations, roots & patterns, basic verb conjugation) plus solid
-  foundational and advanced-preview material elsewhere — meeting the numeric targets is not the same claim as
-  "every domain has textbook-level breadth," and `docs/ROADMAP.md` is explicit about where that distinction still
-  matters. The content-authoring pipeline (`content/*.ts` → `prisma/seed.ts`) continues to scale with no
+  accuracy per item, not padding. Sentences were added deliberately spread across all 37 lessons (one or two fresh,
+  differently-worded examples per lesson) rather than piled onto a handful of units, and every lesson's Practice
+  stage now reaches the full 8-exercise cap — the practice-depth dimension specifically is now even across the
+  whole curriculum, not concentrated in whichever units happened to be authored first. What is *not* claimed to be
+  even is sentence-annotation depth per concept: the deepest, most example-rich token-level annotation still sits
+  in 5 core units (nominal sentence, verbal sentence, case foundations, roots & patterns, basic verb conjugation).
+  Meeting the numeric targets and evening out practice depth is not the same claim as "every domain has
+  textbook-level breadth of annotated examples," and `docs/ROADMAP.md` is explicit about where that distinction
+  still matters. The content-authoring pipeline (`content/*.ts` → `prisma/seed.ts`) continues to scale with no
   architecture changes if further breadth is wanted.

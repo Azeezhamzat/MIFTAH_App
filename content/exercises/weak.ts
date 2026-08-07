@@ -100,4 +100,22 @@ export const weakVerbExercises: ExerciseSeed[] = [
     hints: ['Apply the ordinary مَفْعُول pattern; the همزة keeps its seat as أ after the prefixed م.'],
     explanation: 'مأكول means "eaten; edible," following the regular passive-participle pattern despite the hamzated root.', estimatedSeconds: 30,
   },
+  {
+    lessonCode: 'l-hamzated', conceptCode: 'c-hamzated-verbs', sentenceCode: 'morph-21-hamzated-initial-akhadha', type: 'identify_role',
+    objective: 'Locate the همزة within an initial-position hamzated root.',
+    prompt: 'In the root أ خ ذ ("taking"), which position is the همزة in: first, middle, or final?', difficulty: 2,
+    expectedAnswer: 'first', acceptedVariants: ['first radical', 'فاء الفعل'],
+    hints: ['Spell out the three root letters in order.'],
+    explanation: 'أ خ ذ has همزة as its first (فاء الفعل) radical — the position most prone to unusual behavior in derived forms, e.g. Form VIII اتَّخَذَ.',
+    estimatedSeconds: 20,
+  },
+  {
+    lessonCode: 'l-doubled', conceptCode: 'c-doubled-verbs', type: 'transform_word',
+    objective: 'Conjugate a doubled verb for a consonant-initial suffix.',
+    prompt: 'حَبَّ means "he loved." Conjugate it for "we": نحن ___.', difficulty: 3,
+    expectedAnswer: 'حَبَبْنَا', acceptedVariants: ['حببنا'],
+    hints: ['نَا is a consonant-initial suffix, so the doubled letters split apart.'],
+    explanation: 'حَبَبْنَا splits the merged بّ back into ب-ب, exactly as حَبَبْتُ does for "I," because a consonant-initial suffix follows.',
+    estimatedSeconds: 30,
+  },
 ];

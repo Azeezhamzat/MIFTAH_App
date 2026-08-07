@@ -155,6 +155,21 @@ a real seeded database — not mocked.
     numbers: 100 sentences (up from 62), 311 exercises (up from 235), and the per-lesson practice floor from item 11
     rose again, from 3 to 5 (average 6.2 → 7.1), since every lesson now has more concept-linked material feeding its
     Practice stage. `docs/CONTENT_AUTHORING.md` documents the wiring requirement so this doesn't quietly recur.
+13. **Practice depth is now perfectly even across all 37 lessons — every one reaches the full 8-exercise cap, not
+    just most.** Item 12 raised the floor to 5 and the average to 7.1, but 16 lessons still sat below the 8-per-
+    sitting cap (`l-mubtada-khabar`, `l-ellipsis`, `l-three-cases`, `l-form-i`, and `l-imperative` at 5; six more at
+    6; five more at 7). Rather than treat "average went up" as good enough, each of those 16 lessons' concepts got 1
+    to 3 newly hand-authored exercises (spread across `content/exercises/{foundations,nominal,case,morphology,
+    conjugation,verbal,weak,advanced}.ts`, 32 exercises total) targeting genuinely new grammatical points for that
+    concept rather than rephrasing an existing exercise — e.g. detached vs. attached pronouns for `l-pronouns`,
+    the helping-hamza rule contrasted between Form I and derived-form imperatives for `l-imperative`, what happens
+    to a مفعول به when a sentence turns passive for `l-maful-bihi`, the standard vocative-ellipsis analysis for
+    `l-ellipsis`. Hand-authored exercises: 111 → 143. Total exercises (with generated drills): 311 → 343. Every
+    lesson's Practice stage now shows exactly 8 items — the "which lessons feel shorter than others" question this
+    whole thread of feedback started from no longer has an uneven answer in the practice dimension. What still
+    isn't claimed to be even is sentence-annotation depth per concept (see item 12's closing note) — that is a
+    separate, larger undertaking than topping up a lesson's exercise count, since each new annotated sentence needs
+    full per-token linguistic review, not just a prompt/answer/hint set.
 
 ## Suggested Phase 5/6 order (if continuing this project)
 

@@ -148,4 +148,23 @@ export const verbalExercises: ExerciseSeed[] = [
     explanation: 'محل نصب/رفع/جر applies not just to whole clauses but to built words like attached pronouns that cannot carry a physical case vowel at all.',
     estimatedSeconds: 40,
   },
+  {
+    lessonCode: 'l-maful-bihi', conceptCode: 'c-maful-bihi', sentenceCode: 'verb-18-maful-apple', type: 'identify_role',
+    objective: 'Identify a clean, uncomplicated direct object.',
+    prompt: 'In أَكَلَ الْوَلَدُ تُفَّاحَةً, what case is تُفَّاحَةً, and why?', difficulty: 1,
+    expectedAnswer: 'Accusative — it is the مفعول به, the thing eaten.', acceptedVariants: ['accusative', 'منصوب'],
+    hints: ['What did الولد do to تفاحة؟'],
+    explanation: 'تفاحةً is what receives the action of eating, so it is accusative as مفعول به.',
+    estimatedSeconds: 15,
+  },
+  {
+    lessonCode: 'l-maful-bihi', conceptCode: 'c-maful-bihi', type: 'transform_sentence',
+    objective: 'Track what happens to a مفعول به when a sentence becomes passive.',
+    prompt: 'سَمِعَ الطَّالِبُ صَوْتًا ("the student heard a sound") — turn this passive, and say what case صوت takes now.', difficulty: 3,
+    expectedAnswer: 'سُمِعَ صَوْتٌ — صوت is now nominative, as نائب الفاعل, not accusative.',
+    invalidPlausible: [{ answer: 'سُمِعَ صَوْتًا (keeping it accusative)', why: 'Once a verb goes passive, its original مفعول به is promoted to نائب الفاعل and must become nominative — it cannot stay accusative.' }],
+    hints: ['The original فاعل (الطالب) disappears entirely in the passive; the original مفعول به takes over its case.'],
+    explanation: 'This is the defining trade a مفعول به makes in the passive voice: it stops being accusative and becomes the new nominative نائب الفاعل.',
+    misconceptionTags: [], estimatedSeconds: 35,
+  },
 ];
