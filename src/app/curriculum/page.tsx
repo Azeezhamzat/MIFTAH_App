@@ -11,7 +11,12 @@ export default async function CurriculumPage() {
   const [domains, concepts, masteries, refMappings] = await Promise.all([
     prisma.domain.findMany({ orderBy: { order: 'asc' } }),
     prisma.concept.findMany({
-      include: { prerequisites: { include: { prerequisite: true } }, domain: true },
+      // prerequisitesOf is the relation that actually holds THIS concept's own
+      // prerequisites (rows where conceptId = this concept) — the confusingly
+      // named `prerequisites` relation instead holds the reverse (rows where
+      // this concept is listed as someone ELSE's prerequisite), which would
+      // make every concept appear to require only itself.
+      include: { prerequisitesOf: { include: { prerequisite: true } }, domain: true },
       orderBy: [{ domain: { order: 'asc' } }, { order: 'asc' }],
     }),
     prisma.conceptMastery.findMany({ where: { userId: user.id } }),
@@ -35,7 +40,7 @@ export default async function CurriculumPage() {
     const siblings = conceptsByDomain.get(c.domainId)!;
     const row = siblings.findIndex((s) => s.id === c.id);
     const mastery = masteryByConceptId.get(c.id);
-    const prereqsMet = c.prerequisites.every((p) => {
+    const prereqsMet = c.prerequisitesOf.every((p) => {
       const m = masteryByConceptId.get(p.prerequisiteId);
       return m && MASTERED_LABELS.has(m.label);
     });
@@ -58,13 +63,13 @@ export default async function CurriculumPage() {
       status,
       overallScore: mastery?.overallScore ?? 0,
       label: mastery?.label ?? null,
-      prerequisites: c.prerequisites.map((p) => ({ code: p.prerequisite.code, title: p.prerequisite.title })),
+      prerequisites: c.prerequisitesOf.map((p) => ({ code: p.prerequisite.code, title: p.prerequisite.title })),
       references: refMappings.filter((r) => r.conceptId === c.id).map((r) => ({ work: r.referenceWork.titleEnglish, chapter: r.chapter })),
     };
   });
 
   const edges = concepts.flatMap((c) =>
-    c.prerequisites.map((p) => ({
+    c.prerequisitesOf.map((p) => ({
       fromCode: p.prerequisite.code,
       toCode: c.code,
     })),
@@ -87,8 +92,9 @@ export default async function CurriculumPage() {
       <div className="px-6 py-10">
         <h1 className="text-2xl font-serif font-semibold mb-2">Grammar Constellation</h1>
         <p className="text-sm text-ink-500 mb-6 max-w-2xl">
-          Columns are grammatical domains; each node is a concept. Lines show prerequisite relationships. Select a
-          concept to see why it matters, what it depends on, and your evidence.
+          Each node is a concept, loosely clustered with others in the same grammatical domain — the exact position
+          settles from real prerequisite connectivity, not a fixed grid. Lines show prerequisite relationships.
+          Select a concept to see why it matters, what it depends on, and your evidence.
         </p>
         <div className="flex flex-wrap gap-4 mb-4 text-xs">
           {[
@@ -106,7 +112,6 @@ export default async function CurriculumPage() {
           domains={domains.map((d) => d.title)}
           width={width}
           height={height}
-          colWidth={COL_WIDTH}
         />
       </div>
     </NavShell>

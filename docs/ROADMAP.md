@@ -61,9 +61,23 @@ a real seeded database — not mocked.
 3. **Placement is deterministic-adaptive, not item-response-theory adaptive.** See `docs/README.md`'s assumptions
    section — true IRT-based item selection needs a much larger, difficulty-calibrated item bank than 18 questions
    to be worth the complexity.
-4. **Grammar Constellation uses a deterministic grid layout with straight SVG connectors**, not a force-directed
-   graph library. Fully functional (every node clickable, every edge real, mastery-driven coloring) but would
-   benefit visually from a proper graph-layout library at a much larger concept count.
+4. ~~Grammar Constellation uses a deterministic grid layout with straight SVG connectors, not a force-directed
+   graph.~~ **Resolved**, and a real bug was found underneath the visual limitation while fixing it. The layout is
+   now a small, dependency-free force simulation (`src/app/curriculum/ConstellationView.tsx`) — every pair of nodes
+   repels, edges pull along real prerequisite connections, and each node is weakly drawn toward its domain's anchor
+   point so domains still loosely cluster without a rigid grid. While rebuilding this, "every edge real" (the old
+   claim in this item) turned out to be false: `src/app/curriculum/page.tsx` and `src/lib/engine/recommend.ts` were
+   both reading the wrong side of the `Concept ↔ ConceptPrerequisite` self-relation (`prerequisites` instead of
+   `prerequisitesOf` — the two Prisma relation names read backwards from what they actually hold, see the comment
+   now on the `Concept` model in `schema.prisma`). The practical effect: every concept's "prerequisites" list
+   showed only itself, repeated once per concept that depends on it; every edge drawn in the Constellation was a
+   zero-length self-loop (invisible, which is exactly why nobody had noticed); and — the significant part — the
+   dashboard's actual "Learn: X" recommendation (`getDashboardData` in `recommend.ts`) was silently picking from
+   concepts nobody else depends on rather than concepts whose real prerequisites were mastered, since the broken
+   check degenerated into "does the learner already have mastery of this concept," which is never true for a
+   concept with no existing mastery record. Fixed by using the correct relation in both places; verified live that
+   a demo-account concept now shows its real, distinct prerequisite (or none, for foundational concepts) and that
+   the dashboard recommends an appropriately early concept instead of an arbitrary terminal one.
 5. ~~No offline service worker.~~ **Resolved.** `/offline` downloads the full curriculum — every lesson and the
    complete exercise bank, not just lesson-attached exercises — into IndexedDB, and `public/sw.js` keeps
    already-visited pages reachable with no connection at all. Grading happens locally offline (reusing

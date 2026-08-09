@@ -27,13 +27,18 @@ export async function getDashboardData(userId: string) {
   const masteryByConceptId = new Map(masteries.map((m) => [m.conceptId, m]));
 
   const allConcepts = await prisma.concept.findMany({
-    include: { domain: true, prerequisites: { include: { prerequisite: true } } },
+    // prerequisitesOf holds this concept's own prerequisites (rows where
+    // conceptId = this concept) — the `prerequisites` relation is the reverse
+    // (concepts this one is a prerequisite FOR), which would make every
+    // concept appear to depend only on itself. See the same note in
+    // src/app/curriculum/page.tsx.
+    include: { domain: true, prerequisitesOf: { include: { prerequisite: true } } },
     orderBy: [{ domain: { order: 'asc' } }, { order: 'asc' }],
   });
 
   const nextNewConcept = allConcepts.find((c) => {
     if (masteryByConceptId.has(c.id)) return false;
-    return c.prerequisites.every((p) => {
+    return c.prerequisitesOf.every((p) => {
       const m = masteryByConceptId.get(p.prerequisiteId);
       return m && MASTERED_LABELS.has(m.label);
     });

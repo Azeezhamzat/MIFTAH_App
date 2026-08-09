@@ -162,6 +162,14 @@ model Concept {
   order            Int
 
   lessons          LessonConcept[]
+  // To get THIS concept's own prerequisites, query `prerequisitesOf` (rows
+  // where conceptId = this concept) and read each row's `.prerequisite`.
+  // `prerequisites` is the reverse relation — rows where this concept is
+  // listed as the prerequisite FOR something else — and reading `.prerequisite`
+  // off those rows always resolves back to this same concept. Both names read
+  // backwards from what they hold; this has already caused one real bug
+  // (src/app/curriculum/page.tsx, src/lib/engine/recommend.ts) — grep for
+  // `prerequisitesOf` before touching either relation again.
   prerequisitesOf  ConceptPrerequisite[] @relation("PrereqTarget")
   prerequisites    ConceptPrerequisite[] @relation("PrereqSource")
   exercises        Exercise[]

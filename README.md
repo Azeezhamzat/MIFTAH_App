@@ -79,7 +79,7 @@ installers for you on GitHub's own native runners, if you don't have Windows/Mac
 | Sentence Laboratory (real transformation families, break-the-sentence) | ✅ Functional |
 | Morphology Forge (root+pattern composition, verified vs. mechanical) | ✅ Functional |
 | Living Teacher (grounded by default; unrestricted Claude when a key is connected) — Claude is no longer confined to this one chat surface: it also optionally grades paraphrased open-ended exercise answers, and a wrong answer links straight into a prefilled Living Teacher question | ✅ Functional |
-| Grammar Constellation (interactive prerequisite graph) | ✅ Functional |
+| Grammar Constellation (interactive prerequisite graph, force-directed layout) | ✅ Functional |
 | Reading Library (3 passages, vocab preview, comprehension, syntax map) | ✅ Functional |
 | Root & vocabulary notebook | ✅ Functional |
 | Progress analytics | ✅ Functional |
@@ -175,9 +175,13 @@ accessibility primitives (focus rings, high-contrast mode, combining-mark handli
   18 questions and computes a recommended starting unit from per-skill-area accuracy against curriculum prerequisite
   order — genuinely adaptive in *outcome*, not in *item selection during the test*. True item-response-theory
   adaptivity is a reasonable Phase 5 enhancement once a larger item bank exists.
-- **Grammar Constellation renders prerequisite edges as straight SVG lines on a deterministic grid**, not a
-  force-directed layout — fully functional and navigable, but a canvas/force-graph library would look more organic
-  at a larger scale.
+- **Grammar Constellation now uses a small, dependency-free force-directed layout** (`src/app/curriculum/
+  ConstellationView.tsx`) instead of a fixed grid — node positions settle from real prerequisite connectivity, with
+  a weak pull toward each domain's anchor point so domains still loosely cluster. Fixing this surfaced a genuine
+  bug: the app was reading the wrong side of the `Concept`↔`ConceptPrerequisite` self-relation (see
+  `docs/ROADMAP.md`), which made every concept's prerequisite list show only itself and every graph edge a
+  zero-length self-loop — and, more importantly, made the dashboard's "Learn next" recommendation pick from
+  concepts nobody depends on rather than ones whose actual prerequisites were mastered. Both are now fixed.
 - **The 30-lesson / 250-exercise / 100-sentence numeric targets are now all met** (37 lessons, 343 exercises, 100
   sentences), reached the same way the rest of this app's content has been grown throughout — real linguistic
   accuracy per item, not padding. Sentences were added deliberately spread across all 37 lessons (one or two fresh,
