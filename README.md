@@ -86,7 +86,7 @@ installers for you on GitHub's own native runners, if you don't have Windows/Mac
 | Reference Companion (Naḥw al-Wāḍiḥ / al-Tuḥfah al-Saniyyah mappings) | ✅ Functional |
 | Settings (theme, motion, diacritics, Yorùbá notes, Quiet Progress) | ✅ Functional |
 | Account export & deletion | ✅ Functional |
-| Content-authoring / linguistic review studio, incl. AI-drafted lessons | ✅ Functional (see [Assumptions](#assumptions--known-limitations)) |
+| Content-authoring / linguistic review studio, incl. AI-drafted lessons + hand-authoring forms | ✅ Functional (see [Assumptions](#assumptions--known-limitations)) |
 | Offline PWA (full curriculum + exercise bank downloadable, local grading, sync queue) | ✅ Functional |
 | Desktop app (Linux/Windows/macOS installers, Electron) | ✅ Functional — see [`docs/DESKTOP.md`](docs/DESKTOP.md) |
 | Android app (Capacitor WebView + offline PWA) | ✅ Scaffolded & verified where this sandbox allows — see [`docs/MOBILE.md`](docs/MOBILE.md) |
@@ -182,6 +182,15 @@ accessibility primitives (focus rings, high-contrast mode, combining-mark handli
   `docs/ROADMAP.md`), which made every concept's prerequisite list show only itself and every graph edge a
   zero-length self-loop — and, more importantly, made the dashboard's "Learn next" recommendation pick from
   concepts nobody depends on rather than ones whose actual prerequisites were mastered. Both are now fixed.
+- **`/studio` now has hand-authoring forms for concepts, lessons, and exercises**, not just the AI-drafting path.
+  Saves are written straight to `content/concepts.ts` / `content/lessons.ts` / `content/exercises/studio.ts` — the
+  same git-tracked files `npm run db:seed` restores from — via a small dependency-free source rewriter, then
+  best-effort mirrored into the live database so changes show up immediately without forcing a reseed (which would
+  wipe every learner's progress). This is a filesystem-write feature by design, so it's a local/self-hosted-dev
+  tool rather than something that works on a read-only-filesystem production host. Concepts and lessons support
+  full create + edit; exercises are create-only for now (the ~143 existing ones have no stable id to locate an
+  existing entry by), and the expected-answer field only accepts plain text. See `docs/ROADMAP.md` item 2 for the
+  full scope and what's still open.
 - **The 30-lesson / 250-exercise / 100-sentence numeric targets are now all met** (37 lessons, 343 exercises, 100
   sentences), reached the same way the rest of this app's content has been grown throughout — real linguistic
   accuracy per item, not padding. Sentences were added deliberately spread across all 37 lessons (one or two fresh,

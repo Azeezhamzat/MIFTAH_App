@@ -2,11 +2,15 @@ import { prisma } from '@/lib/db';
 import { requireOnboardedUser } from '@/lib/session';
 import NavShell from '@/components/NavShell';
 import StudioBrowser from './StudioBrowser';
+import AuthorStudio from './AuthorStudio';
 
 export default async function StudioPage() {
   const user = await requireOnboardedUser();
 
-  const [lessons, exercises, sentences, concepts, reviews, draftLessons, draftExercises] = await Promise.all([
+  const [
+    lessons, exercises, sentences, concepts, reviews, draftLessons, draftExercises,
+    domains, units, conceptsFull, lessonsFull,
+  ] = await Promise.all([
     prisma.lesson.findMany({ where: { status: 'published' }, select: { id: true, code: true, title: true, status: true }, orderBy: { order: 'asc' } }),
     prisma.exercise.findMany({ where: { status: 'published' }, select: { id: true, type: true, prompt: true }, take: 50 }),
     prisma.arabicSentence.findMany({ select: { id: true, code: true, textVocalized: true, sourceType: true } }),
@@ -22,6 +26,16 @@ export default async function StudioPage() {
       include: { hints: { orderBy: { level: 'asc' } }, concept: true },
       orderBy: { order: 'desc' },
     }),
+    prisma.domain.findMany({ orderBy: { order: 'asc' }, select: { code: true, title: true } }),
+    prisma.unit.findMany({ orderBy: { order: 'asc' }, select: { code: true, title: true } }),
+    prisma.concept.findMany({
+      include: { domain: true, prerequisitesOf: { include: { prerequisite: true } } },
+      orderBy: { order: 'asc' },
+    }),
+    prisma.lesson.findMany({
+      include: { unit: true, concepts: { include: { concept: true } } },
+      orderBy: { order: 'asc' },
+    }),
   ]);
 
   return (
@@ -33,6 +47,46 @@ export default async function StudioPage() {
           ever reach the learner-facing app. A drafted lesson only becomes visible in the normal lesson flow once
           you explicitly approve it here.
         </p>
+
+        <AuthorStudio
+          domains={domains}
+          units={units}
+          concepts={conceptsFull.map((c) => ({
+            code: c.code,
+            domainCode: c.domain.code,
+            title: c.title,
+            titleArabic: c.titleArabic,
+            definition: c.definition,
+            whyItMatters: c.whyItMatters,
+            difficulty: c.difficulty,
+            order: c.order,
+            prerequisites: c.prerequisitesOf.map((p) => p.prerequisite.code),
+          }))}
+          lessons={lessonsFull.map((l) => {
+            let discoveryPrompt = '';
+            try { discoveryPrompt = (JSON.parse(l.discoveryJson ?? '{}') as { prompt?: string }).prompt ?? ''; } catch { /* leave blank */ }
+            let observeSentenceCodes: string[] = [];
+            try { observeSentenceCodes = JSON.parse(l.observePrompt ?? '[]') as string[]; } catch { /* leave empty */ }
+            return {
+              code: l.code,
+              unitCode: l.unit.code,
+              title: l.title,
+              titleArabic: l.titleArabic,
+              summary: l.summary,
+              order: l.order,
+              estimatedMinutes: l.estimatedMinutes,
+              concepts: l.concepts.map((c) => ({ conceptCode: c.concept.code, role: c.role })),
+              observeSentenceCodes,
+              discoveryPrompt,
+              microExplanation: l.microExplanation,
+              deeperDetail: l.deeperDetail ?? '',
+            };
+          })}
+          allConceptOptions={concepts.map((c) => ({ code: c.code, title: c.title }))}
+          allLessonOptions={lessons.map((l) => ({ code: l.code, title: l.title }))}
+          allSentenceOptions={sentences.map((s) => ({ code: s.code ?? '', text: s.textVocalized }))}
+        />
+
         <StudioBrowser
           lessons={lessons}
           exercises={exercises}

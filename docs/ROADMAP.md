@@ -189,9 +189,20 @@ a real seeded database — not mocked.
 
 1. Grow sentence/exercise *breadth* further in the currently-thinner units (advanced analysis, weak verbs) even
    though the ≥100/≥250 numeric targets are now met — see item 12's note on even breadth vs. raw count.
-2. Build the full in-app content-authoring editor (structured forms over the same `content/*.ts` shapes, with a
-   "commit to file + reseed" or a direct-to-database mode with proper versioning) — the AI-drafting path in
-   `/studio` covers lesson/exercise generation, but hand-authoring still means editing `content/*.ts` directly.
+2. ~~Build the full in-app content-authoring editor.~~ **Partially resolved.** `/studio` now has an "Author
+   content" panel with structured forms for concepts and lessons (full create + edit) and exercises (create only).
+   Chose the "commit to file" mode discussed here rather than direct-to-database: saves are written straight to
+   `content/concepts.ts` / `content/lessons.ts` / the new `content/exercises/studio.ts` — the same git-tracked
+   files `npm run db:seed` reads from — via a small dependency-free bracket-aware source rewriter
+   (`src/lib/contentEditor/tsArray.ts`, covered by `tests/contentEditor.test.ts`), then best-effort mirrored into
+   the live database so the change is visible immediately without forcing a full reseed (which would also wipe
+   every learner's progress). This means the feature is filesystem-write-dependent and is a local/self-hosted-dev
+   tool, not something that works against a read-only-filesystem production deployment (e.g. Vercel) — an
+   intentional tradeoff given this app has no multi-tenant deployment story yet. Still open: editing an
+   *existing* hand-authored exercise in place (the ~143 across `content/exercises/*.ts` have no stable id field to
+   locate them by, unlike concepts/lessons' `code`); authoring exercise types whose answer is an array/object
+   rather than plain text; and forms for the other content types (sentences, misconceptions, placement questions,
+   reading passages, roots/patterns/lexemes).
 3. Add pronunciation audio (recorded or TTS) with transcripts, and voice recording for teach-back.
 4. Move the placement assessment to IRT-based adaptive item selection once the question bank is large enough to
    support it.

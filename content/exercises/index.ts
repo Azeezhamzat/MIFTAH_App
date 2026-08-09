@@ -6,6 +6,7 @@ import { morphologyExercises } from './morphology';
 import { conjugationExercises } from './conjugation';
 import { weakVerbExercises } from './weak';
 import { advancedExercises } from './advanced';
+import { studioExercises } from './studio';
 import type { ExerciseSeed } from '../exerciseTypes';
 
 export const allHandAuthoredExercises: ExerciseSeed[] = [
@@ -17,4 +18,5 @@ export const allHandAuthoredExercises: ExerciseSeed[] = [
   ...conjugationExercises,
   ...weakVerbExercises,
   ...advancedExercises,
+  ...studioExercises,
 ];
